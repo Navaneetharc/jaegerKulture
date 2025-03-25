@@ -1,0 +1,30 @@
+
+<%- include('../partials/adminL/header.ejs') %>
+
+
+<section class="content-main mt-80 mb-80">
+    <div class="card mx-auto card-login">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Change Password?</h4>
+            <form id="adminLoginForm">
+                <div class="mb-3">
+                    <label for="">Enter new password</label>
+                    <input class="form-control" placeholder="enter email" type="text" name="username" id="username" required>
+                </div> 
+                <div class="mb-3">
+                    <label for="">Confirm password</label>
+                    <input class="form-control" placeholder="enter email" type="text" name="username" id="username" required>
+                </div> 
+              
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-primary w-100"> Confirm </button>
+                </div> 
+            </form>
+            <button class="text-center small text-muted mb-15" style="border: none; outline: none; background: none; float: right;">go back to login page?</button>
+
+          
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/adminL/footer.ejs') %>

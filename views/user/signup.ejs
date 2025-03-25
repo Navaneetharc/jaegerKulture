@@ -1,0 +1,251 @@
+<%- include('../partials/userL/header.ejs') %>
+
+<style>
+
+.error-message{
+    color: red;
+    font-size: 0.75rem;
+    display:none;
+}
+
+</style>
+
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/" rel="nofollow">Home</a>
+                    <span></span> Pages
+                    <span></span> Login / Register
+                </div>
+            </div>
+        </div>
+        <section class="pt-150 pb-150">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+
+
+
+                            <!-- <div class="col-lg-5">
+                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
+                                    <div class="padding_eight_all bg-white">
+                                        <div class="heading_s1">
+                                            <h3 class="mb-30">Login</h3>
+                                        </div>
+                                        <form method="post" action="/signup">
+                                            <div class="form-group">
+                                                <input type="text" name="email" placeholder="Your Email">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" name="password" placeholder="Password">
+                                            </div>
+                                            <div class="login_footer form-group">
+                                                <div class="chek-form">
+                                                    <div class="custome-checkbox">
+                                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="">
+                                                        <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
+                                                    </div>
+                                                </div>
+                                                <a class="text-muted" href="#">Forgot password?</a>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Log in</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-1"></div> -->
+
+
+
+
+                            <div class="col-lg-6">
+                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
+                                    <div class="padding_eight_all bg-white">
+                                        <div class="heading_s1">
+                                            <h3 class="mb-30">Create an Account</h3>
+                                        </div>
+                                        <p class="mb-50 font-sm">
+                                            Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy
+                                        </p>
+                                        <form id="signform" method="post" action="/signup">
+                                            <div class="form-group">
+                                                <input type="text"  name="name" id="name" placeholder="Username">
+                                                <div id="error1" class="error-message"></div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <input type="text"  name="email" id="email" placeholder="Email">
+                                                <div id="error2" class="error-message"></div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <input type="text"  name="phone" id="phone" placeholder="phonenumber">
+                                                <div id="error3" class="error-message"></div>
+                                            </div>
+                                         
+                                            <div class="form-group">
+                                                <input type="password" name="password" id="password" placeholder="Password">
+                                                <div id="error4" class="error-message"></div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <input  type="password" name="confirm-password" id="confirm-password" placeholder="Confirm password">
+                                                <div id="error5" class="error-message"></div>
+                                            </div>
+                                            <%if(locals.message && message.length>0){%>
+                                                <div class="alert alert-danger text-center">
+                                                    <%=message%>
+                                                </div>
+                                            <%}%>
+                                            <div class="login_footer form-group">
+                                                <div class="chek-form">
+                                                    <div class="custome-checkbox">
+                                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox12" value="">
+                                                        <label class="form-check-label" for="exampleCheckbox12"><span>I agree to terms &amp; Policy.</span></label>
+                                                    </div>
+                                                </div>
+                                                <a href="page-privacy-policy.html"><i class="fi-rs-book-alt mr-5 text-muted"></i>Lean more</a>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Submit &amp; Register</button>
+                                            </div>
+                                        </form>
+                                        <div class="divider-text-center mt-15 mb-15">
+                                            <span> or</span>
+                                        </div>
+                                        <ul class="btn-login list_none text-center mb-15">
+                                            <li><a href="" class="btn btn-facebook hover-up mb-lg-0 mb-sm-4">Login With Facebook</a></li>
+                                            <li><a href="/auth/google" class="btn btn-google hover-up">Login With Google</a></li>
+                                        </ul>
+                                        <div class="text-muted text-center">Already have an account? <a href="/login">Log in now</a></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+   <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const nameid = document.getElementById("name");
+    const emailid = document.getElementById("email");
+    const phoneid = document.getElementById("phone");
+    const passid = document.getElementById("password");
+    const cpassid = document.getElementById("confirm-password");
+
+    const error1 = document.getElementById("error1");
+    const error2 = document.getElementById("error2");
+    const error3 = document.getElementById("error3");
+    const error4 = document.getElementById("error4"); // Fixed typo
+    const error5 = document.getElementById("error5");
+
+    const signform = document.getElementById("signform");
+
+    function nameValidateChecking() {
+    const nameval = nameid.value.trim();
+    const namepattern = /^[A-Za-z\s]{3,30}$/;
+
+    if (nameval === "") {
+        error1.style.display = "block";
+        error1.innerHTML = "Please enter a valid name";
+    } else if (!namepattern.test(nameval)) {
+        error1.style.display = "block";
+        error1.innerHTML = "Name can only contain alphabets and spaces";
+    } else {
+        error1.style.display = "none";
+    }
+}
+
+function emailValidateChecking() {
+    const emailval = emailid.value.trim();
+    const emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+    if (!emailpattern.test(emailval)) {
+        error2.style.display = "block";
+        error2.innerHTML = "Invalid email format";
+    } else {
+        error2.style.display = "none";
+    }
+}
+
+
+function phoneValidateChecking() {
+    const phoneval = phoneid.value.trim();
+    const phonepattern = /^[6-9]\d{9}$/; // Ensures 10 digits & starts with 6-9
+
+    if (phoneval === "") {
+        error3.style.display = "block";
+        error3.innerHTML = "Enter a valid phone number";
+    } else if (!phonepattern.test(phoneval)) {
+        error3.style.display = "block";
+        error3.innerHTML = "Enter a valid 10-digit Indian phone number";
+    } else {
+        error3.style.display = "none";
+    }
+}
+
+
+function passValidateChecking() {
+    const passval = passid.value.trim();
+    const cpassval = cpassid.value.trim();
+    const passpattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passpattern.test(passval)) {
+        error4.style.display = "block";
+        error4.innerHTML = "Password must be 8+ characters, include uppercase, lowercase, a number, and a special character.";
+    } else {
+        error4.style.display = "none";
+    }
+
+    if (passval !== cpassval) {
+        error5.style.display = "block";
+        error5.innerHTML = "Passwords do not match";
+    } else {
+        error5.style.display = "none";
+    }
+}
+
+
+
+    if (!signform) {
+        console.error("Form element not found");
+        return;
+    }
+
+    
+    signform.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent form submission
+
+        nameValidateChecking();
+        emailValidateChecking();
+        phoneValidateChecking();
+        passValidateChecking();
+
+        if (
+            error1.style.display === "block" ||
+            error2.style.display === "block" ||
+            error3.style.display === "block" ||
+            error4.style.display === "block" ||
+            error5.style.display === "block"
+        ) {
+            console.log("Fix form errors before submitting.");
+        } else {
+            console.log("Form submitted successfully!");
+            signform.submit();
+        }
+    });
+});
+
+   </script>
+
+

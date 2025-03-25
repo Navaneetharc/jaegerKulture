@@ -40,7 +40,7 @@ const productSchema = new Schema({
         default:true
     },
     productImage:{
-        type:{String},
+        type:[String],
         require:true
     },
     isBlocked:{

@@ -10,7 +10,7 @@ const wishlistSchema = new Schema({
     products:[{
         productId:{
             type:Schema.Types.ObjectId,
-            ref:'Products',
+            ref:'Product',
             required:true,
         },
         addedOn:{

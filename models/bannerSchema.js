@@ -18,7 +18,7 @@ const bannerSchema = new Schema({
     link:{
         type:String
     },
-    starDate:{
+    startDate:{
         type:Date,
         required:true
     },

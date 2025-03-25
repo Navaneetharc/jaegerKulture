@@ -21,6 +21,7 @@ const userSchema = new Schema({
     googleId:{
         type:String,
         unique:true,
+        sparse:true
     },
     password:{
         type:String,
@@ -29,6 +30,10 @@ const userSchema = new Schema({
     isBlocked:{
         type:Boolean,
         default:false
+    },
+    isActive:{
+       type:Boolean,
+       default:false
     },
     isAdmin:{
         type:Boolean,
@@ -55,14 +60,17 @@ const userSchema = new Schema({
         default:Date.now,
     },
     referalCode:{
-        type:String
+        type:String,
+        // required:true
     },
     redeemed:{
-        type:Boolean
+        type:Boolean,
+        // required:true
     },
     reedemedUsers:[{
         type:Schema.Types.ObjectId,
-        ref:"User"
+        ref:"User",
+        // required:true
     }],
     searchHistory:[{
         category:{

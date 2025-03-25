@@ -13,20 +13,14 @@ const categorySchema = new mongoose.Schema({
     },
     isListed:{
         type:Boolean,
-        default:true
+        default:false
     },
-    categoryOffer:{
-        type:Number,
-        default:0
-    },
+    
     createdAt:{
         type:Date,
         default:Date.now
     },
-    discountOffers:{
-        type:Number,
-        default:true
-    }
+    
 })  
 
 const Category = mongoose.model("Category",categorySchema);

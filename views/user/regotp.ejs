@@ -1,0 +1,48 @@
+<%- include('../partials/adminL/header.ejs') %>
+
+<section class="content-main mt-80 mb-80">
+    <div class="card mx-auto card-login">
+        <div class="card-body">
+            <h4 class="card-title mb-4">OTP Verification</h4>
+            <p class="text-center text-muted">Enter the OTP sent to your registered mobile/email.</p>
+            <form id="otpVerificationForm">
+                <div class="mb-3 d-flex justify-content-center gap-2">
+                    <input class="form-control text-center border border-dark" type="text" maxlength="1" name="otp1" id="otp1" required style="width: 50px;">
+                    <input class="form-control text-center border border-dark" type="text" maxlength="1" name="otp2" id="otp2" required style="width: 50px;">
+                    <input class="form-control text-center border border-dark" type="text" maxlength="1" name="otp3" id="otp3" required style="width: 50px;">
+                    <input class="form-control text-center border border-dark" type="text" maxlength="1" name="otp4" id="otp4" required style="width: 50px;">
+                    <input class="form-control text-center border border-dark" type="text" maxlength="1" name="otp5" id="otp5" required style="width: 50px;">
+                    <input class="form-control text-center border border-dark" type="text" maxlength="1" name="otp6" id="otp6" required style="width: 50px;">
+                </div> 
+                <div class="mb-3 text-center">
+                    <p id="timer" class="text-danger">Resend OTP in <span id="countdown">2:59</span></p>
+                </div>
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-primary w-100"> Verify OTP </button>
+                </div> 
+            </form>
+            <p class="text-center small text-muted mb-15">Didn't receive the OTP?</p>
+            <div class="d-grid gap-3 mb-4">
+                <button class="btn w-100 btn-light font-sm" id="resendOtp" disabled>Resend OTP</button>
+            </div>
+            <p class="text-center mb-4">Back to <a href="#">signup</a></p>
+        </div>
+    </div>
+</section>
+
+<script>
+    let timeLeft = 179;
+    let timerInterval = setInterval(() => {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("countdown").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        timeLeft--;
+        if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            document.getElementById("resendOtp").disabled = false;
+            document.getElementById("timer").style.display = "none";
+        }
+    }, 1000);
+</script>
+
+<%- include('../partials/adminL/footer.ejs') %>

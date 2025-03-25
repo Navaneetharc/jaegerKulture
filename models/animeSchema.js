@@ -20,5 +20,5 @@ const animeSchema = new Schema({
     }
 })
 
-const anime = mongoose.model("anime",animeSchema);
-module.exports = anime;
+const Anime = mongoose.model("Anime",animeSchema);
+module.exports = Anime;
