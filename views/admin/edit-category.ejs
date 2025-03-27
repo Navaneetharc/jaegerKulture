@@ -60,59 +60,67 @@
                 <div class="col-9">
                     <div class="content-header">
                         <h2 class="content-title">Edit Categorie</h2>
-                        <div>
-                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                            <button class="btn btn-md rounded font-sm hover-up">Publish</button>
-                        </div>
+        
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="card mb-4">
-                        <div class="card-header">
-                            <h4>Basic</h4>
-                        </div>
+                        
                         <div class="card-body">
-                            <form>
+                            <form method="post" action="/admin/editCategory/<%=category._id%>" onsubmit="return handleEditSubmit(event)">
                                 <div class="mb-4">
-                                    <label for="product_name" class="form-label">Categorie title</label>
-                                    <input type="text" placeholder="Type here" class="form-control" id="product_name">
+                                    <label for="product_name" class="form-label">Categorie Name</label>
+                                    <input type="text" name="categoryName" value="<%=category.name%>" placeholder="Type here" class="form-control" id="product_name">
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label">Full description</label>
-                                    <textarea placeholder="Type here" class="form-control" rows="4"></textarea>
+                                    <label class="form-label">description</label>
+                                    <textarea placeholder="Type here" name="description" class="form-control" rows="4"><%= category.description %></textarea>
                                 </div>
-                                <div class="row">
-                                    
-                                    <div class="col-lg-4">
-                                        <label class="form-label">Visbility</label>
-                                        <select class="form-select">
-                                            <option>Active</option>
-                                            <option> Inactive </option>
-                                            <!-- <option> RUBL </option> -->
-                                        </select>
-                                    </div>
-                                </div>
-                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>                              
                             </form>
                         </div>
-                    </div> <!-- card end// -->
+                    </div>
                    
                 </div>
-                <div class="col-lg-3">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h4>Media</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="input-upload">
-                                <img src="/assets/imgs/theme/upload.svg" alt="">
-                                <input class="form-control" type="file">
-                            </div>
-                        </div>
-                    </div> <!-- card end// -->
-                    
-                </div>
+                
             </div>
-        </section> <!-- content-main end// -->
+        </section>
 
         <%- include('../partials/adminL/footer.ejs') %>
+
+        <script>
+            function handleEditSubmit(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        categoryName: formData.get('categoryName'),
+                        description: formData.get('description')
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error);
+                        });
+                    }
+                    window.location.href = '/admin/category';
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops',
+                        text: error.message || 'An error occurred while updating the category'
+                    });
+                });
+            }
+            </script>
+            

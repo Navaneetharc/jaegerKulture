@@ -80,7 +80,7 @@
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Visibility</label>
-                                    <select class="form-select" name="visibility Status" id="visibility">
+                                    <select class="form-select" name="visibility" id="visibility">
                                         <option>List</option>
                                         <option>Unlist</option>
                                     </select>
@@ -154,7 +154,7 @@
                                                         </a>
                                                 <%}%>
                                             </td>
-                                            <td><a class="dropdown-item" href="#">Edit info</a></td>
+                                            <td><a class="dropdown-item" href="/admin/editCategory?id=<%=category._id%>">Edit info</a></td>
                                         </tr>                
                                         <%})%>
                             
@@ -224,13 +224,14 @@
                 }
                 const name = document.getElementsByName("name")[0].value;
                 const description = document.getElementById("descriptionId").value;
+                const visibility = document.getElementById("visibility").value;
 
                 fetch('/admin/addCategory',{
                     method:'POST',
                     headers:{
                         'content-type':'application/json'
                     },
-                    body:JSON.stringify({name,description})
+                    body:JSON.stringify({name,description, Visibility: visibility})
                 })
                 .then(response=>{
                     if(!response.ok){

@@ -1,0 +1,399 @@
+<%- include('../partials/adminL/header.ejs') %>
+<head>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+    <style>
+        .image-preview-container {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 10px;
+            display: none;
+            position: relative;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .image-preview-container img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        .cropper-container {
+            width: 100% !important;
+            height: 400px !important;
+            margin-bottom: 10px;
+        }
+        .input-upload {
+            margin-bottom: 20px;
+            position: relative;
+            padding: 15px;
+            border: 1px dashed #dee2e6;
+            border-radius: 4px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        .input-upload img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        #croppedImg1, #croppedImg2, #croppedImg3 {
+            max-width: 100%;
+            height: auto;
+            display: none;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        .btn-sm {
+            margin-top: 10px;
+            width: 100%;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        .cropper-view-box {
+            outline: 2px solid #39f;
+        }
+        .cropper-point {
+            background-color: #39f;
+        }
+        .cropper-line {
+            background-color: #39f;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .card-body {
+            padding: 1.25rem;
+        }
+        .card-header {
+            padding: 1rem 1.25rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .card-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+    </style>
+<!-- ------- -->
+</head>
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <form method="post" action="/admin/addProducts" enctype="multipart/form-data" onsubmit="return validateForm()">
+                        <div class="content-header">
+                            <h2 class="content-title">Add New Product</h2>
+                            <div>
+                                <button class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Basic</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Product Title</label>
+                                            <input type="text" placeholder="Type here" class="form-control" id="product_name" name="productName" required>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Category</label>
+                                            <select class="form-select" name="category" required>
+                                                <option value="">Select a category</option>
+                                                <% cat.forEach(category => { %>
+                                                    <option value="<%= category.name %>"><%= category.name %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Short description</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="description" required></textarea>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Full description</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="fullDescription" required></textarea>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Specifications</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="specifications"></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="mb-4">
+                                                    <label class="form-label">Regular price</label>
+                                                    <div class="row gx-2">
+                                                        <input placeholder="$" type="number" class="form-control" name="regularPrice" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="mb-4">
+                                                    <label class="form-label">Offer Price</label>
+                                                    <input placeholder="$" type="number" class="form-control" name="salePrice" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Quantity</label>
+                                            <input type="number" placeholder="Enter quantity" class="form-control" name="quantity" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Variants</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <label class="form-label">Size</label>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][s]" placeholder="S" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][m]" placeholder="M" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][l]" placeholder="L" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][x]" placeholder="X" min="0">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][xl]" placeholder="XL" min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Media</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="input-upload">
+                                            <img src="/assets/imgs/theme/upload.svg" id="croppedImg1" alt="">
+                                            <div class="image-preview-container" id="preview1">
+                                                <img id="imgView1" src="" alt="">
+                                            </div>
+                                            <input class="form-control" type="file" name="images" id="input1"
+                                            accept="image/png, image/jpeg, image/jpg"
+                                            onchange="viewImage(event,1)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <button type="button" id="saveButton1" class="btn-sm btn-primary">Save</button>
+                                            <input type="hidden" name="croppedImages" id="croppedImage1">
+                                        </div>
+                                        <div class="input-upload">
+                                            <img src="/assets/imgs/theme/upload.svg" id="croppedImg2" alt="">
+                                            <div class="image-preview-container" id="preview2">
+                                                <img id="imgView2" src="" alt="">
+                                            </div>
+                                            <input class="form-control" type="file" name="images" id="input2"
+                                            accept="image/png, image/jpeg, image/jpg"
+                                            onchange="viewImage(event,2)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <button type="button" id="saveButton2" class="btn-sm btn-primary">Save</button>
+                                            <input type="hidden" name="croppedImages" id="croppedImage2">
+                                        </div>
+                                        <div class="input-upload">
+                                            <img src="/assets/imgs/theme/upload.svg" id="croppedImg3" alt="">
+                                            <div class="image-preview-container" id="preview3">
+                                                <img id="imgView3" src="" alt="">
+                                            </div>
+                                            <input class="form-control" type="file" name="images" id="input3"
+                                            accept="image/png, image/jpeg, image/jpg"
+                                            onchange="viewImage(event,3)">
+                                            <div id="image-error" class="error-message"></div>
+                                            <button type="button" id="saveButton3" class="btn-sm btn-primary">Save</button>
+                                            <input type="hidden" name="croppedImages" id="croppedImage3">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <script>
+let cropperInstances = {};
+
+function validateForm() {
+    const productName = document.querySelector('input[name="productName"]').value;
+    const description = document.querySelector('textarea[name="description"]').value;
+    const regularPrice = document.querySelector('input[name="regularPrice"]').value;
+    const salePrice = document.querySelector('input[name="salePrice"]').value;
+    const quantity = document.querySelector('input[name="quantity"]').value;
+    const category = document.querySelector('select[name="category"]').value;
+
+    if (!productName || !description || !regularPrice || !salePrice || !quantity || !category) {
+        alert('Please fill in all required fields');
+        return false;
+    }
+
+    if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
+        alert('Regular price must be greater than sale price');
+        return false;
+    }
+
+    // Check if at least one image is uploaded
+    const hasImages = document.querySelectorAll('input[name="images"]').some(input => input.files.length > 0);
+    if (!hasImages) {
+        alert('Please upload at least one image');
+        return false;
+    }
+
+    return true;
+}
+
+function viewImage(event, index) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const image = document.getElementById('imgView' + index);
+        const preview = document.getElementById('preview' + index);
+        const croppedImg = document.getElementById('croppedImg' + index);
+        
+        // Hide cropped image and show preview
+        croppedImg.style.display = 'none';
+        preview.style.display = 'block';
+        
+        // Set image source
+        image.src = e.target.result;
+
+        // Wait for image to load
+        image.onload = function() {
+            // Destroy existing cropper if it exists
+            if (cropperInstances[index]) {
+                cropperInstances[index].destroy();
+            }
+
+            // Create new cropper instance
+            cropperInstances[index] = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 1,
+                guides: true,
+                background: false,
+                autoCropArea: 1,
+                zoomable: true,
+                minCropBoxWidth: 200,
+                minCropBoxHeight: 200,
+                ready() {
+                    // Ensure the cropper is properly initialized
+                    this.cropper.setData({
+                        width: 440,
+                        height: 440
+                    });
+                }
+            });
+        };
+    };
+    reader.readAsDataURL(file);
+}
+
+// Add save button functionality
+document.querySelectorAll('[id^="saveButton"]').forEach(button => {
+    button.addEventListener('click', function() {
+        const index = this.id.replace('saveButton', '');
+        if (cropperInstances[index]) {
+            const canvas = cropperInstances[index].getCroppedCanvas({
+                width: 440,
+                height: 440
+            });
+            const croppedImage = document.getElementById('croppedImg' + index);
+            const preview = document.getElementById('preview' + index);
+            const hiddenInput = document.getElementById('croppedImage' + index);
+            
+            // Show cropped image and hide preview
+            croppedImage.src = canvas.toDataURL();
+            croppedImage.style.display = 'block';
+            preview.style.display = 'none';
+            
+            // Store the cropped image data
+            hiddenInput.value = canvas.toDataURL();
+            
+            // Convert canvas to blob and update file input
+            canvas.toBlob(blob => {
+                const file = new File([blob], `cropped-${index}.jpg`, { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                document.getElementById(`input${index}`).files = dataTransfer.files;
+            });
+        }
+    });
+});
+</script>
+
+        <%- include('../partials/adminL/footer.ejs') %>
