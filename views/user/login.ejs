@@ -1,5 +1,19 @@
 <%- include('../partials/userL/header.ejs') %>
 
+<style>
+   
+   .forgot-password-link {
+    color: #007bff !important; 
+    text-decoration: none; 
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline; 
+    text-decoration-color: #007bff; 
+}
+
+
+</style>
 <section class="content-main mt-80 mb-80 d-flex justify-content-center">
     <div class="card card-login" style="max-width: 400px; width: 100%;">
         <div class="card-body">
@@ -18,7 +32,8 @@
                     </div>
                 <%}%>
                 <div class="mb-3">
-                    <a href="#" class="float-end font-sm text-muted">Forgot password?</a>
+                    <a href="/forgot-password" class="float-end font-sm forgot-password-link">Forgot password?</a>
+
                     <label class="form-check">
                         <input type="checkbox" class="form-check-input" checked="">
                         <span class="form-check-label">Remember</span>

@@ -26,13 +26,13 @@ const categoryInfo = async (req,res)=>{
 
         const totalPage = Math.ceil(totalCategory/limit);
         res.render('category',{
-
             cat : categoryData,
             currentPage : page,
             totalPages : totalPage,
             totalCategories :  totalCategory,
-            search: search
-
+            search: search,
+            error: req.query.error,
+            success: req.query.success
         });
 
     } catch (error) {
@@ -44,26 +44,28 @@ const categoryInfo = async (req,res)=>{
 }
 
 const addCategory = async(req,res)=>{
-    const {name,description, Visibility} = req.body;
+    const {name, description, Visibility} = req.body;
     try {
+        console.log("Received category data:", {name, description, Visibility});
 
         const existingCategory = await Category.findOne({name});
         if(existingCategory){
-            return res.status(400).json({error:"Category already exist"})
+            return res.redirect("/admin/category?error=Category already exists");
         }
+
         const newCategory = new Category({
             name,
             description,
             isListed: Visibility === "List" ? true : false
-        })
+        });
 
         await newCategory.save();
-        return res.json({message:"Category added succesfully"})
+        console.log("Category saved successfully:", newCategory);
+        return res.redirect("/admin/category?success=Category added successfully");
         
     } catch (error) {
-        
-        return res.status(500).json({error:"Internal Server Error"})
-        
+        console.error("Error adding category:", error);
+        return res.redirect("/admin/category?error=Internal Server Error");
     }
 }
 

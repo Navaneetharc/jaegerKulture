@@ -1,0 +1,77 @@
+// const Product = require("../../models/productSchema");
+// const Category = require("../../models/categorySchema");
+// const User = require("../../models/userSchema");
+
+
+
+// const productDetails = async(req,res)=>{
+//     try {
+        
+//         const userId = req.session.user;
+//         const userData = await User.findById(userId);
+//         const productId = req.query.id;
+//         const product = await Product.findById(productId).populate('category');
+//         const findCategory = product.category;
+    
+//             res.render('product-details',{
+//                 user:userData,
+//                 product:product,
+//                 category:findCategory,
+
+//             });
+
+//     } catch (error) {
+//         console.error('Error in fetching product details', error);
+//         res.redirect('/pageNotFound');
+        
+//     }
+// }
+
+
+
+
+// module.exports = {
+//     productDetails
+// }
+
+const Product = require("../../models/productSchema");
+const Category = require("../../models/categorySchema");
+const User = require("../../models/userSchema");
+
+const productDetails = async (req, res) => {
+    try {
+        const userId = req.session?.user || null;
+        const productId = req.query.id;
+        if (!productId) return res.redirect('/pageNotFound');
+
+        // Fetch user and product data in parallel (using lean() for plain objects)
+        const [userData, productDoc] = await Promise.all([
+            userId ? User.findById(userId).lean() : null,
+            Product.findById(productId).populate('category').lean()
+        ]);
+
+        if (!productDoc) return res.redirect('/pageNotFound');
+
+        // Modify productDoc to match your EJS requirements:
+        // - Add a 'stock' field from productDoc.variant.size
+        // - Rename description to shortDescription
+        const product = {
+            ...productDoc,
+            stock: productDoc.variant.size,       // { s: Number, m: Number, l: Number, x: Number, xl: Number }
+            shortDescription: productDoc.description // use description as the short description
+        };
+
+        res.render('product-details', {
+            user: userData || null,
+            product,
+            category: product.category
+        });
+    } catch (error) {
+        console.error('Error in fetching product details:', error);
+        res.redirect('/pageNotFound');
+    }
+};
+
+module.exports = {
+    productDetails
+};

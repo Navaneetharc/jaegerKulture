@@ -1,0 +1,308 @@
+<%- include('../partials/adminL/header.ejs') %>
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <form method="post" action="/admin/editProducts/<%=product._id%>" enctype="multipart/form-data" onsubmit="return validateForm()">
+                        <div class="content-header">
+                            <h2 class="content-title">Edit Product</h2>
+                            <div>
+                                <button class="btn btn-md rounded font-sm hover-up" type="submit" onclick="validateAndSubmit()">Update</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Basic</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-4">
+                                            <label for="product_name" class="form-label">Product Title</label>
+                                            <input type="text" value="<%=product.productName%>" placeholder="Type here" class="form-control" id="product_name" name="productName" required>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Category</label>
+                                            <select class="form-select" name="category" required>
+                                                <%for(let i=0;i<cat.length;i++){%>
+
+                                                    <option value="<%=cat[i].name%>">
+                                                        <%=cat[i].name%>
+                                                    </option>
+
+                                                    <%}%>
+                                            </select>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Short description</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="description"><%=product.description%></textarea>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Full description</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="longDescription" ><%=product.longDescription%></textarea>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Specifications</label>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="specifications"><%=product.specifications%></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="mb-4">
+                                                    <label class="form-label">Regular price</label>
+                                                    <div class="row gx-2">
+                                                        <input placeholder="$" type="number" class="form-control"  value="<%=product.regularPrice%>"  name="regularPrice" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="mb-4">
+                                                    <label class="form-label">Offer Price</label>
+                                                    <input placeholder="$" type="number" class="form-control" name="salePrice" value="<%=product.salePrice%>" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Variants</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <label class="form-label">Size</label>
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][s]" placeholder="S" min="0" value="<%=product.variant.size.s%>">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][m]" placeholder="M" min="0" value="<%=product.variant.size.m%>">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][l]" placeholder="L" min="0" value="<%=product.variant.size.l%>">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][x]" placeholder="X" min="0" value="<%=product.variant.size.x%>">
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" class="form-control" name="variant[size][xl]" placeholder="XL" min="0" value="<%=product.variant.size.xl%>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4>Media</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <% for(let i = 0; i < product.productImage.length; i++) { %>
+                                        <div class="input-upload">
+                                            <!-- Display Existing Image -->
+                                            <div class="image-preview-container" id="preview<%=i%>" style="position: relative; display: inline-block;">
+                                                <img id="imgView<%=i%>" src="/uploads/product-images/<%=product.productImage[i]%>" alt="Product Image" width="150">
+                                                <button type="button" onclick="deleteSingleImage('<%=product.productImage[i]%>', '<%=product._id%>')" 
+                                                    class="delete-image-btn" 
+                                                    style="position: absolute; top: -10px; right: -10px; width: 25px; height: 25px; border-radius: 50%; background: #ff4444; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                                    ×
+                                                </button>
+                                            </div>
+                            
+                                            <!-- Upload New Image -->
+                                            <input class="form-control" type="file" name="images" id="input<%= i %>"
+                                                   accept="image/png, image/jpeg, image/jpg"
+                                                   onchange="viewImage(event, '<%= i %>')">
+
+                                            
+                                            <div id="image-error" class="error-message"></div>
+                            
+                                           
+                                            <input type="hidden" name="croppedImages" id="croppedImage<%=i%>">
+                                        </div>
+                                        
+                                        <br>
+                                        <br>
+                                        <br>
+        
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <%- include('../partials/adminL/footer.ejs') %>
+
+        <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+
+
+        <script>
+            function validateForm() {
+              clearErrorMessages();
+              const name = document.getElementsByName('productName')[0].value;
+              const description = document.getElementById('descriptionid').value;
+            //   const brand = document.getElementsByName('brand')[0].value;
+              const price = document.getElementsByName('regularPrice')[0].value;
+              const saleprice = document.getElementsByName('salePrice')[0].value;
+            //   const color = document.getElementsByName('color')[0].value;
+              const category = document.getElementsByName('category')[0].value;
+              const images = document.getElementById('input1')
+            //   const quantity=document.getElementsByName('quantity')
+              let isValid = true
+              if (name.trim() === "") {
+
+      displayErrorMessage('productName-error', 'Please enter a product name.');
+      isValid = false;
+   } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+      displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
+      isValid = false;
+   }
+            
+   if (description.trim() === "") {
+      displayErrorMessage('description-error', 'Please enter a product description.');
+      isValid = false;
+   } else if (!/^[a-zA-Z\s]+$/.test(description.trim())) {
+      displayErrorMessage('description-error', 'Product description should contain only alphabetic characters.');
+      isValid = false;
+   }
+  
+  
+           
+  
+  
+            //   if ( parseInt(quantity) < 0) {
+            //       displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+            //       isValid = false;
+            //   }
+  
+  
+  
+  
+              if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+                  displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
+                  isValid = false;
+              }
+  
+  
+              if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
+                  displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
+                  isValid = false;
+              }
+              if (parseFloat(price) <= parseFloat(saleprice)) {
+
+
+      displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
+      isValid = false;
+   }
+  
+  
+            //   if (color.trim() === "") {
+            //       displayErrorMessage('color-error', 'Please enter a color.');
+            //       isValid = false;
+            //   }
+  
+  
+              if (images.files.length === 0) {
+                  displayErrorMessage("images-error",'Please select an image.');
+                  isValid = false;
+              }
+              return isValid;
+          }
+
+
+          function displayErrorMessage(elementId, message) {
+              var errorElement = document.getElementById(elementId);
+              errorElement.innerText = message;
+              errorElement.style.display = "block";
+          }
+  
+  
+          function clearErrorMessages() {
+              const errorElements = document.getElementsByClassName('error-message');
+              Array.from(errorElements).forEach(element => {
+                  element.innerText = '';
+              });
+              const errorMessage = document.getElementById('errorMessage');
+  
+  
+          }
+
+          function deleteSingleImage(imageId,productId){
+            $.ajax({
+                url:"/admin/deleteImage",
+                method:'post',
+                data:{imageNameToServer:imageId,productIdToServer:productId},
+                success:((response)=>{
+                    if(response.status===true){
+                        window.location.reload()
+                    }
+                })
+            })
+          }
+
+        </script>

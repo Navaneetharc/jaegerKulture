@@ -1,5 +1,125 @@
 <%- include('../partials/userL/header.ejs') %>
     
+<style>
+    .dropdown{
+        position:relative;
+        display:inline-block;
+    }
+    .dropdown-content{
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+        z-index: 1000;
+        right: 0;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+    }
+    .dropdown-content a:hover{
+        background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content{
+        display:block;
+    }
+    .header{
+        position: relative;
+        z-index: 500;
+    }
+
+    /* Simplified Category Selection Styles */
+    .category-link {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    .category-link:hover {
+        color: #3BB77E;
+    }
+    .category-link.active {
+        color: #3BB77E;
+        font-weight: 500;
+    }
+     /* Sort Dropdown Styles */
+     .sort-by-cover {
+        position: relative;
+    }
+    .sort-by-product-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 15px;
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .sort-by-product-wrap:hover {
+        border-color: #3BB77E;
+    }
+    .sort-by {
+        color: #666;
+        font-size: 14px;
+    }
+    .sort-by-dropdown-wrap {
+        color: #333;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .sort-by-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 5px);
+        right: 0;
+        background: white;
+        min-width: 220px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        z-index: 1000;
+        border: 1px solid #e5e5e5;
+    }
+    .sort-by-dropdown.show {
+        display: block;
+    }
+    .sort-by-dropdown ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .sort-by-dropdown ul li {
+        border-bottom: 1px solid #f5f5f5;
+    }
+    .sort-by-dropdown ul li:last-child {
+        border-bottom: none;
+    }
+    .sort-by-dropdown ul li a {
+        display: block;
+        padding: 12px 20px;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 14px;
+    }
+    .sort-by-dropdown ul li a:hover {
+        background-color: #f8f8f8;
+        color: #3BB77E;
+        padding-left: 25px;
+    }
+    .sort-by-dropdown-wrap i {
+        transition: transform 0.3s ease;
+    }
+    .sort-by-dropdown.show + .sort-by-dropdown-wrap i {
+        transform: rotate(180deg);
+    }
+</style>
 
 <header class="header-area header-style-1 header-height-2">
     <div class="header-top header-top-ptb-1 d-none d-lg-block">
@@ -29,7 +149,17 @@
                                     <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                 </ul>
                             </li>
-                            <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <div class="dropdown">
+                                    <a href="#" class="sign-in-link"><%= user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/userProfile">Profile</a>
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>
@@ -44,21 +174,8 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        <form action="#">
-                            <!-- <select class="select-active">
-                                <option>All Categories</option>
-                                <option>Women's</option>
-                                <option>Men's</option>
-                                <option>Cellphones</option>
-                                <option>Computer</option>
-                                <option>Electronics</option>
-                                <option> Accessories</option>
-                                <option>Home & Garden</option>
-                                <option>Luggage</option>
-                                <option>Shoes</option>
-                                <option>Mother & Kids</option>
-                            </select> -->
-                            <input type="text" placeholder="Search for items...">
+                        <form action="/search" method="get" onsubmit="return handleSearch(this)">
+                            <input type="text" placeholder="Search for items..." name="query" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
                         </form>
                     </div>
                     <div class="header-action-right">
@@ -86,20 +203,20 @@
         <div class="container">
             <div class="header-wrap header-space-between position-relative">
                 <div class="logo logo-width-1 d-block d-lg-none">
-                    <a href="/home"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
+                    <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
                 </div>
                 <div class="header-nav d-none d-lg-flex">
     
                     <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                         <nav>
                             <ul>
-                                <li><a class="active" href="/home">Home</a>
+                                <li><a class="" href="/">Home</a>
                                     
                                 </li>
                                 <li>
                                     <a href="page-about.html">About</a>
                                 </li>
-                                <li><a href="/shop">Shop</a>
+                                <li><a class="active" href="/shop">Shop</a>
                                    
                                 </li>
                                 <li class="position-static"><a href="#">Deals</a>
@@ -142,64 +259,38 @@
                     <div class="col-lg-9">
                         <div class="shop-product-fillter">
                             <div class="totall-product">
-                                <p> We found <strong class="text-brand">688</strong> items for you!</p>
+                                <p> We found <strong class="text-brand"><%= totalProducts %></strong> items for you!</p>
                             </div>
-                            <div class="sort-by-product-area">
-                                <div class="sort-by-cover mr-10">
-                                    <div class="sort-by-product-wrap">
-                                        <div class="sort-by">
-                                            <span><i class="fi-rs-apps"></i>Show:</span>
-                                        </div>
-                                        <div class="sort-by-dropdown-wrap">
-                                            <span> 50 <i class="fi-rs-angle-small-down"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="sort-by-dropdown">
-                                        <ul>
-                                            <li><a class="active" href="#">50</a></li>
-                                            <li><a href="#">100</a></li>
-                                            <li><a href="#">150</a></li>
-                                            <li><a href="#">200</a></li>
-                                            <li><a href="#">All</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="sort-by-cover">
-                                    <div class="sort-by-product-wrap">
-                                        <div class="sort-by">
-                                            <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
-                                        </div>
-                                        <div class="sort-by-dropdown-wrap">
-                                            <span> Featured <i class="fi-rs-angle-small-down"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="sort-by-dropdown">
-                                        <ul>
-                                            <li><a class="active" href="#">Featured</a></li>
-                                            <li><a href="#">Price: Low to High</a></li>
-                                            <li><a href="#">Price: High to Low</a></li>
-                                            <li><a href="#">Release Date</a></li>
-                                            <li><a href="#">Avg. Rating</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
+                            <% if (typeof priceRange !== 'undefined' && priceRange) { %>
+                                <div class="price-filter-info">
+                                    <p>Price Range: ₹<%= priceRange.min %> - ₹<%= priceRange.max %></p>
+                                    <a href="/shop" class="clear-filter">Clear Filter</a>
+                                    <div class="sort-by-cover">
+                                
                             </div>
+                                </div>
+                            <% } %>
+                            
+                            
                         </div>
+
                         <div class="row product-grid-3">
+                            <%for(let i=0;i<products.length;i++){%>
                             <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                                 <div class="product-cart-wrap mb-30">
                                     <div class="product-img-action-wrap">
                                         <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/geeshatee.jpeg" alt="">
-                                                <!-- <img class="hover-img" src="assets2/imgs/shop/product-2-2.jpg" alt=""> -->
+                                            <a href="/productDetails?id=<%= products[i]._id %>">
+
+                                                <img class="default-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%=products[i].productName%>">
+                                                <img class="hover-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%=products[i].productName%>">
                                             </a>
                                         </div>
                                         <div class="product-action-1">
                                             <!-- <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
 <i class="fi-rs-search"></i></a> -->
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot">Hot</span>
@@ -207,17 +298,17 @@
                                     </div>
                                     <div class="product-content-wrap">
                                         <div class="product-category">
-                                            <a href="shop-grid-right.html">T Shirts & Tops</a>
+                                            <a href="shop-grid-right.html"><%= products[i].category.name %></a>
                                         </div>
-                                        <h2><a href="shop-product-right.html">Geisha warrior premium oversized tee</a></h2>
+                                        <h2><a href=""><%=products[i].productName%></a></h2>
                                         <div class="rating-result" title="90%">
                                             <span>
                                                 <span>90%</span>
                                             </span>
                                         </div>
                                         <div class="product-price">
-                                            <span>₹238.85 </span>
-                                            <span class="old-price">₹245.8</span>
+                                            <span>₹<%= products[i].salePrice %></span>
+                                            <span class="old-price">₹<%= products[i].regularPrice %></span>
                                         </div>
                                         <div class="product-action-1 show">
                                             <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
@@ -225,460 +316,119 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-3-1.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-3-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="new">New</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Music</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Cartoon Astronaut T-Shirts</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>50%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹138.85 </span>
-                                            <span class="old-price">₹255.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-7-1.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-7-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="best">Best Sell</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Watch</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Plain Striola Shirts</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>95%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹338.85 </span>
-                                            <span class="old-price">₹445.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-1-2.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-1-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="sale">Sale</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Music</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Landscape Painting Shirt</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>70%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹123.85 </span>
-                                            <span class="old-price">₹235.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-4-1.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-3-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">-30%</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Speaker</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Letter Print T-Shirt</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>70%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹28.85 </span>
-                                            <span class="old-price">₹45.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-5-2.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-5-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">-22%</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Camera</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Element Pattern Print Shirts</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>70%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹238.85 </span>
-                                            <span class="old-price">₹245.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-8-2.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-8-1.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="new">New</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Phone</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Vintage Henley Shirt</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>98%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹1275.85 </span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-11-1.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-11-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Accessories </a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Cotton Leaf Printed</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>70%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹238.85 </span>
-                                            <span class="old-price">₹245.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-13-1.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-13-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Accessories </a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Cotton Leaf Printed</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>70%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹238.85 </span>
-                                            <span class="old-price">₹245.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-3-1.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-3-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Music</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Colorful Pattern Shirts</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>90%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹238.85 </span>
-                                            <span class="old-price">$245.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-2-1.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-2-2.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="new">New</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Music</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Cartoon Astronaut T-Shirts</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>50%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹138.85 </span>
-                                            <span class="old-price">₹255.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="shop-product-right.html">
-                                                <img class="default-img" src="assets2/imgs/shop/product-7-2.jpg" alt="">
-                                                <img class="hover-img" src="assets2/imgs/shop/product-7-1.jpg" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="best">Best Sell</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Watch</a>
-                                        </div>
-                                        <h2><a href="shop-product-right.html">Plain Striola Shirts</a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>95%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹338.85 </span>
-                                            <span class="old-price">₹445.8</span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <%}%>
+                            
                         </div>
                         <!--pagination-->
                         <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
                             <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-start">
-                                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                              <ul class="pagination justify-content-start">
+                                <% if (currentPage > 1) { %>
+                                  <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">
+                                      <i class="fi-rs-angle-double-small-left"></i>
+                                    </a>
+                                  </li>
+                                <% } %>
+                          
+                                <% 
+                                  // Determine which page numbers to show
+                                  let startPage = Math.max(1, currentPage - 2);
+                                  let endPage = Math.min(totalPages, currentPage + 2);
+                                  if(startPage > 1) { 
+                                %>
+                                  <li class="page-item">
+                                    <a class="page-link" href="?page=1<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">01</a>
+                                  </li>
+                                  <% if(startPage > 2) { %>
                                     <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                                    <li class="page-item"><a class="page-link" href="#"><i class="fi-rs-angle-double-small-right"></i></a></li>
-                                </ul>
+                                  <% } %>
+                                <% } %>
+                          
+                                <% for(let i = startPage; i <= endPage; i++) { %>
+                                  <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">
+                                      <%= i < 10 ? '0' + i : i %>
+                                    </a>
+                                  </li>
+                                <% } %>
+                          
+                                <% if(endPage < totalPages) { %>
+                                  <% if(endPage < totalPages - 1) { %>
+                                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                  <% } %>
+                                  <li class="page-item">
+                                    <a class="page-link" href="?page=<%= totalPages %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">
+                                      <%= totalPages < 10 ? '0' + totalPages : totalPages %>
+                                    </a>
+                                  </li>
+                                <% } %>
+                          
+                                <% if (currentPage < totalPages) { %>
+                                  <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">
+                                      <i class="fi-rs-angle-double-small-right"></i>
+                                    </a>
+                                  </li>
+                                <% } %>
+                              </ul>
                             </nav>
-                        </div>
+                          </div>
+                          
+                          
                     </div>
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
+
+
+                        <div class="sort-by-cover">
+                            <div class="sort-by-product-wrap">
+                                <div class="sort-by">
+                                    <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+                                </div>
+                                <div class="sort-by-dropdown-wrap">
+                                    <span id="currentSort">
+                                        <% if (typeof sortOption !== 'undefined' && sortOption) { %>
+                                            <% if (sortOption === 'price_low') { %>
+                                                Price: Low to High
+                                            <% } else if (sortOption === 'price_high') { %>
+                                                Price: High to Low
+                                            <% } else { %>
+                                                Featured
+                                            <% } %>
+                                        <% } else { %>
+                                            Featured
+                                        <% } %>
+                                        <i class="fi-rs-angle-small-down"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="sort-by-dropdown">
+                                <ul>
+                                    <li><a href="/shop?sort=price_low<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>" class="<%= sortOption === 'price_low' ? 'active' : '' %>">Price: Low to High</a></li>
+                                    <li><a href="/shop?sort=price_high<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>" class="<%= sortOption === 'price_high' ? 'active' : '' %>">Price: High to Low</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+
                         <div class="widget-category mb-30">
                             <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
                             <ul class="categories">
-                                <li><a href="shop-grid-right.html">T Shirts & Tops</a></li>
-                                <li><a href="shop-grid-right.html">Samurai Accessories</a></li>
-                                <li><a href="shop-grid-right.html">Home & Decor</a></li>
-                                <li><a href="shop-grid-right.html">Hoodies & Sweatshirts</a></li>
-                                <li><a href="shop-grid-right.html">Desktop Setup</a></li>
-                                <!-- <li><a href="shop-grid-right.html">Jewelry & Watch</a></li>
-                                <li><a href="shop-grid-right.html">Accessories</a></li> -->
+                                <li><a href="#" class="category-link <%= !selectedCategory ? 'active' : '' %>" data-category="">All Categories</a></li>
+                                <% for(let i = 0; i < category.length; i++) { %>
+                                <li>
+                                    <a href="#" class="category-link <%= selectedCategory && selectedCategory.toString() === category[i]._id.toString() ? 'active' : '' %>" 
+                                       data-category="<%= category[i]._id %>">
+                                        <%= category[i].name %>
+                                    </a>
+                                </li>
+                                <% } %>
                             </ul>
                         </div>
-                        <!-- Fillter By Price -->
+                        <!-- Price Filter -->
                         <div class="sidebar-widget price_range range mb-30">
                             <div class="widget-header position-relative mb-20 pb-10">
-                                <h5 class="widget-title mb-10">Fill by price</h5>
+                                <h5 class="widget-title mb-10">Filter by price</h5>
                                 <div class="bt-1 border-color-1"></div>
                             </div>
                             <div class="price-filter">
@@ -686,96 +436,16 @@
                                     <div id="slider-range"></div>
                                     <div class="price_slider_amount">
                                         <div class="label-input">
-                                            <span>Range:</span><input type="text" id="amount" name="price" placeholder="Add Your Price" />
+                                            <span>Range:</span>
+                                            <input type="text" id="amount" name="price" placeholder="Add Your Price" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="list-group">
-                                <div class="list-group-item mb-10 mt-10">
-                                    <label class="fw-900">Customer Rating</label>
-                                    <div class="custome-checkbox">
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="">
-                                        <label class="form-check-label" for="exampleCheckbox1"><span>5 star (56)</span></label>
-                                        <br>
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox2" value="">
-                                        <label class="form-check-label" for="exampleCheckbox2"><span>4 star & above (78)</span></label>
-                                        <br>
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox3" value="">
-                                        <label class="form-check-label" for="exampleCheckbox3"><span>3 star & above (54)</span></label>
-                                        <br>
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox3" value="">
-                                        <label class="form-check-label" for="exampleCheckbox3"><span>2 star & above (54)</span></label>
-                                        <br>
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox3" value="">
-                                        <label class="form-check-label" for="exampleCheckbox3"><span>1 star & above (54)</span></label>
-                                    </div>
-                                    <!-- <label class="fw-900 mt-15">Item Condition</label>
-                                    <div class="custome-checkbox">
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox11" value="">
-                                        <label class="form-check-label" for="exampleCheckbox11"><span>New (1506)</span></label>
-                                        <br>
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox21" value="">
-                                        <label class="form-check-label" for="exampleCheckbox21"><span>Refurbished (27)</span></label>
-                                        <br>
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox31" value="">
-                                        <label class="form-check-label" for="exampleCheckbox31"><span>Used (45)</span></label>
-                                    </div> -->
-                                </div>
-                            </div>
-                            <a href="shop-grid-right.html" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Fillter</a>
                         </div>
-                        <!-- Product sidebar Widget -->
-                        <!-- <div class="sidebar-widget product-sidebar  mb-30 p-30 bg-grey border-radius-10">
-                            <div class="widget-header position-relative mb-20 pb-10">
-                                <h5 class="widget-title mb-10">New products</h5>
-                                <div class="bt-1 border-color-1"></div>
-                            </div>
-                            <div class="single-post clearfix">
-                                <div class="image">
-                                    <img src="assets2/imgs/shop/thumbnail-3.jpg" alt="#">
-                                </div>
-                                <div class="content pt-10">
-                                    <h5><a href="shop-product-detail.html">Chen Cardigan</a></h5>
-                                    <p class="price mb-0 mt-5">$99.50</p>
-                                    <div class="product-rate">
-                                        <div class="product-rating" style="width:90%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="single-post clearfix">
-                                <div class="image">
-                                    <img src="assets2/imgs/shop/thumbnail-4.jpg" alt="#">
-                                </div>
-                                <div class="content pt-10">
-                                    <h6><a href="shop-product-detail.html">Chen Sweater</a></h6>
-                                    <p class="price mb-0 mt-5">$89.50</p>
-                                    <div class="product-rate">
-                                        <div class="product-rating" style="width:80%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="single-post clearfix">
-                                <div class="image">
-                                    <img src="assets2/imgs/shop/thumbnail-5.jpg" alt="#">
-                                </div>
-                                <div class="content pt-10">
-                                    <h6><a href="shop-product-detail.html">Colorful Jacket</a></h6>
-                                    <p class="price mb-0 mt-5">$25</p>
-                                    <div class="product-rate">
-                                        <div class="product-rating" style="width:60%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
-                            <img src="assets2/imgs/banner/banner-11.jpg" alt="">
-                            <div class="banner-text">
-                                <span>Women Zone</span>
-                                <h4>Save 17% on <br>Office Dress</h4>
-                                <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                            </div>
-                        </div> -->
+                        <button id="applyFilter" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Filter</button>
+
+                        
                     </div>
                 </div>
             </div>
@@ -784,3 +454,92 @@
 
 
     <%- include('../partials/userL/footer.ejs') %>
+
+    <script>
+
+            function handleSearch(form) {
+            const searchInput = form.querySelector('input[name="query"]');
+            if (!searchInput.value.trim()) {
+                // If search is empty, redirect to shop page without search parameters
+                window.location.href = '/shop';
+                return false;
+            }
+            return true;
+        }
+
+
+        $(document).ready(function() {
+            let selectedCategoryId = '<%= selectedCategory %>';
+            
+            // Get the current price range from the server if it exists
+            const currentMin = '<%= typeof priceRange !== "undefined" && priceRange ? priceRange.min : 0 %>';
+            const currentMax = '<%= typeof priceRange !== "undefined" && priceRange ? priceRange.max : 5000 %>';
+
+            // Initialize price slider
+            $("#slider-range").slider({
+                range: true,
+                min: 0,
+                max: 5000,
+                values: [parseInt(currentMin), parseInt(currentMax)],
+                slide: function(event, ui) {
+                    $("#amount").val("₹" + ui.values[0] + " - ₹" + ui.values[1]);
+                }
+            });
+
+            // Set initial value
+            $("#amount").val("₹" + currentMin + " - ₹" + currentMax);
+
+            // Handle category selection
+            $(".category-link").on('click', function(e) {
+                e.preventDefault();
+                $(".category-link").removeClass('active');
+                $(this).addClass('active');
+                selectedCategoryId = $(this).data('category');
+            });
+
+            // Handle filter button click
+            $("#applyFilter").on('click', function() {
+                const priceRange = $("#amount").val();
+                let url = '/filter';
+                
+                // Add category parameter if selected
+                if (selectedCategoryId) {
+                    url += '?category=' + selectedCategoryId;
+                }
+                
+                // Add price range parameter
+                if (priceRange) {
+                    url += (selectedCategoryId ? '&' : '?') + 'price=' + encodeURIComponent(priceRange);
+                }
+                
+                // Add sort parameter if it exists
+                const currentSort = '<%= sortOption %>';
+                if (currentSort) {
+                    url += (url.includes('?') ? '&' : '?') + 'sort=' + currentSort;
+                }
+                 // Add search query if it exists
+                 const searchQuery = '<%= typeof searchQuery !== "undefined" ? searchQuery : "" %>';
+                if (searchQuery) {
+                    url += (url.includes('?') ? '&' : '?') + 'query=' + encodeURIComponent(searchQuery);
+                }
+                
+                window.location.href = url;
+            });
+
+            // Sort dropdown functionality
+            $('.sort-by-product-wrap').on('click', function() {
+                $('.sort-by-dropdown').toggleClass('show');
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.sort-by-cover').length) {
+                    $('.sort-by-dropdown').removeClass('show');
+                }
+            });
+        });
+
+        
+    </script>
+</body>
+</html>

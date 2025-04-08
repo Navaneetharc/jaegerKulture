@@ -49,7 +49,10 @@
                 zoomType: "inner",
                 cursor: "crosshair",
                 zoomWindowFadeIn: 500,
-                zoomWindowFadeOut: 750
+                zoomWindowFadeOut: 500,
+                lensFadeIn: 500,
+                lensFadeOut: 500,
+                scrollZoom: true
             });
         }
         //Filter color/Size
@@ -92,6 +95,33 @@
     //Load functions
     $(document).ready(function () {
         productDetails();
+         // Remove any existing zoom
+         $('.zoomContainer').remove();
+        
+         function initZoom() {
+             $('.product-image-slider .slick-active img').elevateZoom({
+                 zoomType: "inner",
+                 cursor: "crosshair",
+                 zoomWindowFadeIn: 500,
+                 zoomWindowFadeOut: 500,
+                 lensFadeIn: 500,
+                 lensFadeOut: 500,
+                 scrollZoom: true
+             });
+         }
+ 
+         // Initialize zoom after slick is initialized
+         $('.product-image-slider').on('init', function() {
+             setTimeout(function() {
+                 initZoom();
+             }, 100);
+         });
+ 
+         // Reinitialize zoom after slide change
+         $('.product-image-slider').on('afterChange', function() {
+             $('.zoomContainer').remove();
+             initZoom();
+         });
     });
 
 })(jQuery);

@@ -89,37 +89,6 @@
         return false;
     }
 
-    // function resendOTP(){
-    //     clearInterval(timerInterval);
-    //     time=60
-    //     document.getElementById("otp").disabled=false;
-    //     document.getElementById("timerValue").classList.remove("expired")
-    //     startTimer();
-    //     $.ajax({
-    //         type:"POST",
-    //         url:"resend-otp",
-    //         success: function(response){
-    //             if(response.success){
-
-    //                 Swal.fire({
-    //                     icon:"success",
-    //                     title:"OTP Resended",
-    //                     showConfirmButton:false,
-    //                     timer:1500,
-    //                 })
-
-    //             }else{
-    //                 Swal.fire({
-    //                     icon:"error",
-    //                     title:"Error",
-    //                     text:"An error occured while resending OTP please try again!"
-
-    //                 })
-    //             }
-    //         }
-    //     })
-    //     return false;
-    // }
 
     function resendOTP(){
     clearInterval(timerInterval);

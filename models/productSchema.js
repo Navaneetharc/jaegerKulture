@@ -11,6 +11,14 @@ const productSchema = new Schema({
         type: String,
         required: true,
     },
+    longDescription: {
+        type: String,
+        required: true,
+    },
+    specifications: {
+        type: String,
+        required: true,
+    },
     category: {
         type: Schema.Types.ObjectId,
         ref: "Category",
@@ -28,10 +36,7 @@ const productSchema = new Schema({
         type: Number,
         default: 0,
     },
-    quantity: {
-        type: Number,
-        default: 0, 
-    },
+
     variant: { 
         size: {
             s: { type: Number, required: true, default: 0 },

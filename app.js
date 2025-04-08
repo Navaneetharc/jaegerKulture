@@ -50,14 +50,16 @@ app.get(
 app.set('view engine', 'ejs');
 app.set("views",[path.join(__dirname,'views/user'),path.join(__dirname,'views/admin')]);
 app.use(express.static('public'));
+app.use('/uploads', express.static('public/uploads'));
+
+
+
 
 
 app.use("/",userRouter);
 app.use("/admin",adminRouter);
 
-// app.get("/cate",(req,res)=>{
-//   res.render('category');
-// })
+
 
 
 const port = process.env.PORT || 4000;

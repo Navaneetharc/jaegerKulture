@@ -38,7 +38,7 @@ const uploads = multer({
         }
         cb(null, true);
     }
-}).array('images', 4); // Allow up to 4 images
+});
 
 
 
@@ -66,6 +66,13 @@ router.post("/editCategory/:id",adminAuth,categoryController.editCategory);
 
 // product Management
 router.get('/addProducts',adminAuth,productController.getProductAddPage);
-router.post("/addProducts",adminAuth,uploads,productController.addProducts);
+router.post("/addProducts",adminAuth,uploads.array('images', 3),productController.addProducts);
+router.get('/products',adminAuth,productController.getAllProducts);
+router.get('/blockProduct/:id', adminAuth,productController.productBlocked);
+router.get('/unblockProduct/:id', adminAuth,productController.productunBlocked);
+router.get('/editProduct/:id',adminAuth,productController.getEditProduct);
+router.post('/editProduct/:id',adminAuth,uploads.array('images', 3),productController.editProduct)
+router.post('/deleteImage',adminAuth,productController.deleteSingleImage)
 
+  
 module.exports = router

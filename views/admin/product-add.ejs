@@ -176,11 +176,11 @@
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Full description</label>
-                                            <textarea placeholder="Type here" class="form-control" rows="4" name="fullDescription" required></textarea>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="longDescription" required></textarea>
                                         </div>
                                         <div class="mb-4">
                                             <label class="form-label">Specifications</label>
-                                            <textarea placeholder="Type here" class="form-control" rows="4" name="specifications"></textarea>
+                                            <textarea placeholder="Type here" class="form-control" rows="4" name="specifications" required></textarea>
                                         </div>
                                         <div class="row">
                                             <div class="col-lg-4">
@@ -198,10 +198,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mb-4">
-                                            <label class="form-label">Quantity</label>
-                                            <input type="number" placeholder="Enter quantity" class="form-control" name="quantity" required>
-                                        </div>
+                                       
                                     </div>
                                 </div>
                                 <div class="card mb-4">
@@ -289,27 +286,123 @@
 let cropperInstances = {};
 
 function validateForm() {
-    const productName = document.querySelector('input[name="productName"]').value;
-    const description = document.querySelector('textarea[name="description"]').value;
-    const regularPrice = document.querySelector('input[name="regularPrice"]').value;
-    const salePrice = document.querySelector('input[name="salePrice"]').value;
-    const quantity = document.querySelector('input[name="quantity"]').value;
+    // Get form inputs
+    const productName = document.querySelector('input[name="productName"]').value.trim();
+    const description = document.querySelector('textarea[name="description"]').value.trim();
+    const longDescription = document.querySelector('textarea[name="longDescription"]').value.trim();
+    const specifications = document.querySelector('textarea[name="specifications"]').value.trim();
+    const regularPrice = document.querySelector('input[name="regularPrice"]').value.trim();
+    const salePrice = document.querySelector('input[name="salePrice"]').value.trim();
     const category = document.querySelector('select[name="category"]').value;
+    const sizeS = document.querySelector('input[name="variant[size][s]"]').value.trim();
+    const sizeM = document.querySelector('input[name="variant[size][m]"]').value.trim();
+    const sizeL = document.querySelector('input[name="variant[size][l]"]').value.trim();
+    const sizeX = document.querySelector('input[name="variant[size][x]"]').value.trim();
+    const sizeXL = document.querySelector('input[name="variant[size][xl]"]').value.trim();
+    const imageInputs = document.querySelectorAll('input[type="file"]');
+    let imageCount = 0;
 
-    if (!productName || !description || !regularPrice || !salePrice || !quantity || !category) {
-        alert('Please fill in all required fields');
-        return false;
+    // Check how many images are selected
+    imageInputs.forEach(input => {
+        if (input.files && input.files.length > 0) {
+            imageCount++;
+        }
+    });
+
+    // Validation messages
+    const errors = [];
+
+    // Product name validation
+    if (!productName) {
+        errors.push('Product name is required');
+    } else if (productName.length < 3) {
+        errors.push('Product name must be at least 3 characters long');
     }
 
-    if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
-        alert('Regular price must be greater than sale price');
-        return false;
+    // Description validation
+    if (!description) {
+        errors.push('Short description is required');
+    } else if (description.length < 10) {
+        errors.push('Short description must be at least 10 characters long');
     }
 
-    // Check if at least one image is uploaded
-    const hasImages = document.querySelectorAll('input[name="images"]').some(input => input.files.length > 0);
-    if (!hasImages) {
-        alert('Please upload at least one image');
+    // Long description validation
+    if (!longDescription) {
+        errors.push('Full description is required');
+    } else if (longDescription.length < 20) {
+        errors.push('Full description must be at least 20 characters long');
+    }
+
+    // Specifications validation
+    if (!specifications) {
+        errors.push('Specifications are required');
+    } else if (specifications.length < 10) {
+        errors.push('Specifications must be at least 10 characters long');
+    }
+
+    // Price validation
+    if (!regularPrice) {
+        errors.push('Regular price is required');
+    } else if (isNaN(regularPrice) || parseFloat(regularPrice) <= 0) {
+        errors.push('Regular price must be a positive number');
+    }
+
+    if (!salePrice) {
+        errors.push('Sale price is required');
+    } else if (isNaN(salePrice) || parseFloat(salePrice) <= 0) {
+        errors.push('Sale price must be a positive number');
+    } else if (parseFloat(salePrice) >= parseFloat(regularPrice)) {
+        errors.push('Sale price must be less than regular price');
+    }
+
+    // Category validation
+    if (!category) {
+        errors.push('Category is required');
+    }
+
+    // Size validation
+    const sizes = [sizeS, sizeM, sizeL, sizeX, sizeXL];
+    const sizeLabels = ['S', 'M', 'L', 'X', 'XL'];
+    let totalStock = 0;
+    
+    sizes.forEach((size, index) => {
+        if (size) {
+            if (isNaN(size) || parseInt(size) < 0) {
+                errors.push(`Size ${sizeLabels[index]} must be a non-negative number`);
+            } else {
+                totalStock += parseInt(size);
+            }
+        }
+    });
+
+    if (totalStock === 0) {
+        errors.push('At least one size must have stock quantity');
+    }
+
+    // Image validation
+    if (imageCount !== 3) {
+        errors.push('Exactly 3 product images are required');
+    } else {
+        // Validate each selected image
+        imageInputs.forEach(input => {
+            if (input.files && input.files.length > 0) {
+                const file = input.files[0];
+                const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+
+                if (!validTypes.includes(file.type)) {
+                    errors.push('Only JPG, JPEG, and PNG images are allowed');
+                }
+                if (file.size > maxSize) {
+                    errors.push('Image size must be less than 5MB');
+                }
+            }
+        });
+    }
+
+    // Display errors if any
+    if (errors.length > 0) {
+        alert(errors.join('\n'));
         return false;
     }
 
@@ -326,21 +419,20 @@ function viewImage(event, index) {
         const preview = document.getElementById('preview' + index);
         const croppedImg = document.getElementById('croppedImg' + index);
         
-        // Hide cropped image and show preview
+        
         croppedImg.style.display = 'none';
         preview.style.display = 'block';
         
-        // Set image source
+        
         image.src = e.target.result;
 
-        // Wait for image to load
         image.onload = function() {
-            // Destroy existing cropper if it exists
+            
             if (cropperInstances[index]) {
                 cropperInstances[index].destroy();
             }
 
-            // Create new cropper instance
+            // Create new cropper
             cropperInstances[index] = new Cropper(image, {
                 aspectRatio: 1,
                 viewMode: 1,
@@ -351,7 +443,7 @@ function viewImage(event, index) {
                 minCropBoxWidth: 200,
                 minCropBoxHeight: 200,
                 ready() {
-                    // Ensure the cropper is properly initialized
+                    
                     this.cropper.setData({
                         width: 440,
                         height: 440
