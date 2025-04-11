@@ -23,12 +23,12 @@ const login = async (req, res) => {
             if (passwordMatch) {
                 req.session.admin = true;
                 console.log("Admin session set:", req.session.admin); // Debugging log
-                // req.session.save(() => res.redirect('/admin')); // Ensure session is saved before redirecting
+                // req.session.save(() => res.redirect('/admin')); 
                 req.session.save(() => {
-                    res.redirect('/admin');  // Redirect to dashboard after saving session
+                    res.redirect('/admin');  // Redirect to dashboard 
                 });
             } else {
-                return res.render("admin-login", { message: "Invalid email or password" }); // Send error message
+                return res.render("admin-login", { message: "Invalid email or password" }); // error message
             }
         } else {
             return res.render("admin-login", { message: "Invalid email or password" });

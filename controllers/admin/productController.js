@@ -198,16 +198,12 @@ const addProducts = async (req,res)=>{
 
 const getAllProducts = async (req,res)=>{
     try {
-        
         const search = req.query.search || "";
-        const page = req.query.page || 1;
+        const page = parseInt(req.params.page) || 1;
         const limit = 4;
         const productData = await Product.find({
             $or:[
-
                 {productName:{$regex:new RegExp(".*"+search+".*","i")}},
-                
-
             ],
         }).limit(limit*1).skip((page-1)*limit).populate('category').exec();
 
@@ -223,20 +219,15 @@ const getAllProducts = async (req,res)=>{
             res.render("products",{
                 data:productData,
                 currentPage:page,
-                totalPages:page,
                 totalPages:Math.ceil(count/limit),
                 cat:category,
-               
-
             })
         }else{
             res.render("page-404");
         }
 
     } catch (error) {
-
         res.redirect("/admin/pageerror");
-        
     }
 };
 
@@ -273,207 +264,118 @@ const productunBlocked = async (req,res)=>{
     }
 };
 
-// const getEditProduct = async (req,res)=>{
-//     try {
 
-//         const id = req.params.id;
-//         const product = await Product.findOne({_id:id});
-//         const category = await Category.find({});
-//         res.render("edit-product",{
-//             product:product,
-//             cat:category,
-
-//         })
-        
-//     } catch (error) {
-
-//         res.redirect("/admin/pageerror")
-        
-//     }
-// }
-
-
-// const editProduct = async (req,res)=>{
-//     try {
-
-//         const id = req.params.id;
-//         const product = await Product.findOne({_id:id});
-//         const data = req.body;
-//         const existingProduct = await Product.findOne({
-//             productname:data.productName,
-//             _id:{$ne:id}
-//         })
-
-//         if(existingProduct){
-//             return res.status(400).json({error:"Product with this name already exist. Please try with another name"});
-//         }
-
-//         const images = [];
-
-//         if(req.files && req.files.length>0){
-//             for(let i=0;i<req.files.length;i++){
-//                 images.push(req.files[i].filename);
-//             }
-//         }
-
-//         const updateFields = {
-//             productName: products.productName,
-//             description: products.description,
-//             longDescription: products.longDescription,
-//             specifications: products.specifications,
-//             category: categoryId._id,
-//             regularPrice: parseFloat(products.regularPrice),
-//             salePrice: parseFloat(products.salePrice),
-            
-//             variant: {
-//                 size: {
-//                     s: parseInt(products.variant?.size?.s) || 0,
-//                     m: parseInt(products.variant?.size?.m) || 0,
-//                     l: parseInt(products.variant?.size?.l) || 0,
-//                     x: parseInt(products.variant?.size?.x) || 0,
-//                     xl: parseInt(products.variant?.size?.xl) || 0
-//                 }
-//             },
-//             productImage: images,
-//             status: "Available",
-
-//         }
-//         if(req.files.length>0){
-//             updateFields.$push = {productImage:{$each:images}};
-//         }
-
-//         await Product.findByIdAndUpdate(id,updateFields,{new:true});
-//         res.redirect("/admin/products");
-
-//     } catch (error) {
-//         console.error(error);
-//         res.redirect("/admin/pageerror");
-        
-//     }
-// }
-
-// const deleteSingleImage = async (req,res)=>{
-//     try {
-
-//         const {imageNameToServer,productIdToServer} = req.body;
-//         const product = await Product.findByIdAndUpdate(productIdToServer,{$pull:{productImage:imageNameToServer}});
-//         const imagePath = path.join("public","uploads","re-image",imageNameToServer);
-//         if(fs.existsSync(imagePath)){
-//             await fs.unlinkSync(imagePath);
-//             console.log(`Image ${imagenameToServer} deleted successfully`);
-//         }else{
-//             console.log(`Image ${imageNameToServer} not found`);
-//         }
-//         res.send({status:true});
-        
-//     } catch (error) {
-
-//         res.redirect("/admin/pageerror");
-        
-//     }
-// }
-
-const getEditProduct = async (req, res) => {
+const loadEditProducts = async(req,res)=>{
     try {
-        const id = req.params.id;
-        const product = await Product.findOne({ _id: id });
-        const category = await Category.find({});
-        res.render("edit-product", {
-            product: product,
-            cat: category,
-        });
+     const id = req.params.id;
+     const product = await Product.findOne({_id:id}).populate('category');
+   
+     if(!product){
+       return res.redirect('/admin/pageerror');
+     }
+     const cat = await Category.find({isListed:true});
+    
+     res.render('edit-product',{
+       product: product,
+       cat: cat
+     });
     } catch (error) {
-        console.error(error);
-        res.redirect("/admin/pageerror");
+     console.log("Edit product load error:", error);
+     res.redirect('/admin/pageerror');
     }
-};
+}
 
 const editProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        let product = await Product.findOne({ _id: id });
-        const data = req.body;
+        const {
+            productName,
+            description,
+            longDescription,
+            specifications,
+            category,
+            regularPrice,
+            salePrice,
+            variant,
+            removedImages
+        } = req.body;
 
-        // Check for duplicate product name
-        const existingProduct = await Product.findOne({
-            productName: data.productName,
-            _id: { $ne: id }
-        });
-        if (existingProduct) {
-            return res.status(400).json({ error: "Product with this name already exists. Please try with another name" });
+        // Find product first to ensure it exists
+        const product = await Product.findOne({ _id: id });
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
         }
 
-        // Copy the existing images array
-        let updatedImages = [...product.productImage];
+        // Basic validation (unchanged)
+        if (!productName || !description || !longDescription || !specifications || !category || !regularPrice || !salePrice) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
 
-        // Expecting 'removedImages' as a JSON-stringified array of filenames that were removed in the UI.
-        const removedImages = data.removedImages ? JSON.parse(data.removedImages) : [];
+        // Clone current product image array
+        let images = [...product.productImage];
+        const uploadDir = path.join(__dirname, '../../public/uploads/product-images');
 
-        // For each removed image, check if a new file was uploaded.
-        // It is assumed that the order of req.files corresponds to the order of removedImages.
-        if (removedImages.length > 0 && req.files && req.files.length > 0) {
-            for (let i = 0; i < removedImages.length; i++) {
-                const removedImage = removedImages[i];
-                const index = updatedImages.indexOf(removedImage);
+        // Process removed images
+        if (removedImages) {
+            let imagesToRemove;
+            try {
+                imagesToRemove = JSON.parse(removedImages);
+            } catch (err) {
+                imagesToRemove = [];
+            }
+            imagesToRemove.forEach(imageName => {
+                const index = images.indexOf(imageName);
                 if (index !== -1) {
-                    if (req.files[i]) {
-                        // New image provided for replacement: delete old file from storage
-                        const imagePath = path.join("public", "uploads", "re-image", removedImage);
-                        if (fs.existsSync(imagePath)) {
-                            fs.unlinkSync(imagePath);
-                        }
-                        // Replace with the new image filename
-                        updatedImages[index] = req.files[i].filename;
+                    const imagePath = path.join(uploadDir, imageName);
+                    if (fs.existsSync(imagePath)) {
+                        fs.unlinkSync(imagePath);
                     }
-                    // If no new file was provided, do nothing – the old image remains.
+                    images[index] = null;
                 }
+            });
+        }
+
+        // Handle new image uploads
+        if (req.files) {
+            if (Array.isArray(req.files)) {
+                req.files.forEach(file => {
+                    const match = file.fieldname.match(/productImages\[(\d+)\]/);
+                    if (match) {
+                        const idx = parseInt(match[1], 10);
+                        images[idx] = file.filename;
+                    }
+                });
+            } else {
+                Object.keys(req.files).forEach(key => {
+                    const match = key.match(/productImages\[(\d+)\]/);
+                    if (match) {
+                        const idx = parseInt(match[1], 10);
+                        const file = req.files[key][0];
+                        images[idx] = file.filename;
+                    }
+                });
             }
         }
 
-        const updateFields = {
-            productName: data.productName,
-            description: data.description,
-            longDescription: data.longDescription,
-            specifications: data.specifications,
-            category: data.category, // Ensure your frontend sends the correct category identifier
-            regularPrice: parseFloat(data.regularPrice),
-            salePrice: parseFloat(data.salePrice),
-            variant: {
-                size: {
-                    s: parseInt(data.variant?.size?.s) || 0,
-                    m: parseInt(data.variant?.size?.m) || 0,
-                    l: parseInt(data.variant?.size?.l) || 0,
-                    x: parseInt(data.variant?.size?.x) || 0,
-                    xl: parseInt(data.variant?.size?.xl) || 0
-                }
-            },
-            productImage: updatedImages,
-            status: "Available"
-        };
+        // Update product fields (PUT expects a full resource replacement)
+        product.productName = productName;
+        product.description = description;
+        product.longDescription = longDescription;
+        product.specifications = specifications;
+        product.category = category;
+        product.regularPrice = regularPrice;
+        product.salePrice = salePrice;
+        product.variant = variant;
+        product.productImage = images.filter(img => img !== null);
 
-        await Product.findByIdAndUpdate(id, updateFields, { new: true });
-        res.redirect("/admin/products");
-    } catch (error) {
-        console.error(error);
-        res.redirect("/admin/pageerror");
-    }
-};
+        // Save the updated product
+        await product.save();
 
-const deleteSingleImage = async (req, res) => {
-    try {
-        const { imageNameToServer, productIdToServer } = req.body;
-        await Product.findByIdAndUpdate(productIdToServer, { $pull: { productImage: imageNameToServer } });
-        const imagePath = path.join("public", "uploads", "re-image", imageNameToServer);
-        if (fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
-            console.log(`Image ${imageNameToServer} deleted successfully`);
-        } else {
-            console.log(`Image ${imageNameToServer} not found`);
-        }
-        res.send({ status: true });
+        // Return a 200 OK status with the updated resource (REST convention)
+        res.status(200).redirect('/admin/products');
     } catch (error) {
-        console.error(error);
-        res.redirect("/admin/pageerror");
+        console.error('Error in editProduct:', error);
+        res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -484,9 +386,7 @@ module.exports = {
     getAllProducts,
     productBlocked,
     productunBlocked,
-    getEditProduct,
+    loadEditProducts,
     editProduct,
-    deleteSingleImage,
-    
 }
  

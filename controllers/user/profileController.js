@@ -1,4 +1,3 @@
-
 const User = require("../../models/userSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require('bcrypt');
@@ -83,7 +82,7 @@ const forgotEmailValid = async (req, res) => {
             }
 
         } else {
-            res.render("forgot-password", { message: "User with this email does not exist" });
+            res.redirect('/forgot-password?error=1');
         }
     } catch (error) {
         console.error("Error in forgotEmailValid:", error);

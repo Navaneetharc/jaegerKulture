@@ -33,7 +33,7 @@
                     <%= message %>
                 </div>
             <% } %>
-            <p class="text-center mb-4">Back to <a href="#">Login</a></p>
+            <p class="text-center mb-4">Back to <a href="/login">Login</a></p>
         </div>
     </div>
 </section>
@@ -61,6 +61,52 @@
             });
         }
     }, 1000);
+
+    // Add event listeners for OTP input fields
+    document.addEventListener('DOMContentLoaded', function() {
+        const otpInputs = document.querySelectorAll('input[name^="otp"]');
+        
+        otpInputs.forEach((input, index) => {
+            // Handle both input and keyup events
+            ['input', 'keyup'].forEach(eventType => {
+                input.addEventListener(eventType, function(e) {
+                    // Only allow numbers
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    
+                    if (this.value.length === 1) {
+                        // If there's a next input, focus it
+                        if (index < otpInputs.length - 1) {
+                            otpInputs[index + 1].focus();
+                        }
+                    }
+                });
+            });
+
+            // Handle backspace
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    // If current input is empty and there's a previous input, focus it
+                    otpInputs[index - 1].focus();
+                }
+            });
+
+            // Handle paste
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').slice(0, 6);
+                const digits = pastedData.split('');
+                
+                digits.forEach((digit, i) => {
+                    if (i + index < otpInputs.length) {
+                        otpInputs[i + index].value = digit;
+                        if (i + index < otpInputs.length - 1) {
+                            otpInputs[i + index + 1].focus();
+                        }
+                    }
+                });
+            });
+        });
+    });
 
     function validateOTPForm() {
         if (timeLeft < 0) {
@@ -94,15 +140,19 @@
                     Swal.fire({
                         icon: "error",
                         title: "Error",
-                        text: response.message,  // Use dynamic response message
+                        text: response.message,
                     });
                 }
             },
-            error: function() {
+            error: function(xhr) {
+                let errorMessage = "Invalid OTP, Please Try Again";
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
                 Swal.fire({
                     icon: "error",
-                    title: "Invalid OTP",
-                    text: "Please Try Again",
+                    title: "Error",
+                    text: errorMessage,
                 });
             }
         });
@@ -119,7 +169,8 @@
             document.getElementById(`otp${i}`).disabled = false;
             document.getElementById(`otp${i}`).value = '';
         }
-
+        // Focus the first input after resending
+        document.getElementById('otp1').focus();
 
         timerInterval = setInterval(() => {
             let minutes = Math.floor(timeLeft / 60);

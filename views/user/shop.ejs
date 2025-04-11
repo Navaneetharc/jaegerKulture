@@ -248,7 +248,7 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
+                    <a href="/" rel="nofollow">Home</a>
                     <span></span> Shop
                 </div>
             </div>
@@ -322,58 +322,44 @@
                         <!--pagination-->
                         <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
                             <nav aria-label="Page navigation example">
-                              <ul class="pagination justify-content-start">
-                                <% if (currentPage > 1) { %>
-                                  <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage - 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">
-                                      <i class="fi-rs-angle-double-small-left"></i>
-                                    </a>
-                                  </li>
-                                <% } %>
-                          
-                                <% 
-                                  // Determine which page numbers to show
-                                  let startPage = Math.max(1, currentPage - 2);
-                                  let endPage = Math.min(totalPages, currentPage + 2);
-                                  if(startPage > 1) { 
-                                %>
-                                  <li class="page-item">
-                                    <a class="page-link" href="?page=1<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">01</a>
-                                  </li>
-                                  <% if(startPage > 2) { %>
-                                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                                  <% } %>
-                                <% } %>
-                          
-                                <% for(let i = startPage; i <= endPage; i++) { %>
-                                  <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                    <a class="page-link" href="?page=<%= i %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">
-                                      <%= i < 10 ? '0' + i : i %>
-                                    </a>
-                                  </li>
-                                <% } %>
-                          
-                                <% if(endPage < totalPages) { %>
-                                  <% if(endPage < totalPages - 1) { %>
-                                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                                  <% } %>
-                                  <li class="page-item">
-                                    <a class="page-link" href="?page=<%= totalPages %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">
-                                      <%= totalPages < 10 ? '0' + totalPages : totalPages %>
-                                    </a>
-                                  </li>
-                                <% } %>
-                          
-                                <% if (currentPage < totalPages) { %>
-                                  <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage + 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&search=' + searchQuery : '' %>">
-                                      <i class="fi-rs-angle-double-small-right"></i>
-                                    </a>
-                                  </li>
-                                <% } %>
-                              </ul>
+                                <ul class="pagination justify-content-start">
+                                    <% if (currentPage > 1) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="/shop?page=<%= currentPage - 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">
+                                                <i class="fi-rs-angle-double-small-left"></i>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                    
+                                    <% 
+                                        let startPage = Math.max(1, currentPage - 2);
+                                        let endPage = Math.min(totalPages, currentPage + 2);
+                                        if(startPage > 1) { 
+                                    %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="/shop?page=1<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">01</a>
+                                        </li>
+                                        <% if(startPage > 2) { %>
+                                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                        <% } %>
+                                    <% } %>
+                                    
+                                    <% for(let i = startPage; i <= endPage; i++) { %>
+                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                            <a class="page-link" href="/shop?page=<%= i %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>"><%= i.toString().padStart(2, '0') %></a>
+                                        </li>
+                                    <% } %>
+                                    
+                                    <% if (currentPage < totalPages) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="/shop?page=<%= currentPage + 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">
+                                                <i class="fi-rs-angle-double-small-right"></i>
+                                            </a>
+                                        </li>
+                                    <% } %>
+                                </ul>
                             </nav>
-                          </div>
+                        </div>
                           
                           
                     </div>

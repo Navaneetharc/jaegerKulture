@@ -157,11 +157,14 @@ const securePassword = async (password)=>{
 
 const verifyOtp = async(req,res)=>{
     try {
-        
         const {otp} = req.body;
 
         console.log("Recieved OTP:",otp);
         console.log("Expected OTP:",req.session.userOtp);
+
+        if (!req.session.userOtp) {
+            return res.status(400).json({success: false, message: "OTP has expired. Please request a new one"});
+        }
 
         if(otp===req.session.userOtp){
             const user = req.session.userData;
@@ -175,6 +178,7 @@ const verifyOtp = async(req,res)=>{
 
             await saveUserData.save();
             req.session.user = saveUserData._id;
+            delete req.session.userOtp; // Clear the OTP after successful verification
             return res.json({success:true,redirectUrl:"/"})
         }else{
             return res.status(400).json({success:false, message:"Invalid OTP, Please Try Again"})
@@ -332,25 +336,23 @@ const loadShoppingPage = async(req,res)=>{
             currentPage: page,
             totalPages: totalPages,
             selectedCategory: null,
-            sortOption: sortOption, // Pass sort option to view
-            searchQuery: searchQuery // Pass search query to view
+            sortOption: sortOption,
+            searchQuery: searchQuery
         });
 
     } catch (error) {
-        console.error("Error in loadShoppingPage:", error);
-        res.redirect("/pageNotFound");
+        console.error('Error in loadShoppingPage:', error);
+        res.redirect('/pageNotFound');
     }
 }
 
 const filterProduct = async(req,res)=>{
     try {
-
         const user = req.session.user;
         const categoryId = req.query.category;
         const priceRange = req.query.price;
         const sortOption = req.query.sort;
         const searchQuery = req.query.query || "";
-        
         
         let query = {
             isBlocked: false
@@ -395,8 +397,6 @@ const filterProduct = async(req,res)=>{
         const products = await Product.find(query)
             .populate('category')
             .sort(sortObject);
-
-           
 
         const categories = await Category.find({ isListed: true });
 

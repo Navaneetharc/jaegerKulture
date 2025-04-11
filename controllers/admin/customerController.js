@@ -169,11 +169,55 @@ const customerunBlocked = async (req,res)=>{
     }
 };
 
+const getAllUsers = async(req,res)=>{
+    try {
+        let search = "";
+        if(req.query.search){
+            search = req.query.search;
+        }
+        const page = parseInt(req.params.page) || 1;
+        const limit = 10;
+        const userData = await User.find({
+            isAdmin:false,
+            $or:[
+                {name:{$regex:".*"+search+".*", $options:"i"}},
+                {email:{$regex:".*"+search+".*", $options:"i"}}
+            ],
+        })
+        .limit(limit*1)
+        .skip((page-1)*limit)
+        .exec();
+
+        const count = await User.find({
+            isAdmin:false,
+            $or:[
+                {name:{$regex:".*"+search+".*"}},
+                {email:{$regex:".*"+search+".*"}}
+            ],            
+        }).countDocuments();
+
+        const totalPages = Math.ceil(count / limit);
+
+        res.render('customers',{
+            data: userData, 
+            count, 
+            currentPage: page, 
+            limit, 
+            search, 
+            totalPages
+        });
+        
+    } catch (error) {
+        console.error("Error fetching customer data:",error);
+        res.status(500).send("Internal Server Error");
+    }
+}
 
 module.exports = {
 
     customerInfo,
     customerBlocked,
     customerunBlocked,
+    getAllUsers
 
 }

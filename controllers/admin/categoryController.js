@@ -111,35 +111,40 @@ const getEditCategory = async (req,res)=>{
     }
 }
 
-const editCategory = async(req,res)=>{
+const editCategory = async (req, res) => {
     try {
-
         const id = req.params.id;
-        const {categoryName,description} = req.body;
-        const existingCategory = await Category.findOne({name:categoryName});
+        const { categoryName, description } = req.body;
 
-        if(existingCategory){
-            return res.status(400).json({error:"Category exists, please choose another name"})
+        // Find the category to ensure it exists
+        const category = await Category.findById(id);
+        if (!category) {
+            return res.status(404).json({ error: "Category not found" });
         }
 
-        const updateCategory = await Category.findByIdAndUpdate(id,{
-            name:categoryName,
-            description:description,
-        },{new:true});
-
-        if(updateCategory){
-            res.redirect('/admin/category');
-        }else{
-            res.status(404).json({error:"Category not found"})
+        // Check for duplicate category name (excluding the current category)
+        const existingCategory = await Category.findOne({ 
+            name: categoryName, 
+            _id: { $ne: id } // Exclude the current category from the check
+        });
+        if (existingCategory) {
+            return res.status(400).json({ error: "Category exists, please choose another name" });
         }
-        
+
+        // Update the category (PUT replaces the resource)
+        category.name = categoryName;
+        category.description = description;
+        // Note: If you want to update isListed here, include it in the form and req.body
+
+        await category.save();
+
+        // Return a 200 OK status with a redirect (REST-compliant for web apps)
+        res.status(200).redirect('/admin/category');
     } catch (error) {
-
-        res.status(500).json({error:"Internal server error"})
-        
+        console.error("Error editing category:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
-}
-
+};
 module.exports = {
     categoryInfo,
     addCategory,

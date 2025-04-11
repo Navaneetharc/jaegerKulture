@@ -62,17 +62,19 @@ router.get('/listCategory',adminAuth,categoryController.getListCategory);
 router.get('/unlistCategory',adminAuth,categoryController.getUnlistCategory);
 // edit
 router.get('/editCategory',adminAuth,categoryController.getEditCategory);
-router.post("/editCategory/:id",adminAuth,categoryController.editCategory);
+router.put('/editCategory/:id', adminAuth, categoryController.editCategory);
 
 // product Management
 router.get('/addProducts',adminAuth,productController.getProductAddPage);
 router.post("/addProducts",adminAuth,uploads.array('images', 3),productController.addProducts);
-router.get('/products',adminAuth,productController.getAllProducts);
+router.get('/products/:page?', adminAuth, productController.getAllProducts);
 router.get('/blockProduct/:id', adminAuth,productController.productBlocked);
 router.get('/unblockProduct/:id', adminAuth,productController.productunBlocked);
-router.get('/editProduct/:id',adminAuth,productController.getEditProduct);
-router.post('/editProduct/:id',adminAuth,uploads.array('images', 3),productController.editProduct)
-router.post('/deleteImage',adminAuth,productController.deleteSingleImage)
+router.get('/editProduct/:id', adminAuth, productController.loadEditProducts);
+router.put('/editProduct/:id', adminAuth, uploads.any(), productController.editProduct);
 
+// New routes for customer and category pagination
+router.get('/customers/:page?', adminAuth, customerController.getAllUsers);
+router.get('/categories/:page?', adminAuth, categoryController.categoryInfo);
   
 module.exports = router

@@ -6,6 +6,7 @@ const adminRouter = require('./routes/adminRouter');
 const userRouter = require('./routes/userRouter');
 const session = require('express-session');
 const passport = require('./config/passport');
+const methodOverride = require('method-override');
 
 const app = express();
 db()
@@ -13,14 +14,17 @@ db()
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+app.use(methodOverride('_method')); 
+
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave:false,
-    saveUninitialized:false,
-    cookie:{
-        secure:false,
-        httpOnly:true,
-        maxAge:72*60*60*1000
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }))
 
@@ -35,17 +39,6 @@ app.use((req,res,next)=>{
 })
 
 
-
-app.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-
-
-app.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: "/", 
-    failureRedirect: "/login", 
-  })
-);
 
 app.set('view engine', 'ejs');
 app.set("views",[path.join(__dirname,'views/user'),path.join(__dirname,'views/admin')]);
