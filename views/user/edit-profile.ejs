@@ -1,0 +1,540 @@
+<%- include('../partials/userL/header.ejs') %>
+
+<!-- CropperJS Styles -->
+<link href="https://unpkg.com/cropperjs/dist/cropper.min.css" rel="stylesheet">
+
+<!-- Add Material Icons font -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!-- SweetAlert2 -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<style>
+    .breadcrumb a,
+    .breadcrumb span {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .breadcrumb .separator {
+        margin: 0 8px;
+        color: #999;
+    }
+
+    .profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid #3BB77E;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  .profile-image-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  .profile-image-upload {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #3BB77E;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  .profile-image-upload i {
+    color: white;
+    font-size: 18px;
+  }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .dropdown{
+        position:relative;
+        display:inline-block;
+    }
+    .dropdown-content{
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+        z-index: 1000;
+        right: 0;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+    }
+    .dropdown-content a:hover{
+        background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content{
+        display:block;
+    }
+    .header{
+        position: relative;
+        z-index: 500;
+    }
+
+    /* Dashboard menu styles */
+    .dashboard-menu .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-menu .nav-link i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    .dashboard-menu .nav-link:hover,
+    .dashboard-menu .nav-link.active {
+        background-color: #f8f9fa;
+        color: #3BB77E;
+    }
+    
+    /* OTP Input styles */
+    .otp-input-container {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    
+    .otp-input {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 18px;
+    }
+    
+    .timer {
+        font-size: 16px;
+        color: #666;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .resend-btn {
+        background: none;
+        border: none;
+        color: #3BB77E;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    
+    .resend-btn:disabled {
+        color: #999;
+        cursor: not-allowed;
+        text-decoration: none;
+    }
+</style>
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span class="separator">&gt;</span>
+                <a href="/profileInfo">Personal Information</a>
+                <span class="separator">&gt;</span>
+                <span>Edit Personal Information</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="dashboard-menu">
+                        <ul class="nav flex-column" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/profileinfo">
+                                    <i class="fi-rs-user-check"></i> Personal Information
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/myorders">
+                                    <i class="fi-rs-shopping-cart"></i> My Orders
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/addresses">
+                                    <i class="fi-rs-marker"></i> My Addresses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wishlist">
+                                    <i class="fi-rs-heart"></i> Wishlist
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wallet">
+                                    <i class="fi-rs-credit-card"></i> My Wallet
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/notifications">
+                                    <i class="fi-rs-bell"></i> Notifications
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/security">
+                                    <i class="fi-rs-shield-check"></i> Security Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/help">
+                                    <i class="fi-rs-help"></i> Help Center
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">
+                                    <i class="fi-rs-exit"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="mb-0">Edit Personal Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <form id="editForm" action="/edit-profile/<%= user._id %>?_method=PUT" method="post" enctype="multipart/form-data">
+                                    <div class="text-center">
+                                      <div class="profile-image-container">
+                                        <img id="cropperPreview" src="<%= user.profileImage || '/assets/imgs/people/avatar2.jpg' %>" alt="Profile Picture" class="profile-image">
+                                        <label class="profile-image-upload">
+                                          <i class="fi-rs-camera"></i>
+                                          <input type="file" id="fileInput" name="userImage" accept="image/*" />
+                                        </label>
+                                      </div>
+                                    </div>
+                            
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <label>Full Name</label>
+                                        <input type="text" name="fullName" class="form-control" value="<%= user.name %>" required />
+                                      </div>
+                                      <div class="col-md-6">
+                                        <label>Email</label>
+                                        <input type="email" name="email" id="emailInput" class="form-control" value="<%= user.email %>" required />
+                                        <input type="hidden" id="originalEmail" value="<%= user.email %>" />
+                                      </div>
+                                      <div class="col-md-6">
+                                        <label>Phone Number</label>
+                                        <input type="tel" name="phone" class="form-control" value="<%= user.phone %>" />
+                                      </div>
+                                      <div class="col-md-6">
+                                        <label>Gender</label>
+                                        <select name="gender" class="form-control" required>
+                                          <option disabled>Select Gender</option>
+                                          <option value="male" <%= user.gender==='male'?'selected':'' %>>Male</option>
+                                          <option value="female" <%= user.gender==='female'?'selected':'' %>>Female</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                            
+                                    <div class="mt-4 text-center">
+                                      <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                  </form>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/userL/footer.ejs') %>
+
+<script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let cropper;
+    const fileInput = document.getElementById('fileInput');
+    const preview   = document.getElementById('cropperPreview');
+    const form      = document.getElementById('editForm');
+    const emailInput = document.getElementById('emailInput');
+    const originalEmail = document.getElementById('originalEmail').value;
+    let isEmailChanged = false;
+    let otpTimer;
+    let remainingTime = 49;
+
+    // Check if email is changed
+    emailInput.addEventListener('input', function() {
+      isEmailChanged = (emailInput.value !== originalEmail);
+    });
+
+    // Initialize cropper
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        preview.src = reader.result;
+        preview.onload = () => {
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(preview, {
+            aspectRatio: 1,
+            viewMode: 1,
+            background: false,
+            autoCropArea: 1,
+            movable: false,
+            zoomable: true,
+            cropBoxResizable: false,
+            guides: false
+          });
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Update form submit event handler
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Check if email was changed
+      if (isEmailChanged) {
+        // Show OTP verification dialog
+        showOtpVerification();
+        return;
+      }
+      
+      // If email was not changed, proceed with normal form submission
+      submitFormWithImage();
+    });
+    
+    // Function to handle form submission with cropped image
+    function submitFormWithImage() {
+      if (cropper) {
+        cropper.getCroppedCanvas({ width: 300, height: 300 }).toBlob((blob) => {
+          const formData = new FormData(form);
+          formData.set('userImage', blob, 'profile.jpg');
+          
+          submitFormData(formData);
+        });
+      } else {
+        const formData = new FormData(form);
+        submitFormData(formData);
+      }
+    }
+    
+    // Function to submit form data via fetch
+    function submitFormData(formData) {
+      fetch(form.action, {
+        method: form.method,
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Upload failed');
+        window.location = '/profileinfo';
+      })
+      .catch(err => alert(err.message));
+    }
+    
+    // Function to show OTP verification dialog
+    function showOtpVerification() {
+      // Reset timer
+      remainingTime = 49;
+      
+      Swal.fire({
+        title: 'OTP Verification',
+        html: `
+          <p>A verification code has been sent to your new email address.</p>
+          <div class="otp-input-container">
+            <input type="text" class="otp-input" maxlength="1" autofocus>
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+          </div>
+          <div class="timer">Time remaining: <span id="countdown">49</span> seconds</div>
+          <!-- container for error/expired messages -->
+          <div id="otpMessage" class="text-center mt-2 text-danger"></div>
+          <button type="button" id="resendBtn" class="resend-btn" disabled>Resend OTP</button>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Verify',
+        cancelButtonText: 'Cancel',
+        allowOutsideClick: false,
+        didOpen: () => {
+          setupOtpInputs();
+          startTimer();
+          // Initial send
+          requestOtp(emailInput.value);
+        }
+      }).then((result) => {
+        clearInterval(otpTimer);
+        
+        if (result.isConfirmed) {
+          // Collect OTP digits
+          const otpInputs = document.querySelectorAll('.otp-input');
+          let otpValue = '';
+          otpInputs.forEach(i => otpValue += i.value);
+          // Verify
+          verifyOtp(emailInput.value, otpValue);
+        }
+      });
+    }
+
+    // Setup OTP input fields for auto-tabbing & Resend button
+    function setupOtpInputs() {
+      const otpInputs = document.querySelectorAll('.otp-input');
+      otpInputs.forEach((input, idx) => {
+        input.addEventListener('input', function() {
+          if (this.value.length === 1 && idx < otpInputs.length - 1) {
+            otpInputs[idx + 1].focus();
+          }
+        });
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Backspace' && !this.value && idx > 0) {
+            otpInputs[idx - 1].focus();
+          }
+        });
+      });
+
+      const resendBtn = document.getElementById('resendBtn');
+      resendBtn.addEventListener('click', function() {
+        if (!this.disabled) {
+          // reset UI
+          remainingTime = 49;
+          document.getElementById('countdown').textContent = remainingTime;
+          document.getElementById('otpMessage').textContent = '';
+          this.disabled = true;
+          // hit your backend resend
+          resendEmailOtp(emailInput.value);
+          // restart countdown
+          startTimer();
+        }
+      });
+    }
+
+    // Start countdown timer without wiping out the DOM
+    function startTimer() {
+      const countdownEl = document.getElementById('countdown');
+      const resendBtn   = document.getElementById('resendBtn');
+      const messageDiv  = document.getElementById('otpMessage');
+
+      if (otpTimer) clearInterval(otpTimer);
+      otpTimer = setInterval(() => {
+        remainingTime--;
+        countdownEl.textContent = remainingTime;
+        
+        if (remainingTime <= 0) {
+          clearInterval(otpTimer);
+          countdownEl.textContent = '0';
+          resendBtn.disabled = false;
+          messageDiv.textContent = 'OTP expired. Please request a new one.';
+        }
+      }, 1000);
+    }
+
+    // initial OTP request (same as before)
+    function requestOtp(email) {
+      fetch('/request-email-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to send OTP' });
+      })
+      .catch(() => {
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to send OTP. Please try again.' });
+      });
+    }
+
+    // new: resend through its own endpoint
+    function resendEmailOtp(email) {
+      fetch('/resend-email-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) {
+          Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to resend OTP' });
+        }
+      })
+      .catch(() => {
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to resend OTP. Please try again.' });
+      });
+    }
+    
+    // Verify OTP with backend
+    function verifyOtp(email, otp) {
+      fetch('/verify-email-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, otp })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // OTP verified successfully, submit the form
+          submitFormWithImage();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid OTP',
+            text: data.message || 'Please enter the correct OTP'
+          }).then(() => {
+            // Show OTP dialog again
+            showOtpVerification();
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error verifying OTP:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to verify OTP. Please try again.'
+        });
+      });
+    }
+  });
+</script>

@@ -560,12 +560,11 @@
             }
         });
 
-        // Check if we have enough images after removals
+       
         if (visibleImages + newImages < 1) {
             errors.push('At least one product image is required');
         }
 
-        // Display errors if any
         if (errors.length > 0) {
             const errorContainer = document.querySelector('.alert-danger');
             if (errorContainer) {
@@ -598,10 +597,8 @@
             preview.style.display = 'block';
             image.src = e.target.result;
 
-            // Remove the "removed" flag if it exists
             image.removeAttribute('data-removed');
             
-            // Remove this image (the original) from the removedImages list
             const removedImagesInput = document.getElementById('removedImages');
             let removedImages = [];
             try {
@@ -654,11 +651,9 @@
                 
                 hiddenInput.value = canvas.toDataURL();
                 
-                // Destroy the cropper instance
                 cropperInstances[index].destroy();
                 cropperInstances[index] = null;
                 
-                // Create new image element
                 const newImage = document.createElement('img');
                 newImage.id = 'imgView' + index;
                 newImage.src = canvas.toDataURL();

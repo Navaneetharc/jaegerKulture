@@ -124,9 +124,9 @@
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                    <a class="mini-cart-icon" href="/cart">
                                         <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue">2</span>
+                                        <span id="cart-count" class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
                                     </a>
 
                                 </div>
@@ -187,7 +187,7 @@
                 <div class="breadcrumb">
                     <a href="/" rel="nofollow">Home</a>
                     <span><a href="/shop" rel="nofollow">shop</a></span> 
-                    <span></span> <%= product.productName %>
+                    <span><%= product.productName %></span> 
                 </div>
             </div>
         </div>
@@ -197,107 +197,113 @@
                     <div class="col-lg-12">
                         <div class="product-detail accordion-detail">
                             <div class="row mb-50">
-                                <!-- Gallery Section -->
-                                <div class="col-md-6 col-sm-12 col-xs-12">
-                                    <div class="detail-gallery">
-                                        <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                                        <!-- MAIN SLIDES -->
-                                        <div class="product-image-slider">
-                                            <% product.productImage.forEach((img, index) => { %>
-                                                <div class="zoom-container" style="position: relative;">
-                                                    <img src="/uploads/product-images/<%= img %>" alt="product image <%= index+1 %>" class="zoom-image" style="width: 100%; height: auto;">
-                                                    
-                                                </div>
-                                            <% }); %>
-                                        </div>
-                                        
-                                        
-                                        <!-- THUMBNAILS -->
-                                        <div class="slider-nav-thumbnails pl-15 pr-15">
-                                            <% product.productImage.forEach((img, index) => { %>
-                                                <div>
-                                                    <img src="/uploads/product-images/<%= img %>" alt="product thumbnail <%= index+1 %>" style="width: 100%; object-fit: cover;">
-                                                </div>
-                                            <% }); %>
-                                        </div>
-                                    </div>
+                              <!-- Gallery Section -->
+                              <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="detail-gallery">
+                                  <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                                  <!-- MAIN SLIDES -->
+                                  <div class="product-image-slider">
+                                    <% product.productImage.forEach((img, index) => { %>
+                                      <div class="zoom-container" style="position: relative;">
+                                        <img src="/uploads/product-images/<%= img %>" alt="product image <%= index+1 %>" class="zoom-image" style="width: 100%; height: auto;">
+                                      </div>
+                                    <% }); %>
+                                  </div>
+                                  <!-- THUMBNAILS -->
+                                  <div class="slider-nav-thumbnails pl-15 pr-15">
+                                    <% product.productImage.forEach((img, index) => { %>
+                                      <div>
+                                        <img src="/uploads/product-images/<%= img %>" alt="product thumbnail <%= index+1 %>" style="width: 100%; object-fit: cover;">
+                                      </div>
+                                    <% }); %>
+                                  </div>
                                 </div>
-                                <!-- Detail Info Section -->
-                                <div class="col-md-6 col-sm-12 col-xs-12">
-                                    <div class="detail-info">
-                                        <h2 class="title-detail"><%= product.productName %></h2>
-                                        <div class="product-detail-rating">
-                                            <span>Category: <a href="#"><%= product.category.name %></a></span>
-                                        </div>
-                                        <!-- Short Description -->
-                                        
-                                        <div class="short-desc mb-30">
-                                            <h4><%= product.shortDescription %></h4>
-                                        </div>
-                                        <div class="product-price primary-color">
-                                            <ins><span class="text-brand">₹<%= product.salePrice %></span></ins>
-                                            <% if (product.salePrice < product.regularPrice) { %>
-                                                <ins><span class="old-price font-md ml-15">₹<%= product.regularPrice %></span></ins>
-                                                <span class="save-price font-md color3 ml-15">
-                                                    <%= Math.round(((product.regularPrice - product.salePrice) / product.regularPrice) * 100) %>% Off
-                                                </span>
-                                            <% } %>
-                                        </div>
-                                        
-                                         
-                                        <!-- Size & Stock Availability -->
-                                        <div class="attr-detail attr-size">
-                                            <strong class="mr-10">Size</strong>
-                                            <ul class="list-filter size-filter font-small" id="size-options">
-                                                <% Object.keys(product.variant.size).forEach(size => { %>
-                                                    <li>
-                                                        <% if (product.variant.size[size] > 0) { %>
-                                                            <a href="#" class="size-option" data-size="<%= size %>" data-stock="<%= product.variant.size[size] %>">
-                                                                <%= size.toUpperCase() %>
-                                                            </a>
-                                                        <% } else { %>
-                                                            <a href="#" class="size-option disabled" style="opacity: 0.5; text-decoration: line-through; pointer-events: none;" data-size="<%= size %>" data-stock="0">
-                                                                <%= size.toUpperCase() %>
-                                                            </a>
-                                                        <% } %>
-                                                    </li>
-                                                <% }); %>
-                                            </ul>
-                                        </div>
-                                        <div class="stock-status mt-10">
-                                            Availability: <span id="stock-count">Select a size</span>
-                                        </div>
-                                        
-                                        <div>
-                                            <a class="" style="color: rgb(3, 119, 103);" href="#">apply coupon ></a>
-                                        </div>
-                                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                        <div class="product-extra-link2">
-                                            <button type="submit" class="button button-add-to-cart">Add to cart</button>
-                                          
-                                            <button type="submit" class="button button-add-to-cart bg-dark">Buy now</button>
-                                        </div>
+                              </div>
+                              <!-- Detail Info Section -->
+                              <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="detail-info">
+                                  <h2 class="title-detail"><%= product.productName %></h2>
+                                  <div class="product-detail-rating">
+                                    <span>Category: <a href="#"><%= product.category.name %></a></span>
+                                  </div>
+                                  <!-- Short Description -->
+                                  <div class="short-desc mb-30">
+                                    <h4><%= product.shortDescription %></h4>
+                                  </div>
+                                  <div class="product-price primary-color">
+                                    <ins><span class="text-brand">₹<%= product.salePrice %></span></ins>
+                                    <% if (product.salePrice < product.regularPrice) { %>
+                                      <ins><span class="old-price font-md ml-15">₹<%= product.regularPrice %></span></ins>
+                                      <span class="save-price font-md color3 ml-15">
+                                        <%= Math.round(((product.regularPrice - product.salePrice) / product.regularPrice) * 100) %>% Off
+                                      </span>
+                                    <% } %>
+                                  </div>
+                          
+                                  <!-- Size & Stock Availability -->
+                                  <div class="attr-detail attr-size">
+                                    <strong class="mr-10">Size</strong>
+                                    <ul class="list-filter size-filter font-small" id="size-options">
+                                      <% Object.keys(product.variant.size).forEach(size => { %>
+                                        <li>
+                                          <% if (product.variant.size[size] > 0) { %>
+                                            <a href="#" class="size-option" data-size="<%= size %>" data-stock="<%= product.variant.size[size] %>">
+                                              <%= size.toUpperCase() %>
+                                            </a>
+                                          <% } else { %>
+                                            <a href="#" class="size-option disabled" style="opacity: 0.5; text-decoration: line-through; pointer-events: none;" data-size="<%= size %>" data-stock="0">
+                                              <%= size.toUpperCase() %>
+                                            </a>
+                                          <% } %>
+                                        </li>
+                                      <% }); %>
+                                    </ul>
+                                  </div>
+                          
+                                  <div class="stock-status mt-10">
+                                    Availability: <span id="stock-count">Select a size</span>
+                                  </div>
+                                  <div>
+                                    <a style="color: rgb(3, 119, 103);" href="#">apply coupon &gt;</a>
+                                  </div>
+                                  <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                          
+                                  <!-- Add to Cart Form -->
+                                  <form id="add-to-cart-form" action="/cart/add" method="POST">
+                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                    <input type="hidden" name="price" value="<%= product.salePrice %>">
+                                    <input type="hidden" name="basePrice" value="<%= product.regularPrice %>">
+                                    <input type="hidden" name="productImage" value="<%= product.productImage[0] %>">
+                                    <input type="hidden" name="name" value="<%= product.productName %>">
+                                    <input type="hidden" name="variants[size]" id="selectedSize" value="">
+                          
+                                    
+                                    <div class="product-extra-link2">
+                                      <button type="submit" class="button button-add-to-cart">Add to cart</button>
                                     </div>
+                                  </form>
                                 </div>
+                              </div>
                             </div>
+                          
                             <!-- Description & Specifications Section -->
                             <div class="row">
-                                <div class="col-lg-10 m-auto entry-main-content">
-                                    <h2 class="section-title style-1 mb-30">Description</h2>
-                                    <div class="description mb-50">
-                                        <!-- Long Description -->
-                                        <p><%= product.longDescription %></p>
-                                        <!-- Specifications, rendered line by line (split by newline) -->
-                                        <h4 class="mt-30">Specifications</h4>
-                                        <ul class="product-more-infor mt-30">
-                                            <% product.specifications.split(/\r?\n/).forEach(spec => { %>
-                                                <li><%= spec.trim() %></li>
-                                            <% }); %>
-                                        </ul>
-                                    </div>
+                              <div class="col-lg-10 m-auto entry-main-content">
+                                <h2 class="section-title style-1 mb-30">Description</h2>
+                                <div class="description mb-50">
+                                  <!-- Long Description -->
+                                  <p><%= product.longDescription %></p>
+                                  <!-- Specifications, rendered line by line (split by newline) -->
+                                  <h4 class="mt-30">Specifications</h4>
+                                  <ul class="product-more-infor mt-30">
+                                    <% product.specifications.split(/\r?\n/).forEach(spec => { %>
+                                      <li><%= spec.trim() %></li>
+                                    <% }); %>
+                                  </ul>
                                 </div>
+                              </div>
                             </div>
-                        </div>
+                          </div>
                         
                         <script>
                             $(document).ready(function() {
@@ -704,19 +710,107 @@
     <script src="./assets2/js/main.js?v=3.4"></script>
     <script src="./assets2/js/shop.js?v=3.4"></script>
     <script>
-        // Dynamic stock update based on selected size
-        document.addEventListener("DOMContentLoaded", function () {
-            const sizeOptions = document.querySelectorAll('.size-option');
-            const stockCount = document.getElementById('stock-count');
 
-            sizeOptions.forEach(option => {
-                option.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const stock = this.getAttribute('data-stock');
-                    stockCount.textContent = stock + ' Items in Stock';
-                });
-            });
+document.addEventListener("DOMContentLoaded", () => {
+  const form              = document.getElementById("add-to-cart-form");
+  const sizeOptions       = document.querySelectorAll('.size-option');
+  const stockCount        = document.getElementById('stock-count');
+  const selectedSizeInput = document.getElementById('selectedSize');
+  const cartCountEl       = document.getElementById('cart-count'); 
+
+  // ✅ Handle size selection
+  sizeOptions.forEach(option => {
+    option.addEventListener('click', e => {
+      e.preventDefault();
+      const size  = option.dataset.size;
+      const stock = option.dataset.stock;
+      selectedSizeInput.value = size;
+      stockCount.textContent  = `${stock} Items in Stock`;
+    });
+  });
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const size = selectedSizeInput.value;
+    if (!size) {
+      return Swal.fire({
+        icon: "error",
+        text: "Please select a size",
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+
+    const payload = {
+      productId:    form.productId.value,
+      price:        form.price.value,
+      basePrice:    form.basePrice.value,
+      productImage: form.productImage.value,
+      name:         form.name.value,
+      variants:     { size }
+    };
+
+    try {
+      const res = await fetch(form.action, {
+        method:  form.method,          
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        Swal.fire({
+          icon: "error",
+          text: data.error || data.message,
+          timer: 2000,
+          showConfirmButton: false
         });
+        return;
+      }
+
+      if (cartCountEl && typeof data.totalCount === 'number') {
+        cartCountEl.textContent = `${data.totalCount} Item${data.totalCount !== 1 ? 's' : ''}`;
+      }
+
+      Swal.fire({
+        icon: "success",
+        text: data.message,
+        timer: 2000,
+        showConfirmButton: false
+      });
+
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      Swal.fire({
+        icon: "error",
+        text: "Something went wrong. Please try again.",
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+  });
+});
+
+
+       document.addEventListener("DOMContentLoaded", function () {
+    const sizeOptions = document.querySelectorAll('.size-option');
+    const stockCount = document.getElementById('stock-count');
+    const selectedSizeInput = document.getElementById('selectedSize');
+
+    sizeOptions.forEach(option => {
+      option.addEventListener('click', function(e) {
+        e.preventDefault();
+        const size = this.getAttribute('data-size');
+        const stock = this.getAttribute('data-stock');
+
+        selectedSizeInput.value = size;
+
+        stockCount.textContent = stock + ' Items in Stock';
+      });
+    });
+  });
     </script>
     
 

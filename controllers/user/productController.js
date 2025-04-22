@@ -1,50 +1,19 @@
-// const Product = require("../../models/productSchema");
-// const Category = require("../../models/categorySchema");
-// const User = require("../../models/userSchema");
 
-
-
-// const productDetails = async(req,res)=>{
-//     try {
-        
-//         const userId = req.session.user;
-//         const userData = await User.findById(userId);
-//         const productId = req.query.id;
-//         const product = await Product.findById(productId).populate('category');
-//         const findCategory = product.category;
-    
-//             res.render('product-details',{
-//                 user:userData,
-//                 product:product,
-//                 category:findCategory,
-
-//             });
-
-//     } catch (error) {
-//         console.error('Error in fetching product details', error);
-//         res.redirect('/pageNotFound');
-        
-//     }
-// }
-
-
-
-
-// module.exports = {
-//     productDetails
-// }
 
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const User = require("../../models/userSchema");
+const Cart    = require('../../models/cartSchema');
 
 const productDetails = async (req, res) => {
     try {
         const userId = req.session?.user || null;
         const productId = req.query.id;
         if (!productId) return res.redirect('/pageNotFound');
+        // let cart = await Cart.findOne({ userId });
 
-        // Fetch user and product data in parallel (using lean() for plain objects)
+
+
         const [userData, productDoc] = await Promise.all([
             userId ? User.findById(userId).lean() : null,
             Product.findById(productId).populate('category').lean()
@@ -71,14 +40,23 @@ const productDetails = async (req, res) => {
             shortDescription: productDoc.description // use description as the short description
         };
 
+        let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+        
+            
+
         res.render('product-details', {
             user: userData || null,
             product,
+            items,
             category: product.category,
             products: relatedProducts // Add related products to the template
         });
     } catch (error) {
-        console.error('Error in fetching product details:', error);
+        console.log('Error in fetching product details:', error);
         res.redirect('/pageNotFound');
     }
 };

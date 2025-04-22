@@ -6,9 +6,14 @@ const userAuth = (req,res,next)=>{
         User.findById(req.session.user)
         .then(data=>{
             if(data && !data.isBlocked){
+                req.user = data;
                 next();
             }else{
-                res.redirect("/login")
+                // If user is blocked or doesn't exist, destroy their session and redirect to login
+                req.session.destroy(err => {
+                    if(err) console.log("Error destroying session:", err);
+                    res.redirect("/login");
+                });
             }
         })
         .catch(error=>{
@@ -21,18 +26,26 @@ const userAuth = (req,res,next)=>{
 }
 
 const adminAuth = (req,res,next)=>{
-    User.findOne({isAdmin:true})
-    .then(data=>{
-        if(data){
-            next();
-        }else{
-            res.redirect("/admin/login")
-        }
-    })
-    .catch(error=>{
-        console.log("Error in adminauth middleware",error);
-        res.status(500).send("Internal Server Error");
-    })
+    if(req.session.admin){
+        // Find the admin
+        User.findOne({isAdmin: true})
+        .then(admin => {
+            if(admin){
+                next();
+            } else {
+                req.session.destroy(err => {
+                    if(err) console.log("Error destroying session:", err);
+                    res.redirect("/admin/login");
+                });
+            }
+        })
+        .catch(error => {
+            console.log("Error in adminAuth middleware:", error);
+            res.redirect("/admin/pageerror");
+        });
+    } else {
+        res.redirect("/admin/login");
+    }
 }
 
 module.exports ={

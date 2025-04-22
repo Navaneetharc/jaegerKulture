@@ -6,48 +6,37 @@ const path = require("path");
 const sharp = require("sharp");
 
 const getProductAddPage = async (req,res)=>{
-    try {
-        
+    try {       
         const category = await Category.find({isListed:true});
         res.render("product-add",{
             cat:category,           
         });
-
     } catch (error) {
-
         res.redirect('/admin/pageerror');
-        
     }
 };
-
+// express validator
 const addProducts = async (req,res)=>{
     try {
         const products = req.body;
-
-        // Input validation
         const validationErrors = [];
-
-        // Product name validation
+       
         if (!products.productName || products.productName.trim().length < 3) {
             validationErrors.push('Product name must be at least 3 characters long');
         }
 
-        // Description validation
         if (!products.description || products.description.trim().length < 10) {
             validationErrors.push('Short description must be at least 10 characters long');
         }
 
-        // Long description validation
         if (!products.longDescription || products.longDescription.trim().length < 20) {
             validationErrors.push('Full description must be at least 20 characters long');
         }
 
-        // Specifications validation
         if (!products.specifications || products.specifications.trim().length < 10) {
             validationErrors.push('Specifications must be at least 10 characters long');
         }
 
-        // Price validation
         if (!products.regularPrice || isNaN(products.regularPrice) || parseFloat(products.regularPrice) <= 0) {
             validationErrors.push('Regular price must be a positive number');
         }
@@ -58,12 +47,10 @@ const addProducts = async (req,res)=>{
             validationErrors.push('Sale price must be less than regular price');
         }
 
-        // Category validation
         if (!products.category) {
             validationErrors.push('Category is required');
         }
 
-        // Size validation
         const sizes = [
             products.variant?.size?.s,
             products.variant?.size?.m,
@@ -75,7 +62,7 @@ const addProducts = async (req,res)=>{
         let totalStock = 0;
 
         sizes.forEach((size, index) => {
-            if (size !== undefined && size !== '') {
+            if (!size && size !== '') {
                 if (isNaN(size) || parseInt(size) < 0) {
                     validationErrors.push(`Size ${sizeLabels[index]} must be a non-negative number`);
                 } else {
@@ -108,7 +95,7 @@ const addProducts = async (req,res)=>{
         }
 
         // Return validation errors if any
-        if (validationErrors.length > 0) {
+        if (validationErrors.length) {
             return res.status(400).json({ errors: validationErrors });
         }
 
@@ -235,7 +222,7 @@ const productBlocked = async(req,res)=>{
     try {
         
         let id = req.params.id;
-        console.log("Blocking product with ID:", id);
+        // console.log("Blocking product with ID:", id);
         const result = await Product.updateOne({_id:id},{$set:{isBlocked:true}});
         console.log("Update result:", result);
         res.redirect("/admin/products")
@@ -300,22 +287,19 @@ const editProduct = async (req, res) => {
             removedImages
         } = req.body;
 
-        // Find product first to ensure it exists
+        // product already undoo??
         const product = await Product.findOne({ _id: id });
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        // Basic validation (unchanged)
         if (!productName || !description || !longDescription || !specifications || !category || !regularPrice || !salePrice) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        // Clone current product image array
         let images = [...product.productImage];
         const uploadDir = path.join(__dirname, '../../public/uploads/product-images');
 
-        // Process removed images
         if (removedImages) {
             let imagesToRemove;
             try {
@@ -335,7 +319,7 @@ const editProduct = async (req, res) => {
             });
         }
 
-        // Handle new image uploads
+        // Handle new image 
         if (req.files) {
             if (Array.isArray(req.files)) {
                 req.files.forEach(file => {
@@ -357,7 +341,7 @@ const editProduct = async (req, res) => {
             }
         }
 
-        // Update product fields (PUT expects a full resource replacement)
+        // Update 
         product.productName = productName;
         product.description = description;
         product.longDescription = longDescription;
@@ -368,10 +352,9 @@ const editProduct = async (req, res) => {
         product.variant = variant;
         product.productImage = images.filter(img => img !== null);
 
-        // Save the updated product
+        // Save
         await product.save();
 
-        // Return a 200 OK status with the updated resource (REST convention)
         res.status(200).redirect('/admin/products');
     } catch (error) {
         console.error('Error in editProduct:', error);

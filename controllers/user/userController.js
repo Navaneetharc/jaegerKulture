@@ -4,6 +4,7 @@ const Product = require('../../models/productSchema');
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
+const Cart    = require('../../models/cartSchema');
 
 
 const pageNotFound = async(req,res)=>{
@@ -30,6 +31,13 @@ const loadHomepage = async (req, res) => {
     try {
         const userId = req.session.user;
         const categories = await Category.find({isListed:true});
+        let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+        
+            
         // console.log("Found categories:", categories);
 
         let productData = await Product.find({
@@ -39,10 +47,10 @@ const loadHomepage = async (req, res) => {
         .sort({createdAt: -1})
         .limit(4)
         .populate('category');
-
+        
         // console.log("Found products:", JSON.stringify(productData, null, 2));
         // console.log("Product image paths:", productData.map(p => p.productImage));
-
+        
         if(!productData || productData.length === 0) {
             
             productData = [];
@@ -50,9 +58,9 @@ const loadHomepage = async (req, res) => {
 
         if(userId){
             const userData = await User.findById(userId);
-            return res.render('home',{user: userData, products: productData});
+            return res.render('home',{user: userData, products: productData,items});
         }else{
-            return res.render("home",{products: productData});
+            return res.render("home",{products: productData,items});
         }
 
     } catch (error) {
@@ -104,7 +112,7 @@ const signup = async(req,res)=>{
 
     try {
         
-        const {name,phone,email,password,cPassword} = req.body;
+        const {name,phone,email,password,cPassword,gender} = req.body;
 
         console.log(req.body);
         
@@ -126,7 +134,7 @@ const signup = async(req,res)=>{
         }
 
         req.session.userOtp = otp;
-        req.session.userData = {name,phone,email,password};
+        req.session.userData = {name,phone,email,password,gender};
 
         res.render("verify-otp");
         
@@ -138,7 +146,7 @@ const signup = async(req,res)=>{
     } catch (error) {
 
         console.error('signup error',error);
-        res.redirect('/pageNotFound')
+        res.redirect('/login')
         
     }
 }
@@ -158,7 +166,6 @@ const securePassword = async (password)=>{
 const verifyOtp = async(req,res)=>{
     try {
         const {otp} = req.body;
-
         console.log("Recieved OTP:",otp);
         console.log("Expected OTP:",req.session.userOtp);
 
@@ -174,6 +181,7 @@ const verifyOtp = async(req,res)=>{
                 email:user.email,
                 phone:user.phone,
                 password:passwordHash,
+                gender:user.gender
             })
 
             await saveUserData.save();
@@ -289,15 +297,20 @@ const logout = async (req,res)=>{
 const loadShoppingPage = async(req,res)=>{
     try {
         const user = req.session.user;
+        const userId   = req.session.user; 
         const userData = await User.findOne({_id:user});
         const categories = await Category.find({isListed:true});
-        
-        // Get sort parameter from query
+                
         const sortOption = req.query.sort;
         const searchQuery = req.query.query || "";
+        let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
         
-        // Define sort object based on sort option
-        let sortObject = { createdAt: -1 }; // Default sort
+            const items = cart?.items || [];
+        
+       
+        let sortObject = { createdAt: -1 };
         
         if (sortOption === 'price_low') {
             sortObject = { salePrice: 1 }; // Sort by price low to high
@@ -310,7 +323,7 @@ const loadShoppingPage = async(req,res)=>{
             category: {$in: categories.map(cat => cat._id)}
         };
 
-        // Add search query if it exists
+       
         if (searchQuery) {
             query.productName = { $regex: ".*" + searchQuery + ".*", $options: "i" };
         }
@@ -337,7 +350,8 @@ const loadShoppingPage = async(req,res)=>{
             totalPages: totalPages,
             selectedCategory: null,
             sortOption: sortOption,
-            searchQuery: searchQuery
+            searchQuery: searchQuery,
+            items,
         });
 
     } catch (error) {
@@ -353,6 +367,12 @@ const filterProduct = async(req,res)=>{
         const priceRange = req.query.price;
         const sortOption = req.query.sort;
         const searchQuery = req.query.query || "";
+        const userId   = req.session.user; 
+        let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
         
         let query = {
             isBlocked: false
@@ -380,13 +400,11 @@ const filterProduct = async(req,res)=>{
             query.category = { $in: categories.map(cat => cat._id) };
         }
 
-        // Add search query if it exists
         if (searchQuery) {
             query.productName = { $regex: ".*" + searchQuery + ".*", $options: "i" };
         }
 
-        // Define sort object based on sort option
-        let sortObject = { createdAt: -1 }; // Default sort
+        let sortObject = { createdAt: -1 }; 
         
         if (sortOption === 'price_low') {
             sortObject = { salePrice: 1 }; // Sort by price low to high
@@ -422,7 +440,6 @@ const filterProduct = async(req,res)=>{
             }
         }
 
-        // Get price range for display if it exists
         let priceRangeObj = null;
         if (priceRange) {
             const prices = priceRange.split(' - ').map(price => 
@@ -446,7 +463,8 @@ const filterProduct = async(req,res)=>{
             selectedCategory: categoryId,
             priceRange: priceRangeObj,
             sortOption: sortOption,
-            searchQuery: searchQuery
+            searchQuery: searchQuery,
+            items,
         });
 
     } catch (error) {
@@ -465,6 +483,12 @@ const filterByPrice = async (req, res) => {
         const sortOption = req.query.sort;
         let minPrice = 0;
         let maxPrice = Number.MAX_VALUE;
+        const userId   = req.session.user; 
+        let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
 
         if (priceRange) {
     
@@ -477,7 +501,6 @@ const filterByPrice = async (req, res) => {
             }
         }
 
-        // Define sort object based on sort option
         let sortObject = { createdAt: -1 }; // Default sort
         
         if (sortOption === 'price_low') {
@@ -518,7 +541,8 @@ const filterByPrice = async (req, res) => {
                 min: minPrice,
                 max: maxPrice
             },
-            sortOption: sortOption
+            sortOption: sortOption,
+            items,
         });
 
     } catch (error) {
@@ -530,84 +554,34 @@ const filterByPrice = async (req, res) => {
 
 
 
-// const searchProducts = async (req, res) => {
-//     try {
-//         const user = req.session.user;
-//         const userData = user ? await User.findOne({ _id: user }) : null;
-//         const search = req.body.query || "";
-//         const categories = await Category.find({ isListed: true }).lean();
-
-//         let products = [];
-//         // Check if filtered products are available in session
-//         if (req.session.filteredProducts && req.session.filteredProducts.length > 0) {
-//             // Use filtered products from the session
-//             products = req.session.filteredProducts.filter(product =>
-//                 product.productName.toLowerCase().includes(search.toLowerCase())
-//             );
-//         } else {
-//             // Otherwise, search the entire product collection with common filters
-//             const categoryIds = categories.map(category => category._id.toString());
-//             products = await Product.find({
-//                 productName: { $regex: ".*" + search + ".*", $options: "i" },
-//                 isBlocked: false,
-//                 category: { $in: categoryIds }
-//             })
-//                 .populate("category")
-//                 .lean();
-//         }
-
-//         // Sort products by creation date descending (most recent first)
-//         products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-//         // Pagination setup
-//         const itemsPerPage = 6;
-//         const currentPage = parseInt(req.query.page) || 1;
-//         const startIndex = (currentPage - 1) * itemsPerPage;
-//         const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
-//         const totalPages = Math.ceil(products.length / itemsPerPage);
-
-//         res.render("shop", {
-//             user: userData,
-//             products: paginatedProducts,
-//             category: categories,
-//             totalProducts: products.length,
-//             currentPage: currentPage,
-//             totalPages: totalPages,
-//             selectedCategory: req.query.category || null,
-//             sortOption: req.query.sort || null,
-//             priceRange: req.query.price || null,
-//             searchQuery: search
-//         });
-//     } catch (error) {
-//         console.error("Error in searchProducts:", error);
-//         res.redirect("/pageNotFound");
-//     }
-// };
-
 const searchProducts = async (req, res) => {
     try {
       const user = req.session.user;
       const userData = user ? await User.findOne({ _id: user }) : null;
       
-      // Get the search term from body, query, or session.
-      // This makes sure that when you sort (a GET request), the search term is preserved.
+      
       const searchTerm = req.body.query || req.query.query || req.session.searchQuery || "";
-      req.session.searchQuery = searchTerm; // persist for subsequent requests
+      req.session.searchQuery = searchTerm; 
   
-      // Get sort option from query parameters
+    
       const sortOption = req.query.sort;
       
-      // Fetch categories that are listed
+     
       const categories = await Category.find({ isListed: true }).lean();
       
       let products = [];
-      // If filtered products exist in session, search within that subset
+      const userId   = req.session.user; 
+      let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+     
       if (req.session.filteredProducts && req.session.filteredProducts.length > 0) {
         products = req.session.filteredProducts.filter(product =>
           product.productName.toLowerCase().includes(searchTerm.toLowerCase())
         );
       } else {
-        // Otherwise, search in the entire collection (restricted by listed categories)
         const categoryIds = categories.map(category => category._id.toString());
         products = await Product.find({
           productName: { $regex: ".*" + searchTerm + ".*", $options: "i" },
@@ -618,13 +592,11 @@ const searchProducts = async (req, res) => {
           .lean();
       }
   
-      // Apply sorting only on the searched products
       if (sortOption === "price_low") {
         products.sort((a, b) => a.salePrice - b.salePrice);
       } else if (sortOption === "price_high") {
         products.sort((a, b) => b.salePrice - a.salePrice);
       } else {
-        // Default sort by creation date (newest first)
         products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       }
   
@@ -645,7 +617,8 @@ const searchProducts = async (req, res) => {
         selectedCategory: req.query.category || null,
         sortOption: sortOption || null,
         priceRange: req.query.price || null,
-        searchQuery: searchTerm
+        searchQuery: searchTerm,
+        items,
       });
     } catch (error) {
       console.error("Error in searchProducts:", error);

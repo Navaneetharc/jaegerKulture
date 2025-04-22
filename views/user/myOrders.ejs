@@ -1,0 +1,598 @@
+<%- include('../partials/userL/header.ejs') %>
+
+<!-- Add Material Icons font -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+    .breadcrumb a,
+    .breadcrumb span {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .breadcrumb .separator {
+        margin: 0 8px;
+        color: #999;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .dropdown{
+        position:relative;
+        display:inline-block;
+    }
+    .dropdown-content{
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+        z-index: 1000;
+        right: 0;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+    }
+    .dropdown-content a:hover{
+        background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content{
+        display:block;
+    }
+    .header{
+        position: relative;
+        z-index: 500;
+    }
+
+    /* Dashboard menu styles */
+    .dashboard-menu .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-menu .nav-link i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    .dashboard-menu .nav-link:hover,
+    .dashboard-menu .nav-link.active {
+        background-color: #f8f9fa;
+        color: #3BB77E;
+    }
+
+    /* Order card styles */
+    .order-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .order-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+
+    .order-card .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .order-card .card-body {
+        padding: 1rem;
+    }
+
+    .order-card .order-id {
+        font-weight: 600;
+        color: #3BB77E;
+    }
+
+    .order-card .order-date {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .order-card .order-status {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .order-card .order-status.pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .order-card .order-status.processing {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+
+    .order-card .order-status.shipped {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .order-card .order-status.delivered {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .order-card .order-status.cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .order-card .order-total {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .order-card .order-items {
+        margin-top: 1rem;
+        border-top: 1px solid #dee2e6;
+        padding-top: 1rem;
+    }
+
+    .order-card .order-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-card .order-item img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        margin-right: 1rem;
+        border-radius: 4px;
+    }
+
+    .order-card .order-item-details {
+        flex-grow: 1;
+    }
+
+    .order-card .order-item-name {
+        font-weight: 600;
+    }
+
+    .order-card .order-item-price {
+        color: #6c757d;
+    }
+
+    .order-card .order-item-quantity {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .order-card .order-actions {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .order-card .order-actions .btn {
+        margin-left: 0.5rem;
+    }
+
+    .no-orders {
+        text-align: center;
+        padding: 2rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .no-orders i {
+        font-size: 3rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+
+    .no-orders p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<header class="header-area header-style-1 header-height-2">
+    <div class="header-top header-top-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info">
+                        <ul>
+                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-4">
+                    <div class="text-center">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info header-info-right">
+                        <ul>
+                            <li>
+                                <a class="language-dropdown-active" href="#"> 
+                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
+                                </a>
+                                <ul class="language-dropdown">
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                </ul>
+                            </li>
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <div class="dropdown">
+                                    <a href="#" class="sign-in-link"><%= user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/profileinfo">Profile</a>
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="header-wrap">
+                <div class="logo logo-width-1">
+                   <img src="assets/imgs/theme/jaeger.png" alt="logo">
+                </div>
+                <div class="header-right">
+                    <div class="search-style-2">
+                        <form action="/search" method="get">
+                            <input type="text" placeholder="Search for items..." name="query">
+                        </form>
+                    </div>
+                    <div class="header-action-right">
+                        <div class="header-action-2">
+                            <div class="header-action-icon-2">
+                                <a href="/wishlist">
+                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                    <span class="pro-count blue">0</span>
+                                </a>
+                            </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="/cart">
+                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                    <span class="pro-count blue">0</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-bottom header-bottom-bg-color sticky-bar">
+        <div class="container">
+            <div class="header-wrap header-space-between position-relative">
+                <div class="logo logo-width-1 d-block d-lg-none">
+                    <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
+                </div>
+                <div class="header-nav d-none d-lg-flex">
+                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
+                        <nav>
+                            <ul>
+                                <li><a href="/">Home</a></li>
+                                <li><a href="/about">About</a></li>
+                                <li><a href="/shop">Shop</a></li>
+                                <li class="position-static"><a href="/offers">Deals</a>
+                                    <ul class="mega-menu">
+                                    </ul>
+                                </li>
+                                <li><a href="/contact">Contact</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="hotline d-none d-lg-block">
+                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                </div>   
+                <div class="header-action-icon-2 d-block d-lg-none">
+                    <div class="burger-icon burger-icon-white">
+                        <span class="burger-icon-top"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-mid"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-bottom"><span></span><span></span><span></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-header-active mobile-header-wrapper-style perfect-scrollbar">
+    <div class="mobile-header-wrapper-inner">
+        <div class="mobile-header-content-area">
+            <div class="perfect-scroll">
+                <div class="mobile-menu-wrap mobile-header-border">
+                    <nav>
+                        <ul class="mobile-menu font-heading">
+                            <li><a class="active" href="/">Home</a></li>
+                            <li><a href="/about">About</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                            <li><a href="/offers">Deals</a></li>
+                            <li><a href="/contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="mobile-account">
+                    <h6 class="mb-10px">My Account</h6>
+                    <ul class="mobile-menu font-heading">
+                        <li><a href="/profileinfo">Profile</a></li>
+                        <li><a href="/myorders">My Orders</a></li>
+                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/wishlist">Wishlist</a></li>
+                        <li><a href="/wallet">My Wallet</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> My Orders
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="dashboard-menu">
+                        <ul class="nav flex-column" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profileinfo">
+                                    <i class="fi-rs-user-check"></i> Personal Information
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/myorders">
+                                    <i class="fi-rs-shopping-cart"></i> My Orders
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/addresses">
+                                    <i class="fi-rs-marker"></i> My Addresses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wishlist">
+                                    <i class="fi-rs-heart"></i> Wishlist
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wallet">
+                                    <i class="fi-rs-credit-card"></i> My Wallet
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/notifications">
+                                    <i class="fi-rs-bell"></i> Notifications
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/security">
+                                    <i class="fi-rs-shield-check"></i> Security Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/help">
+                                    <i class="fi-rs-help"></i> Help Center
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">
+                                    <i class="fi-rs-exit"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0">My Orders</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Sample Orders - In a real application, these would be dynamically generated -->
+                            <div class="order-card">
+                                <div class="card-header">
+                                    <div>
+                                        <span class="order-id">Order #ORD-2023-001</span>
+                                        <span class="order-date ms-2">Placed on: June 15, 2023</span>
+                                    </div>
+                                    <span class="order-status delivered">Delivered</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="order-items">
+                                        <div class="order-item">
+                                            <img src="assets/imgs/shop/product-1.jpg" alt="Product">
+                                            <div class="order-item-details">
+                                                <div class="order-item-name">Premium Watch</div>
+                                                <div class="order-item-price">$299.99</div>
+                                                <div class="order-item-quantity">Quantity: 1</div>
+                                            </div>
+                                        </div>
+                                        <div class="order-item">
+                                            <img src="assets/imgs/shop/product-2.jpg" alt="Product">
+                                            <div class="order-item-details">
+                                                <div class="order-item-name">Leather Wallet</div>
+                                                <div class="order-item-price">$49.99</div>
+                                                <div class="order-item-quantity">Quantity: 2</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="order-total">Total: $399.97</div>
+                                        <div class="order-actions">
+                                            <a href="/order-details/ORD-2023-001" class="btn btn-sm btn-outline-primary">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="order-card">
+                                <div class="card-header">
+                                    <div>
+                                        <span class="order-id">Order #ORD-2023-002</span>
+                                        <span class="order-date ms-2">Placed on: June 10, 2023</span>
+                                    </div>
+                                    <span class="order-status shipped">Shipped</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="order-items">
+                                        <div class="order-item">
+                                            <img src="assets/imgs/shop/product-3.jpg" alt="Product">
+                                            <div class="order-item-details">
+                                                <div class="order-item-name">Designer Sunglasses</div>
+                                                <div class="order-item-price">$159.99</div>
+                                                <div class="order-item-quantity">Quantity: 1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="order-total">Total: $159.99</div>
+                                        <div class="order-actions">
+                                            <a href="/order-details/ORD-2023-002" class="btn btn-sm btn-outline-primary">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="order-card">
+                                <div class="card-header">
+                                    <div>
+                                        <span class="order-id">Order #ORD-2023-003</span>
+                                        <span class="order-date ms-2">Placed on: June 5, 2023</span>
+                                    </div>
+                                    <span class="order-status processing">Processing</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="order-items">
+                                        <div class="order-item">
+                                            <img src="assets/imgs/shop/product-4.jpg" alt="Product">
+                                            <div class="order-item-details">
+                                                <div class="order-item-name">Smartphone Case</div>
+                                                <div class="order-item-price">$29.99</div>
+                                                <div class="order-item-quantity">Quantity: 1</div>
+                                            </div>
+                                        </div>
+                                        <div class="order-item">
+                                            <img src="assets/imgs/shop/product-5.jpg" alt="Product">
+                                            <div class="order-item-details">
+                                                <div class="order-item-name">Wireless Earbuds</div>
+                                                <div class="order-item-price">$89.99</div>
+                                                <div class="order-item-quantity">Quantity: 1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="order-total">Total: $119.98</div>
+                                        <div class="order-actions">
+                                            <a href="/order-details/ORD-2023-003" class="btn btn-sm btn-outline-primary">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="order-card">
+                                <div class="card-header">
+                                    <div>
+                                        <span class="order-id">Order #ORD-2023-004</span>
+                                        <span class="order-date ms-2">Placed on: May 28, 2023</span>
+                                    </div>
+                                    <span class="order-status pending">Pending</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="order-items">
+                                        <div class="order-item">
+                                            <img src="assets/imgs/shop/product-6.jpg" alt="Product">
+                                            <div class="order-item-details">
+                                                <div class="order-item-name">Fitness Tracker</div>
+                                                <div class="order-item-price">$199.99</div>
+                                                <div class="order-item-quantity">Quantity: 1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="order-total">Total: $199.99</div>
+                                        <div class="order-actions">
+                                            <a href="/order-details/ORD-2023-004" class="btn btn-sm btn-outline-primary">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Uncomment this section to show when there are no orders -->
+                            <!--
+                            <div class="no-orders">
+                                <i class="fi-rs-shopping-cart"></i>
+                                <h4>No Orders Found</h4>
+                                <p>You haven't placed any orders yet. Start shopping to see your orders here.</p>
+                                <a href="/shop" class="btn btn-fill-out">Start Shopping</a>
+                            </div>
+                            -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/userL/footer.ejs') %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Simple JavaScript for basic interactions
+    const viewDetailsButtons = document.querySelectorAll('.btn-outline-primary');
+    viewDetailsButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Add view details logic here
+            console.log('Viewing order details');
+        });
+    });
+});
+</script> 

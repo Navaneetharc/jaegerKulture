@@ -1,0 +1,954 @@
+<%- include('../partials/adminL/header.ejs') %>
+
+<!-- Add Material Icons font -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+    .breadcrumb a,
+    .breadcrumb span {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .breadcrumb .separator {
+        margin: 0 8px;
+        color: #999;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* Inventory filters */
+    .inventory-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .filter-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .filter-select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        background-color: white;
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: flex-end;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .filter-btn.search {
+        background-color: #3BB77E;
+        color: white;
+    }
+
+    .filter-btn.clear {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+
+    /* Inventory table */
+    .inventory-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .inventory-table th {
+        background-color: #f8f9fa;
+        padding: 0.75rem;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 1px solid #dee2e6;
+        text-align: left;
+    }
+
+    .inventory-table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .inventory-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .inventory-table tr:hover {
+        background-color: rgba(59, 183, 126, 0.05);
+    }
+
+    .product-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .product-sku {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+
+    .product-category {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        color: #495057;
+    }
+
+    .stock-level {
+        font-weight: 600;
+    }
+
+    .stock-level.low {
+        color: #dc3545;
+    }
+
+    .stock-level.medium {
+        color: #ffc107;
+    }
+
+    .stock-level.good {
+        color: #28a745;
+    }
+
+    .stock-level.out {
+        color: #6c757d;
+    }
+
+    .stock-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .stock-action-btn {
+        padding: 0.25rem 0.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .stock-action-btn.add {
+        background-color: #3BB77E;
+        color: white;
+    }
+
+    .stock-action-btn.remove {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+
+    .stock-action-btn.history {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    /* Stock movement history modal */
+    .stock-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .stock-modal-content {
+        position: relative;
+        background-color: white;
+        margin: 10% auto;
+        padding: 1.5rem;
+        width: 50%;
+        max-width: 600px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .stock-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .stock-modal-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+
+    .stock-modal-close {
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6c757d;
+    }
+
+    .stock-modal-body {
+        margin-bottom: 1.5rem;
+    }
+
+    .stock-history-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .stock-history-table th {
+        background-color: #f8f9fa;
+        padding: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #333;
+        border-bottom: 1px solid #dee2e6;
+        text-align: left;
+    }
+
+    .stock-history-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .stock-history-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .stock-movement {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .stock-movement.in {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .stock-movement.out {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .stock-movement.adjustment {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    /* Add stock modal */
+    .add-stock-form {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .form-textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .form-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .form-btn.cancel {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+
+    .form-btn.submit {
+        background-color: #3BB77E;
+        color: white;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .pagination-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        margin: 0 0.25rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        font-weight: 500;
+        color: #3BB77E;
+        cursor: pointer;
+    }
+
+    .pagination-item.active {
+        background-color: #3BB77E;
+        color: white;
+        border-color: #3BB77E;
+    }
+
+    .pagination-item.disabled {
+        color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 991.98px) {
+        .inventory-filters {
+            flex-direction: column;
+        }
+
+        .filter-group {
+            width: 100%;
+        }
+
+        .filter-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .stock-modal-content {
+            width: 80%;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .inventory-table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+            white-space: nowrap;
+        }
+
+        .stock-modal-content {
+            width: 95%;
+            margin: 5% auto;
+        }
+    }
+</style>
+
+<!-- Admin Dashboard Layout -->
+<div class="admin-dashboard">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <a href="/admin">
+                    <img src="/assets/imgs/theme/logo.png" alt="JaegerKulture" class="logo-img">
+                </a>
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="/admin" class="nav-link">
+                        <i class="material-icons">dashboard</i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/orders" class="nav-link">
+                        <i class="material-icons">shopping_cart</i>
+                        <span>Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/inventory" class="nav-link active">
+                        <i class="material-icons">inventory_2</i>
+                        <span>Inventory</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/products" class="nav-link">
+                        <i class="material-icons">category</i>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/customers" class="nav-link">
+                        <i class="material-icons">people</i>
+                        <span>Customers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/categories" class="nav-link">
+                        <i class="material-icons">folder</i>
+                        <span>Categories</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/coupons" class="nav-link">
+                        <i class="material-icons">local_offer</i>
+                        <span>Coupons</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/reports" class="nav-link">
+                        <i class="material-icons">bar_chart</i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/settings" class="nav-link">
+                        <i class="material-icons">settings</i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-main">
+        <!-- Top Navigation -->
+        <div class="admin-navbar">
+            <div class="navbar-left">
+                <button class="sidebar-toggle">
+                    <i class="material-icons">menu</i>
+                </button>
+                <div class="breadcrumb">
+                    <a href="/admin">Dashboard</a>
+                    <span class="separator">/</span>
+                    <span>Inventory Management</span>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <div class="search-box">
+                    <i class="material-icons">search</i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="notifications">
+                    <i class="material-icons">notifications</i>
+                    <span class="badge">3</span>
+                </div>
+                <div class="admin-profile">
+                    <img src="/assets/imgs/theme/admin-avatar.jpg" alt="Admin" class="avatar">
+                    <div class="profile-info">
+                        <span class="name">Admin User</span>
+                        <span class="role">Administrator</span>
+                    </div>
+                    <i class="material-icons">arrow_drop_down</i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="admin-content">
+            <div class="content-header">
+                <h1>Inventory Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary">
+                        <i class="material-icons">add</i>
+                        Add New Product
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="material-icons">file_download</i>
+                        Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>Inventory Management</h4>
+                        <span class="badge bg-primary">Total Products: 156</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- Inventory Filters -->
+                        <div class="inventory-filters">
+                            <div class="filter-group">
+                                <label class="filter-label">Search</label>
+                                <input type="text" class="filter-input" placeholder="Product Name, SKU...">
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Category</label>
+                                <select class="filter-select">
+                                    <option value="">All Categories</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="clothing">Clothing</option>
+                                    <option value="accessories">Accessories</option>
+                                    <option value="home">Home & Kitchen</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Stock Level</label>
+                                <select class="filter-select">
+                                    <option value="">All Levels</option>
+                                    <option value="out">Out of Stock</option>
+                                    <option value="low">Low Stock</option>
+                                    <option value="medium">Medium Stock</option>
+                                    <option value="good">Good Stock</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Sort By</label>
+                                <select class="filter-select">
+                                    <option value="name-asc">Name (A-Z)</option>
+                                    <option value="name-desc">Name (Z-A)</option>
+                                    <option value="stock-asc">Stock (Low to High)</option>
+                                    <option value="stock-desc">Stock (High to Low)</option>
+                                </select>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="filter-btn search">Search</button>
+                                <button class="filter-btn clear">Clear</button>
+                            </div>
+                        </div>
+
+                        <!-- Inventory Table -->
+                        <div class="table-responsive">
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Category</th>
+                                        <th>SKU</th>
+                                        <th>Stock Level</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Product 1 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="/assets/imgs/shop/product-1.jpg" class="product-image me-3" alt="Product">
+                                                <div>
+                                                    <div class="product-name">Wireless Headphones</div>
+                                                    <div class="product-sku">SKU: WH-1001</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="product-category">Electronics</span></td>
+                                        <td>WH-1001</td>
+                                        <td><span class="stock-level good">125 units</span></td>
+                                        <td class="stock-actions">
+                                            <button class="stock-action-btn add">Add Stock</button>
+                                            <button class="stock-action-btn remove">Remove</button>
+                                            <button class="stock-action-btn history">History</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Product 2 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="/assets/imgs/shop/product-2.jpg" class="product-image me-3" alt="Product">
+                                                <div>
+                                                    <div class="product-name">Smart Watch</div>
+                                                    <div class="product-sku">SKU: SW-2002</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="product-category">Electronics</span></td>
+                                        <td>SW-2002</td>
+                                        <td><span class="stock-level medium">45 units</span></td>
+                                        <td class="stock-actions">
+                                            <button class="stock-action-btn add">Add Stock</button>
+                                            <button class="stock-action-btn remove">Remove</button>
+                                            <button class="stock-action-btn history">History</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Product 3 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="/assets/imgs/shop/product-3.jpg" class="product-image me-3" alt="Product">
+                                                <div>
+                                                    <div class="product-name">Leather Wallet</div>
+                                                    <div class="product-sku">SKU: LW-3003</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="product-category">Accessories</span></td>
+                                        <td>LW-3003</td>
+                                        <td><span class="stock-level low">12 units</span></td>
+                                        <td class="stock-actions">
+                                            <button class="stock-action-btn add">Add Stock</button>
+                                            <button class="stock-action-btn remove">Remove</button>
+                                            <button class="stock-action-btn history">History</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Product 4 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="/assets/imgs/shop/product-4.jpg" class="product-image me-3" alt="Product">
+                                                <div>
+                                                    <div class="product-name">Cotton T-Shirt</div>
+                                                    <div class="product-sku">SKU: CT-4004</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="product-category">Clothing</span></td>
+                                        <td>CT-4004</td>
+                                        <td><span class="stock-level out">0 units</span></td>
+                                        <td class="stock-actions">
+                                            <button class="stock-action-btn add">Add Stock</button>
+                                            <button class="stock-action-btn remove">Remove</button>
+                                            <button class="stock-action-btn history">History</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Product 5 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="/assets/imgs/shop/product-5.jpg" class="product-image me-3" alt="Product">
+                                                <div>
+                                                    <div class="product-name">Coffee Maker</div>
+                                                    <div class="product-sku">SKU: CM-5005</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="product-category">Home & Kitchen</span></td>
+                                        <td>CM-5005</td>
+                                        <td><span class="stock-level good">78 units</span></td>
+                                        <td class="stock-actions">
+                                            <button class="stock-action-btn add">Add Stock</button>
+                                            <button class="stock-action-btn remove">Remove</button>
+                                            <button class="stock-action-btn history">History</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Product 6 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="/assets/imgs/shop/product-6.jpg" class="product-image me-3" alt="Product">
+                                                <div>
+                                                    <div class="product-name">Bluetooth Speaker</div>
+                                                    <div class="product-sku">SKU: BS-6006</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="product-category">Electronics</span></td>
+                                        <td>BS-6006</td>
+                                        <td><span class="stock-level medium">32 units</span></td>
+                                        <td class="stock-actions">
+                                            <button class="stock-action-btn add">Add Stock</button>
+                                            <button class="stock-action-btn remove">Remove</button>
+                                            <button class="stock-action-btn history">History</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Product 7 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="/assets/imgs/shop/product-7.jpg" class="product-image me-3" alt="Product">
+                                                <div>
+                                                    <div class="product-name">Denim Jeans</div>
+                                                    <div class="product-sku">SKU: DJ-7007</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="product-category">Clothing</span></td>
+                                        <td>DJ-7007</td>
+                                        <td><span class="stock-level low">8 units</span></td>
+                                        <td class="stock-actions">
+                                            <button class="stock-action-btn add">Add Stock</button>
+                                            <button class="stock-action-btn remove">Remove</button>
+                                            <button class="stock-action-btn history">History</button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Product 8 -->
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="/assets/imgs/shop/product-8.jpg" class="product-image me-3" alt="Product">
+                                                <div>
+                                                    <div class="product-name">Sunglasses</div>
+                                                    <div class="product-sku">SKU: SG-8008</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="product-category">Accessories</span></td>
+                                        <td>SG-8008</td>
+                                        <td><span class="stock-level good">95 units</span></td>
+                                        <td class="stock-actions">
+                                            <button class="stock-action-btn add">Add Stock</button>
+                                            <button class="stock-action-btn remove">Remove</button>
+                                            <button class="stock-action-btn history">History</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination">
+                            <div class="pagination-item disabled">&laquo;</div>
+                            <div class="pagination-item active">1</div>
+                            <div class="pagination-item">2</div>
+                            <div class="pagination-item">3</div>
+                            <div class="pagination-item">&raquo;</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stock History Modal (Static) -->
+<div class="stock-modal" id="stockHistoryModal" style="display: none;">
+    <div class="stock-modal-content">
+        <div class="stock-modal-header">
+            <div class="stock-modal-title">Stock Movement History</div>
+            <div class="stock-modal-close">&times;</div>
+        </div>
+        <div class="stock-modal-body">
+            <div class="mb-3">
+                <strong>Product:</strong> Wireless Headphones (WH-1001)
+            </div>
+            <div class="table-responsive">
+                <table class="stock-history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Movement</th>
+                            <th>Quantity</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>May 15, 2023</td>
+                            <td><span class="stock-movement in">Stock In</span></td>
+                            <td>+50</td>
+                            <td>Initial stock received</td>
+                        </tr>
+                        <tr>
+                            <td>May 20, 2023</td>
+                            <td><span class="stock-movement out">Stock Out</span></td>
+                            <td>-10</td>
+                            <td>Order fulfillment</td>
+                        </tr>
+                        <tr>
+                            <td>May 25, 2023</td>
+                            <td><span class="stock-movement in">Stock In</span></td>
+                            <td>+30</td>
+                            <td>Restock from supplier</td>
+                        </tr>
+                        <tr>
+                            <td>May 30, 2023</td>
+                            <td><span class="stock-movement out">Stock Out</span></td>
+                            <td>-15</td>
+                            <td>Order fulfillment</td>
+                        </tr>
+                        <tr>
+                            <td>Jun 5, 2023</td>
+                            <td><span class="stock-movement adjustment">Adjustment</span></td>
+                            <td>-5</td>
+                            <td>Damaged items removed</td>
+                        </tr>
+                        <tr>
+                            <td>Jun 10, 2023</td>
+                            <td><span class="stock-movement in">Stock In</span></td>
+                            <td>+70</td>
+                            <td>Bulk order received</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Stock Modal (Static) -->
+<div class="stock-modal" id="addStockModal" style="display: none;">
+    <div class="stock-modal-content">
+        <div class="stock-modal-header">
+            <div class="stock-modal-title">Add Stock</div>
+            <div class="stock-modal-close">&times;</div>
+        </div>
+        <div class="stock-modal-body">
+            <form class="add-stock-form">
+                <div class="form-group">
+                    <label class="form-label">Product</label>
+                    <div>Wireless Headphones (WH-1001)</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Current Stock</label>
+                    <div>125 units</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Quantity to Add</label>
+                    <input type="number" class="form-input" min="1" value="10">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Supplier</label>
+                    <select class="form-input">
+                        <option value="">Select Supplier</option>
+                        <option value="supplier1">Supplier 1</option>
+                        <option value="supplier2">Supplier 2</option>
+                        <option value="supplier3">Supplier 3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Purchase Order Number</label>
+                    <input type="text" class="form-input" placeholder="PO-12345">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-textarea" placeholder="Add any additional notes here..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="form-btn cancel">Cancel</button>
+                    <button type="submit" class="form-btn submit">Add Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Remove Stock Modal (Static) -->
+<div class="stock-modal" id="removeStockModal" style="display: none;">
+    <div class="stock-modal-content">
+        <div class="stock-modal-header">
+            <div class="stock-modal-title">Remove Stock</div>
+            <div class="stock-modal-close">&times;</div>
+        </div>
+        <div class="stock-modal-body">
+            <form class="add-stock-form">
+                <div class="form-group">
+                    <label class="form-label">Product</label>
+                    <div>Wireless Headphones (WH-1001)</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Current Stock</label>
+                    <div>125 units</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Quantity to Remove</label>
+                    <input type="number" class="form-input" min="1" value="5">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reason</label>
+                    <select class="form-input">
+                        <option value="">Select Reason</option>
+                        <option value="damaged">Damaged Items</option>
+                        <option value="expired">Expired Items</option>
+                        <option value="return">Customer Return</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-textarea" placeholder="Add any additional notes here..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="form-btn cancel">Cancel</button>
+                    <button type="submit" class="form-btn submit">Remove Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/adminL/footer.ejs') %> 

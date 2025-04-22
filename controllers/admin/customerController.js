@@ -1,127 +1,33 @@
-// const User = require('../../models/userSchema');  
-
-
-// const customerInfo = async(req,res)=>{
-//     try {
-
-//         let search = "";
-//         if(req.query.search){
-//             search = req.query.search;
-//         }
-//         let page=1;
-//         if(req.query.page){
-//             page=req.query.page
-//         }
-//         const limit = 3
-//         const userData = await User.find({
-//             isAdmin:false,
-//             $or:[
-
-//                 {name:{$regex:".*"+search+".*", $options:"i"}},
-//                 {email:{$regex:".*"+search+".*", $options:"i"}}
-
-//             ],
-//         })
-//         .limit(limit*1)
-//         .skip((page-1)*limit)
-//         .exec();
-
-//         const count = await User.find({
-//             isAdmin:false,
-//             $or:[
-
-//                 {name:{$regex:".*"+search+".*"}},
-//                 {email:{$regex:".*"+search+".*"}}
-
-//             ],            
-            
-//         }).countDocuments();
-
-//         const totalPages = Math.ceil(count / limit);
-
-//         res.render('customers',{data: userData, count, currentPage: page, limit, search, totalPages});
-        
-//     } catch (error) {
-
-//         console.error("Error fetching customer data:",error);
-//         res.status(500).send("Internal Server Error");
-        
-//     }
-// }
-
-// const customerBlocked = async(req,res)=>{
-//     try {
-        
-//         let id = req.query.id;
-//         await User.updateOne({_id:id},{isBlocked:true});
-//         res.redirect("/admin/users")
-
-//     } catch (error) {
-
-//         res.redirect("/pageerror");
-        
-//     }
-// }
-
-// const customerunBlocked = async (req,res)=>{
-// try {
-    
-//     let id = req.query.id;
-//     await User.updateOne({_id:id},{$set:{isBlocked:false}});
-//     res.redirect("/admin/users")
-
-// } catch (error) {
-    
-//     res.redirect("?pageerror");
-// }
-// };
-
-
-// module.exports = {
-
-//     customerInfo,
-//     customerBlocked,
-//     customerunBlocked,
-
-// }
-
 const User = require('../../models/userSchema');  
-
 
 const customerInfo = async(req,res)=>{
     try {
-
         let search = "";
         if(req.query.search){
             search = req.query.search;
         }
-        let page=1;
+        let page = 1;
         if(req.query.page){
-            page=req.query.page
+            page = parseInt(req.query.page);
         }
-        const limit = 3
+        const limit = 3;
         const userData = await User.find({
             isAdmin:false,
             $or:[
-
                 {name:{$regex:".*"+search+".*", $options:"i"}},
                 {email:{$regex:".*"+search+".*", $options:"i"}}
-
             ],
         })
-        .limit(limit*1)
+        .limit(limit)
         .skip((page-1)*limit)
         .exec();
 
         const count = await User.find({
             isAdmin:false,
             $or:[
-
-                {name:{$regex:".*"+search+".*"}},
-                {email:{$regex:".*"+search+".*"}}
-
+                {name:{$regex:".*"+search+".*", $options:"i"}},
+                {email:{$regex:".*"+search+".*", $options:"i"}}
             ],            
-            
         }).countDocuments();
 
         const totalPages = Math.ceil(count / limit);
@@ -129,10 +35,8 @@ const customerInfo = async(req,res)=>{
         res.render('customers',{data: userData, count, currentPage: page, limit, search, totalPages});
         
     } catch (error) {
-
         console.error("Error fetching customer data:",error);
         res.status(500).send("Internal Server Error");
-        
     }
 }
 
@@ -143,6 +47,27 @@ const customerBlocked = async(req,res)=>{
         console.log("Blocking user with ID:", id);
         const result = await User.updateOne({_id:id},{$set:{isBlocked:true}});
         console.log("Update result:", result);
+
+        if (req.app.locals.sessionStore) {
+            req.app.locals.sessionStore.all((error, sessions) => {
+                if (error) {
+                    console.error("Error accessing session store:", error);
+                } else {
+                    // Find and destroy sessions for this user
+                    Object.keys(sessions).forEach(sessionId => {
+                        const session = sessions[sessionId];
+                        if (session.user === id) {
+                            req.app.locals.sessionStore.destroy(sessionId, (err) => {
+                                if (err) console.error("Error destroying session:", err);
+                                else console.log("Session destroyed for blocked user:", id);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        
+
         res.redirect("/admin/users")
 
     } catch (error) {
@@ -176,7 +101,7 @@ const getAllUsers = async(req,res)=>{
             search = req.query.search;
         }
         const page = parseInt(req.params.page) || 1;
-        const limit = 10;
+        const limit = 3;
         const userData = await User.find({
             isAdmin:false,
             $or:[

@@ -1,0 +1,634 @@
+<%- include('../partials/userL/header.ejs') %>
+
+<!-- Add Material Icons font -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+    .breadcrumb a,
+    .breadcrumb span {
+        display: inline-block;
+        margin-right: 5px; /* space after each item */
+    }
+
+    .breadcrumb .separator {
+        margin: 0 8px; /* horizontal space around '>' */
+        color: #999; /* optional: lighter color for separator */
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+        border: 3px solid #3BB77E;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .profile-image-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .profile-image-upload {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #3BB77E;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .profile-image-upload i {
+        color: white;
+        font-size: 18px;
+    }
+
+    .profile-image-upload input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .dropdown{
+        position:relative;
+        display:inline-block;
+    }
+    .dropdown-content{
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+        z-index: 1000;
+        right: 0;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+    }
+    .dropdown-content a:hover{
+        background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content{
+        display:block;
+    }
+    .header{
+        position: relative;
+        z-index: 500;
+    }
+
+    /* Dashboard menu styles */
+    .dashboard-menu .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-menu .nav-link i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    .dashboard-menu .nav-link:hover,
+    .dashboard-menu .nav-link.active {
+        background-color: #f8f9fa;
+        color: #3BB77E;
+    }
+
+    .input-group {
+        position: relative;
+    }
+    .password-toggle {
+        cursor: pointer;
+        background: none;
+        border: 1px solid #ddd;
+        border-left: none;
+    }
+    .password-toggle:hover {
+        background: #f8f9fa;
+    }
+    .input-group input {
+        border-right: none;
+    }
+    .input-group-text {
+        padding: 0.375rem 0.75rem;
+    }
+    /* Add styles for the material icons */
+    .material-icons {
+        font-size: 18px;
+        line-height: 1;
+    }
+    
+    /* Password strength indicator styles */
+    .password-requirements {
+        margin-top: 10px;
+        font-size: 0.8rem;
+    }
+    
+    .requirement {
+        color: #dc3545;
+        transition: color 0.3s ease;
+    }
+    
+    .requirement.met {
+        color: #28a745;
+    }
+    
+    .requirement i {
+        margin-right: 5px;
+        font-size: 14px;
+    }
+    
+    .password-strength-meter {
+        height: 5px;
+        margin-top: 10px;
+        margin-bottom: 15px;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    
+    .strength-meter-fill {
+        height: 100%;
+        width: 0;
+        transition: width 0.3s ease, background-color 0.3s ease;
+        background-color: #dc3545;
+    }
+</style>
+
+<header class="header-area header-style-1 header-height-2">
+    <div class="header-top header-top-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info">
+                        <ul>
+                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-4">
+                    <div class="text-center">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info header-info-right">
+                        <ul>
+                            <li>
+                                <a class="language-dropdown-active" href="#"> 
+                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
+                                </a>
+                                <ul class="language-dropdown">
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                </ul>
+                            </li>
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <div class="dropdown">
+                                    <a href="#" class="sign-in-link"><%= user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/profileinfo">Profile</a>
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="header-wrap">
+                <div class="logo logo-width-1">
+                   <img src="assets/imgs/theme/jaeger.png" alt="logo">
+                </div>
+                <div class="header-right">
+                    <div class="search-style-2">
+                        <form action="/search" method="get">
+                            <input type="text" placeholder="Search for items..." name="query">
+                        </form>
+                    </div>
+                    <div class="header-action-right">
+                        <div class="header-action-2">
+                            <div class="header-action-icon-2">
+                                <a href="/wishlist">
+                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                    <span class="pro-count blue">0</span>
+                                </a>
+                            </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="/cart">
+                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                    <span class="pro-count blue">0</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-bottom header-bottom-bg-color sticky-bar">
+        <div class="container">
+            <div class="header-wrap header-space-between position-relative">
+                <div class="logo logo-width-1 d-block d-lg-none">
+                    <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
+                </div>
+                <div class="header-nav d-none d-lg-flex">
+                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
+                        <nav>
+                            <ul>
+                                <li><a href="/">Home</a></li>
+                                <li><a href="/about">About</a></li>
+                                <li><a href="/shop">Shop</a></li>
+                                <li class="position-static"><a href="/offers">Deals</a>
+                                    <ul class="mega-menu">
+                                    </ul>
+                                </li>
+                                <li><a href="/contact">Contact</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="hotline d-none d-lg-block">
+                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                </div>   
+                <div class="header-action-icon-2 d-block d-lg-none">
+                    <div class="burger-icon burger-icon-white">
+                        <span class="burger-icon-top"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-mid"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-bottom"><span></span><span></span><span></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-header-active mobile-header-wrapper-style perfect-scrollbar">
+    <div class="mobile-header-wrapper-inner">
+        <div class="mobile-header-content-area">
+            <div class="perfect-scroll">
+                <div class="mobile-menu-wrap mobile-header-border">
+                    <nav>
+                        <ul class="mobile-menu font-heading">
+                            <li><a class="active" href="/">Home</a></li>
+                            <li><a href="/about">About</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                            <li><a href="/offers">Deals</a></li>
+                            <li><a href="/contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="mobile-account">
+                    <h6 class="mb-10px">My Account</h6>
+                    <ul class="mobile-menu font-heading">
+                        <li><a href="/profileinfo">Profile</a></li>
+                        <li><a href="/myorders">My Orders</a></li>
+                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/wishlist">Wishlist</a></li>
+                        <li><a href="/wallet">My Wallet</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> Account
+                <span></span> Change Password
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="dashboard-menu">
+                        <ul class="nav flex-column" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profileinfo">
+                                    <i class="fi-rs-user-check"></i> Personal Information
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/myorders">
+                                    <i class="fi-rs-shopping-cart"></i> My Orders
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/addresses">
+                                    <i class="fi-rs-location"></i> My Addresses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wishlist">
+                                    <i class="fi-rs-heart"></i> Wishlist
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wallet">
+                                    <i class="fi-rs-credit-card"></i> My Wallet
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/security">
+                                    <i class="fi-rs-lock"></i> Security Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">
+                                    <i class="fi-rs-exit"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="mb-0">Change Password</h3>
+                        </div>
+                        <div class="card-body">
+                            <% if (typeof message !== 'undefined') { %>
+                                <div class="alert <%= message.includes('success') ? 'alert-success' : 'alert-danger' %>" role="alert">
+                                    <%= message %>
+                                </div>
+                            <% } %>
+                            <form method="post" action="/security" id="changePasswordForm">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Current Password</label>
+                                            <div class="input-group">
+                                                <input type="password" name="currentPassword" class="form-control" required>
+                                                <span class="input-group-text password-toggle" onclick="togglePassword(this)">
+                                                    <i class="material-icons">visibility</i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label">New Password</label>
+                                            <div class="input-group">
+                                                <input type="password" name="newPassword" id="newPassword" class="form-control" required>
+                                                <span class="input-group-text password-toggle" onclick="togglePassword(this)">
+                                                    <i class="material-icons">visibility</i>
+                                                </span>
+                                            </div>
+                                            
+                                            <!-- Password strength meter -->
+                                            <div class="password-strength-meter">
+                                                <div class="strength-meter-fill" id="strength-meter"></div>
+                                            </div>
+                                            
+                                            <!-- Password requirements -->
+                                            <div class="password-requirements">
+                                                <p>Your password must:</p>
+                                                <div class="requirement" id="length-req">
+                                                    <i class="material-icons">close</i> Be at least 8 characters long
+                                                </div>
+                                                <div class="requirement" id="uppercase-req">
+                                                    <i class="material-icons">close</i> Include at least one uppercase letter
+                                                </div>
+                                                <div class="requirement" id="lowercase-req">
+                                                    <i class="material-icons">close</i> Include at least one lowercase letter
+                                                </div>
+                                                <div class="requirement" id="number-req">
+                                                    <i class="material-icons">close</i> Include at least one number
+                                                </div>
+                                                <div class="requirement" id="special-req">
+                                                    <i class="material-icons">close</i> Include at least one special character
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Confirm New Password</label>
+                                            <div class="input-group">
+                                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required>
+                                                <span class="input-group-text password-toggle" onclick="togglePassword(this)">
+                                                    <i class="material-icons">visibility</i>
+                                                </span>
+                                            </div>
+                                            <div id="password-match" class="mt-2" style="font-size: 0.8rem;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-fill-out">Update Password</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('../partials/userL/footer.ejs') %>
+
+<script>
+// Password toggle functionality
+function togglePassword(element) {
+    const input = element.parentElement.querySelector('input');
+    const icon = element.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+    } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+    }
+}
+
+// Password strength checker
+const newPasswordInput = document.getElementById('newPassword');
+const confirmPasswordInput = document.getElementById('confirmPassword');
+const strengthMeter = document.getElementById('strength-meter');
+const lengthReq = document.getElementById('length-req');
+const uppercaseReq = document.getElementById('uppercase-req');
+const lowercaseReq = document.getElementById('lowercase-req');
+const numberReq = document.getElementById('number-req');
+const specialReq = document.getElementById('special-req');
+const passwordMatchDiv = document.getElementById('password-match');
+const submitButton = document.querySelector('button[type="submit"]');
+
+// Set initial state
+let passwordStrength = 0;
+let passwordValid = false;
+
+// Check password strength on input
+newPasswordInput.addEventListener('input', function() {
+    const password = this.value;
+    checkPasswordStrength(password);
+    checkPasswordMatch();
+});
+
+// Check password match on input
+confirmPasswordInput.addEventListener('input', function() {
+    checkPasswordMatch();
+});
+
+// Validate form on submit
+document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+    const newPassword = newPasswordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    
+    // Check if passwords match
+    if (newPassword !== confirmPassword) {
+        e.preventDefault();
+        alert('New password and confirm password do not match!');
+        return;
+    }
+    
+    // Check if password meets all requirements
+    if (!passwordValid) {
+        e.preventDefault();
+        alert('Please ensure your password meets all the requirements.');
+    }
+});
+
+// Check password strength function
+function checkPasswordStrength(password) {
+    // Reset requirements
+    passwordStrength = 0;
+    passwordValid = false;
+    
+    // Check length
+    if (password.length >= 8) {
+        passwordStrength++;
+        updateRequirement(lengthReq, true);
+    } else {
+        updateRequirement(lengthReq, false);
+    }
+    
+    // Check uppercase
+    if (/[A-Z]/.test(password)) {
+        passwordStrength++;
+        updateRequirement(uppercaseReq, true);
+    } else {
+        updateRequirement(uppercaseReq, false);
+    }
+    
+    // Check lowercase
+    if (/[a-z]/.test(password)) {
+        passwordStrength++;
+        updateRequirement(lowercaseReq, true);
+    } else {
+        updateRequirement(lowercaseReq, false);
+    }
+    
+    // Check number
+    if (/\d/.test(password)) {
+        passwordStrength++;
+        updateRequirement(numberReq, true);
+    } else {
+        updateRequirement(numberReq, false);
+    }
+    
+    // Check special character
+    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        passwordStrength++;
+        updateRequirement(specialReq, true);
+    } else {
+        updateRequirement(specialReq, false);
+    }
+    
+    // Check if password meets all requirements
+    passwordValid = passwordStrength === 5;
+    
+    // Update strength meter
+    updateStrengthMeter();
+}
+
+// Update requirement status
+function updateRequirement(element, met) {
+    if (met) {
+        element.classList.add('met');
+        element.querySelector('i').textContent = 'check';
+    } else {
+        element.classList.remove('met');
+        element.querySelector('i').textContent = 'close';
+    }
+}
+
+function updateStrengthMeter() {
+    const percentage = (passwordStrength / 5) * 100;
+    strengthMeter.style.width = percentage + '%';
+    
+    if (percentage <= 20) {
+        strengthMeter.style.backgroundColor = '#dc3545'; // Red
+    } else if (percentage <= 40) {
+        strengthMeter.style.backgroundColor = '#ffc107'; // Yellow
+    } else if (percentage <= 60) {
+        strengthMeter.style.backgroundColor = '#fd7e14'; // Orange
+    } else if (percentage <= 80) {
+        strengthMeter.style.backgroundColor = '#17a2b8'; // Blue
+    } else {
+        strengthMeter.style.backgroundColor = '#28a745'; // Green
+    }
+}
+
+function checkPasswordMatch() {
+    const newPassword = newPasswordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    
+    if (newPassword === '' || confirmPassword === '') {
+        passwordMatchDiv.innerHTML = '';
+        return;
+    }
+    
+    if (newPassword === confirmPassword) {
+        passwordMatchDiv.innerHTML = '<span style="color: #28a745;"><i class="material-icons" style="font-size: 14px; vertical-align: middle;">check_circle</i> Passwords match</span>';
+    } else {
+        passwordMatchDiv.innerHTML = '<span style="color: #dc3545;"><i class="material-icons" style="font-size: 14px; vertical-align: middle;">error</i> Passwords do not match</span>';
+    }
+}
+</script>

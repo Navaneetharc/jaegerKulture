@@ -11,12 +11,21 @@ const userSchema = new Schema({
         required:true,
         unique:true,
     },
+    gender:{
+        type:String,
+        enum:['male', 'female'],
+        default:null
+    },
     phone:{
         type:String,
         required:false,
         unique:true,
         sparse:true,
         default:null
+    },
+    profileImage: {
+        type: String,
+        default: null
     },
     googleId:{
         type:String,
@@ -47,10 +56,7 @@ const userSchema = new Schema({
         type:Number,
         default:0,
     },
-    wishlist:[{
-        type:Schema.Types.ObjectId,
-        ref:"Wishlist"
-    }],
+   
     orderHistory:[{
         type:Schema.Types.ObjectId,
         ref:"Order"
@@ -77,9 +83,7 @@ const userSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref:"Category",
         },
-        anime:{
-            type:String
-        },
+        
         searchOn:{
             type:Date,
             default:Date.now

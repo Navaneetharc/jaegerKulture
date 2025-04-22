@@ -35,7 +35,7 @@ const sendVerificationEmail = async (email, otp) => {
         };
 
         const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent: ", info.messageId);  // ✅ Fixed typo
+        console.log("Email sent: ", info.messageId); 
 
         return true;
     } catch (error) {
@@ -53,8 +53,6 @@ const securePassword = async (password)=>{
         
     }
 }
-
-
 
 const getForgotPassPage = async(req,res)=>{
     try {
@@ -89,11 +87,10 @@ const forgotEmailValid = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 };
+
 const verifyForgotPassOtp = async(req,res)=>{
     try {
-        const enteredOtp = req.body.otp;
-        
-        
+        const enteredOtp = req.body.otp;     
         if (!req.session.userOtp) {
             return res.json({success: false, message: "OTP has expired. Please request a new one"});
         }

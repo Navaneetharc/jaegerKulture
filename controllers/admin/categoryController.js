@@ -48,7 +48,7 @@ const addCategory = async(req,res)=>{
     try {
         console.log("Received category data:", {name, description, Visibility});
 
-        const existingCategory = await Category.findOne({name});
+        const existingCategory = await Category.findOne({name:{$regex:`^${name}$`,$options:"i"}});
         if(existingCategory){
             return res.redirect("/admin/category?error=Category already exists");
         }
@@ -116,35 +116,33 @@ const editCategory = async (req, res) => {
         const id = req.params.id;
         const { categoryName, description } = req.body;
 
-        // Find the category to ensure it exists
+        
         const category = await Category.findById(id);
         if (!category) {
             return res.status(404).json({ error: "Category not found" });
         }
 
-        // Check for duplicate category name (excluding the current category)
         const existingCategory = await Category.findOne({ 
             name: categoryName, 
-            _id: { $ne: id } // Exclude the current category from the check
+            _id: { $ne: id }
         });
         if (existingCategory) {
             return res.status(400).json({ error: "Category exists, please choose another name" });
         }
 
-        // Update the category (PUT replaces the resource)
         category.name = categoryName;
         category.description = description;
-        // Note: If you want to update isListed here, include it in the form and req.body
-
+        
         await category.save();
 
-        // Return a 200 OK status with a redirect (REST-compliant for web apps)
         res.status(200).redirect('/admin/category');
     } catch (error) {
         console.error("Error editing category:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
 module.exports = {
     categoryInfo,
     addCategory,
