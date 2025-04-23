@@ -411,6 +411,31 @@
 }
 
 
+/* default */
+
+.default-badge {
+  background-color: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 12px;
+  margin-left: 8px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.set-default {
+  margin-left: 10px;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.selected {
+  border: 2px solid #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -571,7 +596,8 @@
     </div>
 
     <section class="mt-50 mb-50">
-        <div class="container">
+    <div class="container">
+        <form action="/checkout" class="form" id="checkoutForm" method="POST">
             <div class="row">
                 <div class="col-lg-8">
                     <!-- Shipping Address Section -->
@@ -582,44 +608,51 @@
                             </div>
                             <div class="card-body">
                                 <div class="address-list">
-                                    <% addresses.forEach((addr) => { %>
-                                      <div
-                                        class="address-card <%= addr.isDefault ? 'selected' : '' %>"
-                                        data-id="<%= addr.id %>"
-                                      >
-                                        <!-- hidden radio to capture selection -->
-                                        <input
-                                          type="radio"
-                                          name="selectedAddress"
-                                          value="<%= addr.id %>"
-                                          hidden
-                                          <%= addr.isDefault ? 'checked' : '' %>
-                                        />
-                                  
-                                        <div class="address-name"><%= addr.name %></div>
-                                        <div class="address-details">
-                                          <%= addr.addressLine1 %><br/>
-                                          <% if (addr.addressLine2) { %>
-                                            <%= addr.addressLine2 %><br/>
-                                          <% } %>
-                                          <%= addr.city %>, <%= addr.state %> <%= addr.pincode %><br/>
-                                          <p>Phone: <%= addr.phone %></p>
-                                          <% if (addr.altPhone) { %>
-                                            <p>Alt Phone: <%= addr.altPhone %></p>
-                                          <% } %>
-                                        </div>
-                                        <div class="address-actions">
-                                          <a href="/addresses"><i class="fi-rs-edit"></i> Edit</a>
-                                        </div>
+                                  <% addresses.forEach((addr) => { %>
+                                    <div
+                                      class="address-card <%= addr.isDefault ? 'selected' : '' %>"
+                                      data-id="<%= addr._id %>"
+                                    >
+                                      <!-- hidden radio to capture selection -->
+                                      <input
+                                        type="radio"
+                                        name="selectedAddress"
+                                        value="<%= addr._id %>"
+                                        hidden
+                                        <%= addr.isDefault ? 'checked' : '' %>
+                                      />
+                                      
+                                      <div class="address-name">
+                                        <%= addr.name %>
+                                        <% if (addr.isDefault) { %>
+                                          <span class="default-badge">Default</span>
+                                        <% } %>
                                       </div>
-                                    <% }) %>
-                                  
-                                    <div class="add-address-btn">
-                                      <a href="/addAddresses"><i class="fi-rs-plus"></i> Add New Address</a>
+                                      <div class="address-details">
+                                        <%= addr.addressLine1 %><br/>
+                                        <% if (addr.addressLine2) { %>
+                                          <%= addr.addressLine2 %><br/>
+                                        <% } %>
+                                        <%= addr.city %>, <%= addr.state %> <%= addr.pincode %><br/>
+                                        <p>Phone: <%= addr.phone %></p>
+                                        <% if (addr.altPhone) { %>
+                                          <p>Alt Phone: <%= addr.altPhone %></p>
+                                        <% } %>
+                                      </div>
+                                      <div class="address-actions">
+                                        <a href="/addresses/<%= addr._id %>/edit"><i class="fi-rs-edit"></i> Edit</a>
+                                        <% if (!addr.isDefault) { %>
+                                          <a href="#" class="set-default" data-id="<%= addr._id %>">Set as Default</a>
+                                        <% } %>
+                                      </div>
                                     </div>
-                                  </div>
+                                  <% }) %>
                                   
-                            </div>
+                                  <div class="add-address-btn">
+                                    <a href="/addAddresses"><i class="fi-rs-plus"></i> Add New Address</a>
+                                  </div>
+                                </div>
+                              </div>
                         </div>
                     </div>
                     
@@ -658,7 +691,7 @@
                             <div class="card-body">
                                 <div class="payment-methods">
                                     <!-- Credit Card -->
-                                    <div class="payment-method selected">
+                                    <div class="payment-method">
                                         <div class="payment-method-icon">
                                             <i class="fi-rs-credit-card" style="font-size: 24px; color: #3BB77E;"></i>
                                         </div>
@@ -667,7 +700,7 @@
                                             <div class="payment-method-description">Pay securely with your credit or debit card</div>
                                         </div>
                                         <div class="payment-method-radio">
-                                            <input type="radio" name="payment" checked>
+                                            <input type="radio" name="payment" >
                                         </div>
                                     </div>
                                     
@@ -714,7 +747,7 @@
                                     </div>
                                     
                                     <!-- Cash on Delivery -->
-                                    <div class="payment-method">
+                                    <div class="payment-method selected">
                                         <div class="payment-method-icon">
                                             <i class="fi-rs-money" style="font-size: 24px; color: #3BB77E;"></i>
                                         </div>
@@ -723,7 +756,7 @@
                                             <div class="payment-method-description">Pay with cash upon delivery</div>
                                         </div>
                                         <div class="payment-method-radio">
-                                            <input type="radio" name="payment">
+                                            <input type="radio" name="payment" checked>
                                         </div>
                                     </div>
                                 </div>
@@ -734,7 +767,7 @@
                 
                 <% if (items.length > 0) { %>
                     <% const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0); %>
-                    <% const shipping = 10; %>
+                    <% const shipping = 41; %>
                     <% const tax = subtotal * 0.05; %>
                     <% const total = subtotal + shipping + tax; %>
                 
@@ -763,13 +796,15 @@
                                     <div class="checkout-summary-value total">₹<%= total.toFixed(2) %></div>
                                 </div>
                                 <div class="mt-4">
-                                    <a href="/checkout" class="place-order-btn">Place Order</a>
+                                    <button type="submit" class="place-order-btn">Place Order</button>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 <% } %>
             </div>
+        </form>
         </div>
     </section>
 </main>
@@ -811,6 +846,66 @@ cards.forEach(card => {
         method.querySelector('input[type="radio"]').checked = true;
       });
     });
+
+
+    // default
+
+    // Add this to your client-side JS file
+document.querySelectorAll('.set-default').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const addressId = this.dataset.id;
+    
+    // Create a form to submit
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/addresses/${addressId}/default`;
+    document.body.appendChild(form);
+    form.submit();
+  });
+});
+
+
+// place order
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault(); 
+
+    try {
+            const res = await fetch('/checkout', {
+                method: 'POST',
+                body: new FormData(form)
+            });
+
+            const data = await res.json();
+
+            Swal.fire({
+                icon: res.ok ? "success" : "error",
+                text: data.message || data.error || (res.ok ? "Order placed successfully!" : "Failed to place order"),
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            if (res.ok) {
+                setTimeout(() => {
+                    window.location.href = "/order-success"; // change if your route is different
+                }, 1500); // wait for Swal to finish
+            }
+
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                text: "An error occurred while placing the order.",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    });    
+})
   </script>
   
 

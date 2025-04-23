@@ -82,6 +82,7 @@ router.post('/verify-email-otp', userAuth, accountController.verifyEmailOTP);
 router.get('/myAddresses', userAuth, addressController.getMyAddresses);
 router.get('/addAddresses', userAuth, addressController.getAddMyAddressesPage);
 router.post('/addAddresses',userAuth, addressController.addMyAddresses);
+router.post('/addresses/:addressId/default', userAuth, addressController.setDefaultAddress);
 router.delete('/delete-address/:detailId',userAuth,addressController.deleteAddress);
 router.get('/editAddress', userAuth, addressController.getEditMyAddressPage);
 
@@ -97,6 +98,8 @@ router.patch('/cart/:itemId',userAuth, cartController.updateCartItem);
 // Remove an item from the cart
 router.delete('/cart/remove', userAuth, cartController.removeFromCart);
 router.get('/checkout', userAuth, checkoutController.getCheckoutPage);
+router.post('/checkout', userAuth, checkoutController.placeOrder); 
+router.get('/order-success',userAuth, checkoutController.loadOrderSuccess);
 
 // Security settings
 router.get('/security', userAuth, accountController.getSecurityPage);

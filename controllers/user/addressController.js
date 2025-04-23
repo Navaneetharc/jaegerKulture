@@ -41,6 +41,7 @@ const getMyAddresses = async (req, res) => {
       }
 
       const newIndex = addressDoc.details.length;
+      const isDefault = addressDoc.details.length === 0;
 
     addressDoc.details.push({
         index : newIndex,
@@ -53,7 +54,8 @@ const getMyAddresses = async (req, res) => {
         pincode,
         phone,
         altPhone,
-        landmark
+        landmark,
+        isDefault,
       });
   
   
@@ -66,6 +68,38 @@ const getMyAddresses = async (req, res) => {
       return res.redirect("/myAddresses?error=Internal Server Error");
     }
   };
+
+  // default
+
+  const setDefaultAddress = async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const addressId = req.params.addressId;
+      
+      const addressDoc = await Address.findOne({ userId });
+      if (!addressDoc) return res.status(404).send('Address not found');
+      
+      // Set all addresses to non-default
+      addressDoc.details.forEach(addr => {
+        addr.isDefault = false;
+      });
+      
+      // Find the address we want to set as default
+      const addressToDefault = addressDoc.details.id(addressId);
+      if (!addressToDefault) return res.status(404).send('Address not found');
+      
+      // Set it as default
+      addressToDefault.isDefault = true;
+      
+      await addressDoc.save();
+      
+      return res.redirect('/checkout?success=Default address updated');
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send('Server error');
+    }
+  };
+  // fghjk
 
   const deleteAddress = async (req, res) => {
     try {
@@ -170,5 +204,6 @@ const getMyAddresses = async (req, res) => {
      addMyAddresses,
      getEditMyAddressPage,
      deleteAddress,
+     setDefaultAddress,
 
     };
