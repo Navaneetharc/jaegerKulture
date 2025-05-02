@@ -13,6 +13,8 @@ const cartController = require('../controllers/user/cartController');
 const walletController = require('../controllers/user/walletController');
 const checkoutController = require('../controllers/user/checkoutController');
 const upload = require('../middlewares/multerConfig');
+const invoiceController  = require('../controllers/user/invoiceController');
+
 
 // Error page
 router.get('/pageNotFound', userController.pageNotFound);
@@ -123,6 +125,10 @@ router.post('/wallet/refund',userAuth, walletController.refundMoney);
 // Security settings
 router.get('/security', userAuth, accountController.getSecurityPage);
 router.post('/security', userAuth, accountController.updatePassword);
+
+// invoices
+router.get('/invoice/:orderId',invoiceController.downloadInvoice);
+
 
 module.exports = router;
 
