@@ -252,22 +252,6 @@ const editProfileInfo = async (req, res) => {
 };
 
 
-const getMyOrdersPage = async (req, res) => {
-  try {
-    res.render("myOrders");
-  } catch (error) {
-    res.redirect('/admin/pageerror');
-  }
-};
-
-const getOrderDetails = async (req, res) => {
-  try {
-    res.render('orderDetails');
-  } catch (error) {
-    res.redirect('/admin/pageerror');
-  }
-};
-
 const getSecurityPage = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -398,8 +382,6 @@ module.exports = {
   requestEmailOTP,
   resendEmailOTP,
   verifyEmailOTP,
-  getMyOrdersPage,
-  getOrderDetails,
   getSecurityPage,
   updatePassword,
   renderSecurityPage

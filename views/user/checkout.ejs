@@ -668,7 +668,7 @@
                                     <!-- Product 2 -->
                                     <% items.forEach(item => { %>
                                     <div class="checkout-product">
-                                        <img src="assets/imgs/shop/product-1.jpg" alt="Product" class="checkout-product-image">
+                                        <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" class="checkout-product-image">
                                         <div class="checkout-product-details">
                                             <div class="checkout-product-name"><%= item.name %></div>
                                             <div class="checkout-product-price">₹<%= item.price%></div>

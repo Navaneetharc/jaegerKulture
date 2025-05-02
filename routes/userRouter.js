@@ -6,8 +6,11 @@ const profileController = require('../controllers/user/profileController');
 const { userAuth } = require('../middlewares/auth');
 const productController = require('../controllers/user/productController');
 const accountController = require('../controllers/user/accountController');
+const orderController = require('../controllers/user/orderController');
 const addressController = require('../controllers/user/addressController');
+const wishlistController = require('../controllers/user/wishlistController');
 const cartController = require('../controllers/user/cartController');
+const walletController = require('../controllers/user/walletController');
 const checkoutController = require('../controllers/user/checkoutController');
 const upload = require('../middlewares/multerConfig');
 
@@ -87,8 +90,17 @@ router.delete('/delete-address/:detailId',userAuth,addressController.deleteAddre
 router.get('/editAddress', userAuth, addressController.getEditMyAddressPage);
 
 
-router.get('/myOrders', userAuth, accountController.getMyOrdersPage);
-router.get('/orderDetails', userAuth, accountController.getOrderDetails);
+router.get('/myOrders', userAuth, orderController.getMyOrdersPage);
+router.get('/orderDetails/:id', userAuth, orderController.getOrderDetails);
+router.post('/cancel-order/:id', userAuth, orderController.cancelOrder);
+router.post('/return-order/:id',userAuth, orderController.returnFullOrder);
+router.post('/return-items/:id', userAuth, orderController.returnSelectedItems);
+
+// wishlist
+
+router.get('/wishlist',userAuth, wishlistController.getWishlistPage);
+router.post('/wishlist/add',userAuth, wishlistController.addToWishlist);
+router.post('/wishlist/remove', userAuth, wishlistController.removeFromWishlist);
 
 // Cart & Checkout
 router.get('/cart', userAuth, cartController.getCartPage);
@@ -100,6 +112,13 @@ router.delete('/cart/remove', userAuth, cartController.removeFromCart);
 router.get('/checkout', userAuth, checkoutController.getCheckoutPage);
 router.post('/checkout', userAuth, checkoutController.placeOrder); 
 router.get('/order-success',userAuth, checkoutController.loadOrderSuccess);
+
+// Wallet routes
+router.get('/wallet',userAuth, walletController.getMyWalletPage);
+router.get('/wallet/transactions',userAuth, walletController.getWalletTransactions);
+
+router.post('/wallet/refund',userAuth, walletController.refundMoney);
+
 
 // Security settings
 router.get('/security', userAuth, accountController.getSecurityPage);

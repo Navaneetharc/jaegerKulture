@@ -33,6 +33,11 @@ const orderSchema = new Schema({
             type: Number,
             required: true
         },
+        currentStatus: {
+            type: String,
+            enum: ['Pending', 'Order Placed', 'Order Confirmed', 'Order Shipped', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed', 'Return Requested'],
+            default: 'Pending'
+        },
         variant: {
             size: {
                 type: String,
@@ -48,14 +53,14 @@ const orderSchema = new Schema({
         },
         currentStatus: {
             type: String,
-            enum: ['Pending', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed'],
+            enum: ['Pending', 'Order Placed', 'Order Confirmed', 'Order Shipped', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed', 'Return Requested'],
             default: 'Pending'
         },
         statusHistory: [{
             status: {
                 type: String,
                 required: true,
-                enum: ['Pending', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed']
+                enum: ['Pending', 'Order Placed', 'Order Confirmed', 'Order Shipped', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed', 'Return Requested']
             },
             timestamp: {
                 type: Date,
@@ -91,7 +96,14 @@ address: {
     paymentId: {
         type: String
     },
-
+    walletAmountUsed: {
+        type: Number,
+        default: 0
+    },
+    walletTransactionId: {
+        type: Schema.Types.ObjectId,
+        ref: "Wallet"
+    },
     failureReason: {
         type: String
     },
@@ -117,9 +129,13 @@ address: {
 
     status: {
         type: String,
-        enum: ['Pending', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Returned'],
+        enum: ['Pending', 'Order Placed', 'Order Confirmed', 'Order Shipped', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed', 'Return Requested'],
         default: 'Pending'
+    },
+    cancelReason: {
+        type: String,
     }
+    
 
 }, { timestamps: true });
 

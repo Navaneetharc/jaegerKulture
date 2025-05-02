@@ -1,0 +1,732 @@
+<%- include('../partials/userL/header.ejs') %>
+
+<!-- Add Material Icons font -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+    .breadcrumb a,
+    .breadcrumb span {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .breadcrumb .separator {
+        margin: 0 8px;
+        color: #999;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.25rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .card-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .dropdown{
+        position:relative;
+        display:inline-block;
+    }
+    .dropdown-content{
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
+        z-index: 1000;
+        right: 0;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+    }
+    .dropdown-content a:hover{
+        background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content{
+        display:block;
+    }
+    .header{
+        position: relative;
+        z-index: 500;
+    }
+
+    /* Dashboard menu styles */
+    .dashboard-menu .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-menu .nav-link i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    .dashboard-menu .nav-link:hover,
+    .dashboard-menu .nav-link.active {
+        background-color: #f8f9fa;
+        color: #3BB77E;
+    }
+
+    /* Wallet styles */
+    .wallet-card {
+        background-color: #3BB77E;
+        color: white;
+        border-radius: 12px;
+        padding: 25px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(59, 183, 126, 0.2);
+    }
+
+    .wallet-card::before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .wallet-card::after {
+        content: "";
+        position: absolute;
+        bottom: -40px;
+        left: -40px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+
+    .wallet-balance {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .wallet-label {
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+
+    .wallet-actions {
+        margin-top: 15px;
+    }
+
+    .wallet-actions .btn {
+        margin-right: 10px;
+        padding: 8px 16px;
+        border-radius: 6px;
+    }
+
+    .transaction-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .transaction-card:hover {
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+    }
+
+    .transaction-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .transaction-title {
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .transaction-title i {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    .transaction-body {
+        padding: 1rem;
+    }
+
+    .transaction-amount {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    .transaction-amount.credit {
+        color: #3BB77E;
+    }
+
+    .transaction-amount.debit {
+        color: #dc3545;
+    }
+
+    .transaction-date {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .transaction-details {
+        margin-top: 10px;
+        font-size: 0.95rem;
+    }
+
+    .transaction-filter {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .filter-btn {
+        border: 1px solid #dee2e6;
+        background-color: #fff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background-color: #3BB77E;
+        color: white;
+        border-color: #3BB77E;
+    }
+
+    /* Modal styles */
+    .modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        z-index: 1001;
+        width: 90%;
+        max-width: 500px;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        margin-bottom: 20px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+    }
+</style>
+
+<header class="header-area header-style-1 header-height-2">
+    <div class="header-top header-top-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info">
+                        <ul>
+                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-4">
+                    <div class="text-center">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info header-info-right">
+                        <ul>
+                            <li>
+                                <a class="language-dropdown-active" href="#"> 
+                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
+                                </a>
+                                <ul class="language-dropdown">
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                </ul>
+                            </li>
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <div class="dropdown">
+                                    <a href="#" class="sign-in-link"><%= user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/profileinfo">Profile</a>
+                                        <a href="/logout">Logout</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="header-wrap">
+                <div class="logo logo-width-1">
+                   <img src="assets/imgs/theme/jaeger.png" alt="logo">
+                </div>
+                <div class="header-right">
+                    <div class="search-style-2">
+                        <form action="/search" method="get">
+                            <input type="text" placeholder="Search for items..." name="query">
+                        </form>
+                    </div>
+                    <div class="header-action-right">
+                        <div class="header-action-2">
+                            <div class="header-action-icon-2">
+                                <a href="/wishlist">
+                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                    <span class="pro-count blue">0</span>
+                                </a>
+                            </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="/cart">
+                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                    <span class="pro-count blue">0</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-bottom header-bottom-bg-color sticky-bar">
+        <div class="container">
+            <div class="header-wrap header-space-between position-relative">
+                <div class="logo logo-width-1 d-block d-lg-none">
+                    <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
+                </div>
+                <div class="header-nav d-none d-lg-flex">
+                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
+                        <nav>
+                            <ul>
+                                <li><a href="/">Home</a></li>
+                                <li><a href="/about">About</a></li>
+                                <li><a href="/shop">Shop</a></li>
+                                <li class="position-static"><a href="/offers">Deals</a>
+                                    <ul class="mega-menu">
+                                    </ul>
+                                </li>
+                                <li><a href="/contact">Contact</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="hotline d-none d-lg-block">
+                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                </div>   
+                <div class="header-action-icon-2 d-block d-lg-none">
+                    <div class="burger-icon burger-icon-white">
+                        <span class="burger-icon-top"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-mid"><span></span><span></span><span></span></span>
+                        <span class="burger-icon-bottom"><span></span><span></span><span></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-header-active mobile-header-wrapper-style perfect-scrollbar">
+    <div class="mobile-header-wrapper-inner">
+        <div class="mobile-header-content-area">
+            <div class="perfect-scroll">
+                <div class="mobile-menu-wrap mobile-header-border">
+                    <nav>
+                        <ul class="mobile-menu font-heading">
+                            <li><a class="active" href="/">Home</a></li>
+                            <li><a href="/about">About</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                            <li><a href="/offers">Deals</a></li>
+                            <li><a href="/contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="mobile-account">
+                    <h6 class="mb-10px">My Account</h6>
+                    <ul class="mobile-menu font-heading">
+                        <li><a href="/profileinfo">Profile</a></li>
+                        <li><a href="/myorders">My Orders</a></li>
+                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/wishlist">Wishlist</a></li>
+                        <li><a href="/wallet">My Wallet</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> My Wallet
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="dashboard-menu">
+                        <ul class="nav flex-column" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profileinfo">
+                                    <i class="fi-rs-user-check"></i> Personal Information
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/myorders">
+                                    <i class="fi-rs-shopping-cart"></i> My Orders
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/addresses">
+                                    <i class="fi-rs-marker"></i> My Addresses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wishlist">
+                                    <i class="fi-rs-heart"></i> Wishlist
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/wallet">
+                                    <i class="fi-rs-credit-card"></i> My Wallet
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/notifications">
+                                    <i class="fi-rs-bell"></i> Notifications
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/security">
+                                    <i class="fi-rs-shield-check"></i> Security Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/help">
+                                    <i class="fi-rs-help"></i> Help Center
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">
+                                    <i class="fi-rs-exit"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <!-- Wallet Balance Card -->
+                    <div class="wallet-card">
+                      <div class="wallet-label">Available Balance</div>
+                      <div class="wallet-balance">₹<%= balance.toFixed(2) %></div>
+                      <div class="wallet-actions">
+                        <button class="btn btn-light" id="addMoneyBtn">Add Money</button>
+                        <button class="btn btn-outline-light" id="withdrawBtn">Withdraw</button>
+                      </div>
+                    </div>
+          
+                   <!-- Transaction History -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h3 class="mb-0">Transaction History</h3>
+            </div>
+            <div class="card-body">
+              <!-- Transaction Filters -->
+              <div class="transaction-filter mb-3">
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">Added</button>
+                <button class="filter-btn">Spent</button>
+                <button class="filter-btn">Refunded</button>
+              </div>
+  
+              <% if (transactions && transactions.length > 0) { %>
+                <% transactions.forEach(txn => {
+                     // Determine icon, title, CSS class, and sign
+                     let icon, title, cssClass, sign;
+                     if (txn.entryType === 'CREDIT' && txn.type === 'add_money') {
+                       icon = 'add_circle'; title = 'Money Added'; cssClass = 'credit'; sign = '+';
+                     } else if (txn.entryType === 'CREDIT' && txn.type === 'refund') {
+                       icon = 'replay'; title = 'Refund Received'; cssClass = 'credit'; sign = '+';
+                     } else if (txn.entryType === 'DEBIT' && txn.type === 'product_purchase') {
+                       icon = 'remove_circle'; title = 'Order Payment'; cssClass = 'debit'; sign = '−';
+                     } else {
+                       icon = 'account_balance_wallet';
+                       title = (txn.type || '').replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+                       cssClass = txn.entryType === 'CREDIT' ? 'credit' : 'debit';
+                       sign = txn.entryType === 'CREDIT' ? '+' : '−';
+                     }
+                     // Format date/time
+                     const dt = new Date(txn.createdAt);
+                     const dateStr = dt.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+                     const timeStr = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                 %>
+                  <div class="transaction-card">
+                    <div class="transaction-header d-flex justify-content-between align-items-center">
+                      <h5 class="transaction-title">
+                        <i class="material-icons text-<%= cssClass === 'credit' ? 'success' : 'danger' %>"><%= icon %></i>
+                        <%= title %>
+                      </h5>
+                      <span class="transaction-amount <%= cssClass %>"><%= sign %>₹<%= txn.amount.toFixed(2) %></span>
+                    </div>
+                    <div class="transaction-body">
+                      <div class="transaction-date"><%= dateStr %> • <%= timeStr %></div>
+                      <div class="transaction-details">
+                        <% if (txn.type === 'add_money') { %>
+                          Added via <%= (txn.payment_type || '').toUpperCase() %> (<%= txn.transactionId %>)
+                        <% } else if (txn.type === 'refund') { %>
+                          Refund for Order #<%= txn.orderId %>
+                        <% } else if (txn.type === 'product_purchase') { %>
+                          Payment for Order #<%= txn.orderId %>
+                        <% } else { %>
+                          <%= title %>
+                        <% } %>
+                      </div>
+                      <% if (txn.orderId) { %>
+                        <div class="text-end mt-2">
+                          <a href="/orderDetails?id=<%= txn.orderId %>" class="btn btn-sm btn-outline-primary">View Order</a>
+                        </div>
+                      <% } %>
+                    </div>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <p>No transaction history available.</p>
+              <% } %>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  
+          </main>
+          
+<!-- Add Money Modal -->
+<div class="modal-backdrop" id="modalBackdrop"></div>
+<div class="modal" id="addMoneyModal">
+    <div class="modal-header">
+        <h4>Add Money to Wallet</h4>
+        <button class="modal-close" id="closeAddMoneyModal">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="amount">Amount (₹)</label>
+            <input type="number" id="amount" class="form-control" placeholder="Enter amount" min="100">
+        </div>
+        <div class="form-group">
+            <label>Payment Method</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="upi" value="upi" checked>
+                <label class="form-check-label" for="upi">UPI</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="card">
+                <label class="form-check-label" for="card">Credit/Debit Card</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="netbanking" value="netbanking">
+                <label class="form-check-label" for="netbanking">Net Banking</label>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-light" id="cancelAddMoney">Cancel</button>
+        <button class="btn btn-primary" id="confirmAddMoney">Add Money</button>
+    </div>
+</div>
+
+<!-- Withdraw Money Modal -->
+<div class="modal" id="withdrawModal">
+    <div class="modal-header">
+        <h4>Withdraw Money</h4>
+        <button class="modal-close" id="closeWithdrawModal">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="withdrawAmount">Amount (₹)</label>
+            <input type="number" id="withdrawAmount" class="form-control" placeholder="Enter amount" min="100" max="5250">
+            <small class="text-muted">Available balance: ₹5,250.00</small>
+        </div>
+        <div class="form-group">
+            <label for="accountNumber">Account Number</label>
+            <input type="text" id="accountNumber" class="form-control" placeholder="Enter account number">
+        </div>
+        <div class="form-group">
+            <label for="ifscCode">IFSC Code</label>
+            <input type="text" id="ifscCode" class="form-control" placeholder="Enter IFSC code">
+        </div>
+        <div class="form-group">
+            <label for="accountName">Account Holder Name</label>
+            <input type="text" id="accountName" class="form-control" placeholder="Enter account holder name">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-light" id="cancelWithdraw">Cancel</button>
+        <button class="btn btn-primary" id="confirmWithdraw">Withdraw</button>
+    </div>
+</div>
+
+<%- include('../partials/userL/footer.ejs') %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal handling for Add Money
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const addMoneyModal = document.getElementById('addMoneyModal');
+    const addMoneyBtn = document.getElementById('addMoneyBtn');
+    const closeAddMoneyModal = document.getElementById('closeAddMoneyModal');
+    const cancelAddMoney = document.getElementById('cancelAddMoney');
+    const confirmAddMoney = document.getElementById('confirmAddMoney');
+
+    // Modal handling for Withdraw
+    const withdrawModal = document.getElementById('withdrawModal');
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const closeWithdrawModal = document.getElementById('closeWithdrawModal');
+    const cancelWithdraw = document.getElementById('cancelWithdraw');
+    const confirmWithdraw = document.getElementById('confirmWithdraw');
+
+    // Filter buttons
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    // Add Money Modal Functions
+    addMoneyBtn.addEventListener('click', function() {
+        modalBackdrop.style.display = 'block';
+        addMoneyModal.style.display = 'block';
+    });
+
+    function closeAddModal() {
+        modalBackdrop.style.display = 'none';
+        addMoneyModal.style.display = 'none';
+    }
+
+    closeAddMoneyModal.addEventListener('click', closeAddModal);
+    cancelAddMoney.addEventListener('click', closeAddModal);
+    confirmAddMoney.addEventListener('click', function() {
+        // Add money logic would go here
+        alert('Money added successfully!');
+        closeAddModal();
+    });
+
+    // Withdraw Modal Functions
+    withdrawBtn.addEventListener('click', function() {
+        modalBackdrop.style.display = 'block';
+        withdrawModal.style.display = 'block';
+    });
+
+    function closeWithdrawModalFunc() {
+        modalBackdrop.style.display = 'none';
+        withdrawModal.style.display = 'none';
+    }
+
+    closeWithdrawModal.addEventListener('click', closeWithdrawModalFunc);
+    cancelWithdraw.addEventListener('click', closeWithdrawModalFunc);
+    confirmWithdraw.addEventListener('click', function() {
+        // Withdraw money logic would go here
+        alert('Withdrawal request submitted successfully!');
+        closeWithdrawModalFunc();
+    });
+
+    // Filter button handling
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Filter logic would go here in a real implementation
+            // For this static version, we're just toggling the active state
+        });
+    });
+});
+</script>

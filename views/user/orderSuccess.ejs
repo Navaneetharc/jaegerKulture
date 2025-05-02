@@ -225,7 +225,7 @@
                             <div class="card-body">
                                 <!-- Order Products - Static Example -->
                                 <div class="order-product">
-                                    <img src="assets/imgs/shop/product-1.jpg" alt="Product" class="order-product-image">
+                                    <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" class="order-product-image">
                                     <div class="order-product-details">
                                         <div class="order-product-name"><%= item.product.productName %></div>
                                         <div class="order-product-price">₹<%= item.price %></div>
@@ -269,7 +269,7 @@
                         </div>
                         
                         <div class="action-buttons">
-                            <a href="/myorders" class="action-btn primary-btn">Track Order</a>
+                            <a href="/orderDetails/<%= order._id %>" class="action-btn primary-btn">Track Order</a>
                             <a href="/shop" class="action-btn secondary-btn">Continue Shopping</a>
                         </div>
                     </div>

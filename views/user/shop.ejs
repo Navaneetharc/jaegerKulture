@@ -119,6 +119,26 @@
     .sort-by-dropdown.show + .sort-by-dropdown-wrap i {
         transform: rotate(180deg);
     }
+
+    /* For the "Hot" Badge */
+.hot {
+  background-color: #28a745; /* Green */
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* For the "Out of Stock" Badge */
+.out-of-stock {
+  background-color: #dc3545; /* Red */
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: block;
+}
+
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -181,13 +201,15 @@
                     <div class="header-action-right">
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
-                                <a href="shop-wishlist.html">
+                                <a href="/wishlist">
                                     <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">4</span>
+                                    <span class="pro-count blue">
+                                        <%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %>
+                                    </span>
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="shop-cart.html">
+                                <a class="mini-cart-icon" href="/cart">
                                     <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
                                     <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
                                 </a>
@@ -275,50 +297,69 @@
                         </div>
 
                         <div class="row product-grid-3">
-                            <%for(let i=0;i<products.length;i++){%>
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                            <% for(let i = 0; i < products.length; i++){ %>
+                              <div class="col-lg-4 col-md-4 col-12 col-sm-6">
                                 <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="/productDetails?id=<%= products[i]._id %>">
-
-                                                <img class="default-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%=products[i].productName%>">
-                                                <img class="hover-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%=products[i].productName%>">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <!-- <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-search"></i></a> -->
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
-                                        </div>
+                                  <div class="product-img-action-wrap">
+                                    <div class="product-img product-img-zoom">
+                                      <a href="/productDetails?id=<%= products[i]._id %>">
+                                        <img class="default-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                        <img class="hover-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                      </a>
                                     </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html"><%= products[i].category.name %></a>
-                                        </div>
-                                        <h2><a href=""><%=products[i].productName%></a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>90%</span>
-                                            </span>
-                                        </div>
-                                        <div class="product-price">
-                                            <span>₹<%= products[i].salePrice %></span>
-                                            <span class="old-price">₹<%= products[i].regularPrice %></span>
-                                        </div>
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div>
+                                    <div class="product-action-1">
+                                      <a aria-label="Add To Wishlist" 
+                                         class="action-btn hover-up add-to-wishlist" 
+                                         href="#" 
+                                         data-product-id="<%= products[i]._id %>">
+                                        <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
+                                           <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
+                                             style="fill: red;"
+                                           <% } %>
+                                        ></i>
+                                      </a>
                                     </div>
+                          
+                                    <!-- Badge: Show 'Out of Stock' if all sizes are 0, else show 'Hot' -->
+                                    <% const allSizesOutOfStock = products[i].variant.size.s === 0 && 
+                                                                 products[i].variant.size.m === 0 && 
+                                                                 products[i].variant.size.l === 0 && 
+                                                                 products[i].variant.size.x === 0 && 
+                                                                 products[i].variant.size.xl === 0; %>
+                          
+                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                      <% if (allSizesOutOfStock) { %>
+                                        <!-- Display the 'Out of Stock' badge -->
+                                        <span class="out-of-stock">Out of Stock</span>
+                                      <% } else { %>
+                                        <!-- Display the 'Hot' badge -->
+                                        <span class="hot">Hot</span>
+                                      <% } %>
+                                    </div>
+                                  </div>
+                                  <div class="product-content-wrap">
+                                    <div class="product-category">
+                                      <a href="shop-grid-right.html"><%= products[i].category.name %></a>
+                                    </div>
+                                    <h2><a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].productName %></a></h2>
+                                    <div class="rating-result" title="90%">
+                                      <span>
+                                        <span>90%</span>
+                                      </span>
+                                    </div>
+                                    <div class="product-price">
+                                      <span>₹<%= products[i].salePrice %></span>
+                                      <span class="old-price">₹<%= products[i].regularPrice %></span>
+                                    </div>
+                                    <div class="product-action-1 show">
+                                      <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                    </div>
+                                  </div>
                                 </div>
-                            </div>
-                            <%}%>
-                            
-                        </div>
+                              </div>
+                            <% } %>
+                          </div>
+                          
                         <!--pagination-->
                         <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
                             <nav aria-label="Page navigation example">
@@ -438,6 +479,76 @@
         </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.querySelectorAll('.add-to-wishlist').forEach(button => {
+  button.addEventListener('click', async function (e) {
+    e.preventDefault();
+    const productId = this.getAttribute('data-product-id');
+    const iconElement = this.querySelector('i');
+    const isInWishlist = iconElement.classList.contains('text-danger');
+    
+    try {
+      const endpoint = isInWishlist ? '/wishlist/remove' : '/wishlist/add';
+      
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        if (isInWishlist) {
+          // Remove styling
+          iconElement.classList.remove('text-danger');
+          iconElement.style.fill = '';
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Removed from Wishlist!',
+            text: 'Product has been successfully removed.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        } else {
+          // Add styling
+          iconElement.classList.add('text-danger');
+          iconElement.style.fill = 'red';
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Added to Wishlist!',
+            text: 'Product has been successfully added.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        }
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: data.message || 'Could not update wishlist.'
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Server Error',
+        text: 'Something went wrong. Try again later.'
+      });
+    }
+  });
+});
+      </script>
+      
+
+
 
     <%- include('../partials/userL/footer.ejs') %>
 
@@ -446,7 +557,6 @@
             function handleSearch(form) {
             const searchInput = form.querySelector('input[name="query"]');
             if (!searchInput.value.trim()) {
-                // If search is empty, redirect to shop page without search parameters
                 window.location.href = '/shop';
                 return false;
             }
@@ -457,11 +567,9 @@
         $(document).ready(function() {
             let selectedCategoryId = '<%= selectedCategory %>';
             
-            // Get the current price range from the server if it exists
             const currentMin = '<%= typeof priceRange !== "undefined" && priceRange ? priceRange.min : 0 %>';
             const currentMax = '<%= typeof priceRange !== "undefined" && priceRange ? priceRange.max : 5000 %>';
 
-            // Initialize price slider
             $("#slider-range").slider({
                 range: true,
                 min: 0,
@@ -472,10 +580,8 @@
                 }
             });
 
-            // Set initial value
             $("#amount").val("₹" + currentMin + " - ₹" + currentMax);
 
-            // Handle category selection
             $(".category-link").on('click', function(e) {
                 e.preventDefault();
                 $(".category-link").removeClass('active');
@@ -483,27 +589,22 @@
                 selectedCategoryId = $(this).data('category');
             });
 
-            // Handle filter button click
             $("#applyFilter").on('click', function() {
                 const priceRange = $("#amount").val();
                 let url = '/filter';
                 
-                // Add category parameter if selected
                 if (selectedCategoryId) {
                     url += '?category=' + selectedCategoryId;
                 }
                 
-                // Add price range parameter
                 if (priceRange) {
                     url += (selectedCategoryId ? '&' : '?') + 'price=' + encodeURIComponent(priceRange);
                 }
                 
-                // Add sort parameter if it exists
                 const currentSort = '<%= sortOption %>';
                 if (currentSort) {
                     url += (url.includes('?') ? '&' : '?') + 'sort=' + currentSort;
                 }
-                 // Add search query if it exists
                  const searchQuery = '<%= typeof searchQuery !== "undefined" ? searchQuery : "" %>';
                 if (searchQuery) {
                     url += (url.includes('?') ? '&' : '?') + 'query=' + encodeURIComponent(searchQuery);
@@ -512,12 +613,10 @@
                 window.location.href = url;
             });
 
-            // Sort dropdown functionality
             $('.sort-by-product-wrap').on('click', function() {
                 $('.sort-by-dropdown').toggleClass('show');
             });
 
-            // Close dropdown when clicking outside
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.sort-by-cover').length) {
                     $('.sort-by-dropdown').removeClass('show');

@@ -77,8 +77,13 @@ router.get('/categories/:page?', adminAuth, categoryController.categoryInfo);
 
 
 // order management
-router.get('/orders',orderController.getOrderManagement);
-
+router.get('/orders', adminAuth, orderController.getOrderManagement);
+router.get('/orderDetails', adminAuth, orderController.getOrderDetails);
+router.get('/orderDetails/:id', adminAuth, orderController.getOrderDetails);
+router.post('/order-status', adminAuth, orderController.updateOrderStatus);
+router.get('/orderTrack/:id', adminAuth, orderController.getOrderTracking);
+router.post('/approve-return/:orderId', adminAuth, orderController.approveReturns);
+router.post('/cancel-return/:orderId', adminAuth, orderController.rejectReturns);
 // stock/inventory management
 router.get('/stock',inventoryController.getStockManagement);
   

@@ -1,3 +1,4 @@
+
 <%- include('../partials/userL/header.ejs') %>
 
 <!-- Add Material Icons font -->
@@ -82,141 +83,218 @@
         color: #3BB77E;
     }
 
-    /* Order card styles */
-    .order-card {
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        transition: all 0.3s ease;
+    /* Cart styles */
+    .cart-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 1.5rem;
     }
 
-    .order-card:hover {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-    }
-
-    .order-card .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .cart-table th {
         background-color: #f8f9fa;
-        padding: 1rem;
+        padding: 0.75rem;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 1px solid #dee2e6;
+        text-align: left;
+    }
+
+    .cart-table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
         border-bottom: 1px solid #dee2e6;
     }
 
-    .order-card .card-body {
-        padding: 1rem;
+    .cart-table tr:last-child td {
+        border-bottom: none;
     }
 
-    .order-card .order-id {
-        font-weight: 600;
-        color: #3BB77E;
-    }
-
-    .order-card .order-date {
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    .order-card .order-status {
-        padding: 0.25rem 0.5rem;
+    .cart-item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
         border-radius: 4px;
-        font-size: 0.85rem;
+    }
+
+    .cart-item-details {
+        padding-left: 1rem;
+    }
+
+    .cart-item-name {
         font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        color: #333;
     }
 
-    .order-card .order-status.pending {
-        background-color: #fff3cd;
-        color: #856404;
+    .cart-item-price {
+        color: #3BB77E;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
     }
 
-    .order-card .order-status.processing {
-        background-color: #cce5ff;
-        color: #004085;
+    .cart-item-remove {
+        color: #dc3545;
+        cursor: pointer;
     }
 
-    .order-card .order-status.shipped {
-        background-color: #d4edda;
-        color: #155724;
+    .cart-quantity {
+        display: flex;
+        align-items: center;
+        width: 120px;
     }
 
-    .order-card .order-status.delivered {
-        background-color: #d1e7dd;
-        color: #0f5132;
+    .cart-quantity-btn {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
     }
 
-    .order-card .order-status.cancelled {
-        background-color: #f8d7da;
-        color: #721c24;
+    .cart-quantity-input {
+        width: 60px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        margin: 0 0.5rem;
     }
 
-    .order-card .order-total {
+    .cart-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .cart-summary-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .cart-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .cart-summary-row:last-child {
+        margin-bottom: 0;
+        padding-top: 0.75rem;
+        border-top: 1px solid #dee2e6;
         font-weight: 600;
         font-size: 1.1rem;
     }
 
-    .order-card .order-items {
-        margin-top: 1rem;
-        border-top: 1px solid #dee2e6;
-        padding-top: 1rem;
-    }
-
-    .order-card .order-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .order-card .order-item img {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        margin-right: 1rem;
-        border-radius: 4px;
-    }
-
-    .order-card .order-item-details {
-        flex-grow: 1;
-    }
-
-    .order-card .order-item-name {
-        font-weight: 600;
-    }
-
-    .order-card .order-item-price {
+    .cart-summary-label {
         color: #6c757d;
     }
 
-    .order-card .order-item-quantity {
-        color: #6c757d;
-        font-size: 0.9rem;
+    .cart-summary-value {
+        font-weight: 500;
     }
 
-    .order-card .order-actions {
-        margin-top: 1rem;
+    .cart-actions {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+        margin-top: 1.5rem;
     }
 
-    .order-card .order-actions .btn {
-        margin-left: 0.5rem;
-    }
-
-    .no-orders {
+    .cart-empty {
         text-align: center;
-        padding: 2rem;
-        background-color: #f8f9fa;
-        border-radius: 8px;
+        padding: 3rem 1rem;
     }
 
-    .no-orders i {
-        font-size: 3rem;
+    .cart-empty i {
+        font-size: 4rem;
         color: #dee2e6;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-empty h3 {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .cart-empty p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    .cart-coupon {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .cart-coupon-title {
+        font-weight: 600;
         margin-bottom: 1rem;
     }
 
-    .no-orders p {
+    .cart-coupon-form {
+        display: flex;
+    }
+
+    .cart-coupon-input {
+        flex-grow: 1;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px 0 0 4px;
+    }
+
+    .cart-coupon-btn {
+        padding: 0.5rem 1rem;
+        background-color: #3BB77E;
+        color: white;
+        border: none;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+    }
+
+    .cart-update-btn {
+        padding: 0.5rem 1rem;
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .cart-checkout-btn {
+        padding: 0.75rem 1.5rem;
+        background-color: #3BB77E;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .cart-continue-shopping {
+        color: #3BB77E;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .cart-item-variant {
+        font-size: 0.85rem;
         color: #6c757d;
-        margin-bottom: 1.5rem;
+        margin-top: 0.25rem;
+    }
+
+    .cart-item-variant span {
+        font-weight: 500;
     }
 </style>
 
@@ -289,7 +367,6 @@
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="/cart">
                                     <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue">0</span>
                                 </a>
                             </div>
                         </div>
@@ -364,133 +441,85 @@
             </div>
         </div>
     </div>
-</div>
+</div
+
 
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="/" rel="nofollow">Home</a>
-                <span></span> My Orders
+                <a href="index.html" rel="nofollow">Home</a>
+                <span></span> Shop
+                <span></span> Wishlist
             </div>
         </div>
     </div>
-
     <section class="mt-50 mb-50">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3">
-                    <div class="dashboard-menu">
-                        <ul class="nav flex-column" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profileinfo">
-                                    <i class="fi-rs-user-check"></i> Personal Information
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/myorders">
-                                    <i class="fi-rs-shopping-cart"></i> My Orders
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/addresses">
-                                    <i class="fi-rs-marker"></i> My Addresses
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wishlist">
-                                    <i class="fi-rs-heart"></i> Wishlist
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wallet">
-                                    <i class="fi-rs-credit-card"></i> My Wallet
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/security">
-                                    <i class="fi-rs-shield-check"></i> Security Settings
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/help">
-                                    <i class="fi-rs-help"></i> Help Center
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/logout">
-                                    <i class="fi-rs-exit"></i> Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-9">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h3 class="mb-0">My Orders</h3>
-                        </div>
-                        <div class="card-body">
-                            <!-- Sample Orders - In a real application, these would be dynamically generated -->
-                            <% orders.forEach(order => { %>
-                            <div class="order-card">
-                                <div class="card-header">
-                                    <div>
-                                        <span class="order-id">Order <%= order.orderId %></span>
-                                        <span class="order-date ms-2">Placed on: <%= order.createdAt.toLocaleDateString() %></span>
-                                    </div>
-                                    <span class="order-status 
-                                        <%= order.status === 'Delivered' ? 'delivered' : '' %> 
-                                        <%= order.status === 'Shipped' ? 'shipped' : '' %> 
-                                        <%= order.status === 'Processing' ? 'processing' : '' %> 
-                                        <%= order.status === 'Cancelled' ? 'cancelled' : '' %>">
-                                        <%= order.status || 'Unknown' %>
-                                    </span>
-                                </div>
-                                <div class="card-body">
-                                    <div class="order-items">
-                                        <!-- <div class="order-item">
-                                            <img src="assets/imgs/shop/product-1.jpg" alt="Productytlkjkgtkjjku">
-                                            <div class="order-item-details">
-                                                <div class="order-item-name"><%= order.userId.name %></div>
-                                                <div class="order-item-price">₹<%= order.totalAmount.toFixed(2) %></div>
-                                                <div class="order-item-quantity">Quantity: 1</div>
-                                            </div>
-                                        </div> -->
-
-                                        <% order.orderItems.forEach(item => { %>
-                                        <div class="order-item">
-                                            <img src="/uploads/product-images/<%= item.productImage %>" alt="Product">
-                                            <div class="order-item-details">
-                                                <div class="order-item-name"> <%= item.product?.productName || "Unnamed Product" %></div>
-                                                <div class="order-item-price">₹<%= item.product.salePrice%></div>
-                                                <div class="order-item-size">Size: <%= item?.variant?.size?.toUpperCase?.() || 'N/A' %>
-                                                </div>
-                                                <div class="order-item-quantity">Quantity: <%= item.quantity%></div>
-                                                <!-- <pre><%= JSON.stringify(item, null, 2) %></pre> -->
-
-                                            </div>
-                                        </div>
-                                        <% }) %>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <div class="order-total">Total: ₹<%= order.totalAmount.toFixed(2) %></div>
-                                        <div class="order-actions">
-                                            <a href="/orderDetails/<%= order._id %>" class="btn btn-sm btn-outline-primary">View Details</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <%})%>
-
-                            
-
-                        </div>
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center">
+                            <thead>
+                              <tr class="main-heading">
+                                <th colspan="2">Product</th>
+                                <th>Price</th>
+                                <!-- <th>Stock Status</th> -->
+                                <th>Action <br><span style="color: #3BB77E !important;">(visit product to add to cart!)</span></th>
+                                <th>Remove</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% if (products.length === 0) { %>
+                                <tr>
+                                  <td colspan="6">Your wishlist is empty.</td>
+                                </tr>
+                              <% } else { %>
+                                <% products.forEach(product => { %>
+                                  <tr>
+                                    <td class="image product-thumbnail">
+                                      <img src="/uploads/product-images/<%= product.productImage[0] %>" 
+                                           alt="<%= product.productName %>">
+                                    </td>
+                                    <td class="product-des product-name">
+                                      <h5 class="product-name">
+                                        <a href="/productDetails?id=<%= product._id %>">
+                                          <%= product.productName %>
+                                        </a>
+                                      </h5>
+                                    </td>
+                                    <td class="price">
+                                      ₹<%= product.salePrice.toFixed(2) %>
+                                    </td>
+                                    <!-- <td class="text-center">
+                                      <% if (product.countInStock > 0) { %>
+                                        <span class="color3 font-weight-bold">In Stock</span>
+                                      <% } else { %>
+                                        <span class="text-danger font-weight-bold">Out of stock</span>
+                                      <% } %>
+                                    </td> -->
+                                    <td class="text-right">
+                                        <a href="/productDetails?id=<%= product._id %>">
+                                          <button class="btn btn-sm">
+                                            <i class="fi-rs-shopping-bag-add mr-5"></i>Add to cart
+                                          </button>
+                                        </a>
+                                       
+                                    </td>
+                                    <td class="action">
+                                        <form class="remove-wishlist-form" method="POST" data-product-id="<%= product._id %>">
+                                          <button type="submit" class="btn btn-sm">
+                                            <i class="fi-rs-trash"></i>
+                                          </button>
+                                        </form>
+                                      </td>
+                                      
+                                  </tr>
+                                <% }) %>
+                              <% } %>
+                            </tbody>
+                          </table>
+                          
                     </div>
                 </div>
             </div>
@@ -498,17 +527,65 @@
     </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <%- include('../partials/userL/footer.ejs') %>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Simple JavaScript for basic interactions
-    const viewDetailsButtons = document.querySelectorAll('.btn-outline-primary');
-    viewDetailsButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Add view details logic here
-            console.log('Viewing order details');
+    document.querySelectorAll('.remove-wishlist-form').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+  
+        const productId = form.dataset.productId;
+  
+        const confirmed = await Swal.fire({
+          title: 'Are you sure?',
+          text: "Do you want to remove this from your wishlist?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, remove it!',
+          cancelButtonText: 'Cancel'
         });
+  
+        if (confirmed.isConfirmed) {
+          try {
+            const response = await fetch('/wishlist/remove', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ productId })
+            });
+  
+            const data = await response.json();
+  
+            if (response.status === 200) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Removed!',
+                text: data.message || 'Product removed from wishlist.',
+                timer: 2000,
+                showConfirmButton: false
+              }).then(() => {
+                location.reload(); 
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Something went wrong.'
+              });
+            }
+  
+          } catch (err) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Server Error',
+              text: err.message || 'Internal error occurred.'
+            });
+          }
+        }
+      });
     });
-});
-</script> 
+  </script>
+  

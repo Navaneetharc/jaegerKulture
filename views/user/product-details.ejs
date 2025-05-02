@@ -118,9 +118,9 @@
                         <div class="header-action-right">
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
-                                    <a href="shop-wishlist.html">
+                                    <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue">4</span>
+                                        <span class="pro-count blue"><%= products.length %> products<%= products.length !== 1 ? 's' : '' %></span>
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
@@ -128,7 +128,6 @@
                                         <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
                                         <span id="cart-count" class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
                                     </a>
-
                                 </div>
                             </div>
                         </div>
@@ -196,6 +195,11 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="product-detail accordion-detail">
+                                <%  
+                                const sizes = product.variant.size;
+                                const allSizesOutOfStock = Object.values(sizes).every(stock => stock === 0);
+                                %>
+
                             <div class="row mb-50">
                               <!-- Gallery Section -->
                               <div class="col-md-6 col-sm-12 col-xs-12">
@@ -269,19 +273,28 @@
                                   <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                           
                                   <!-- Add to Cart Form -->
-                                  <form id="add-to-cart-form" action="/cart/add" method="POST">
-                                    <input type="hidden" name="productId" value="<%= product._id %>">
-                                    <input type="hidden" name="price" value="<%= product.salePrice %>">
-                                    <input type="hidden" name="basePrice" value="<%= product.regularPrice %>">
-                                    <input type="hidden" name="productImage" value="<%= product.productImage[0] %>">
-                                    <input type="hidden" name="name" value="<%= product.productName %>">
-                                    <input type="hidden" name="variants[size]" id="selectedSize" value="">
-                          
-                                    
-                                    <div class="product-extra-link2">
-                                      <button type="submit" class="button button-add-to-cart">Add to cart</button>
-                                    </div>
-                                  </form>
+                                  <% if (allSizesOutOfStock) { %>
+                                    <div class="product-extra-link2 d-flex align-items-center gap-2">
+                                        <span class="badge bg-danger">Out of Stock</span><br><br><br>
+                                        <button class="btn btn-danger" disabled>Add to cart</button>
+                                      </div>
+                                      
+                                  <% } else { %>
+                                    <form id="add-to-cart-form" action="/cart/add" method="POST">
+                                      <!-- hidden inputs -->
+                                      <input type="hidden" name="productId" value="<%= product._id %>">
+                                      <input type="hidden" name="price" value="<%= product.salePrice %>">
+                                      <input type="hidden" name="basePrice" value="<%= product.regularPrice %>">
+                                      <input type="hidden" name="productImage" value="<%= product.productImage[0] %>">
+                                      <input type="hidden" name="name" value="<%= product.productName %>">
+                                      <input type="hidden" name="variants[size]" id="selectedSize" value="">
+                            
+                                      <div class="product-extra-link2">
+                                        <button type="submit" class="button button-add-to-cart">Add to cart</button>
+                                      </div>
+                                    </form>
+                                  <% } %>
+                            
                                 </div>
                               </div>
                             </div>
@@ -718,16 +731,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedSizeInput = document.getElementById('selectedSize');
   const cartCountEl       = document.getElementById('cart-count'); 
 
-  // ✅ Handle size selection
+
+  let selectedStock = 0;
+
   sizeOptions.forEach(option => {
-    option.addEventListener('click', e => {
-      e.preventDefault();
-      const size  = option.dataset.size;
-      const stock = option.dataset.stock;
-      selectedSizeInput.value = size;
-      stockCount.textContent  = `${stock} Items in Stock`;
-    });
+  option.addEventListener('click', e => {
+    e.preventDefault();
+    const size  = option.dataset.size;
+    const stock = parseInt(option.dataset.stock);
+
+    selectedSizeInput.value = size;
+    stockCount.textContent  = `${stock} Items in Stock`;
+
+    selectedStock = stock; 
   });
+});
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
@@ -740,6 +758,16 @@ document.addEventListener("DOMContentLoaded", () => {
         timer: 2000,
         showConfirmButton: false
       });
+    }
+
+    
+    if (selectedStock <= 0) { // ✨ ADD THIS BLOCK
+        return Swal.fire({
+        icon: "error",
+        text: "Selected size is out of stock",
+        timer: 2000,
+        showConfirmButton: false
+        });
     }
 
     const payload = {
@@ -761,15 +789,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (!res.ok) {
-        Swal.fire({
+        return Swal.fire({
           icon: "error",
           text: data.error || data.message,
           timer: 2000,
           showConfirmButton: false
         });
-        return;
       }
 
+      // ✅ Update cart count on success
       if (cartCountEl && typeof data.totalCount === 'number') {
         cartCountEl.textContent = `${data.totalCount} Item${data.totalCount !== 1 ? 's' : ''}`;
       }
@@ -794,23 +822,23 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-       document.addEventListener("DOMContentLoaded", function () {
-    const sizeOptions = document.querySelectorAll('.size-option');
-    const stockCount = document.getElementById('stock-count');
-    const selectedSizeInput = document.getElementById('selectedSize');
+//        document.addEventListener("DOMContentLoaded", function () {
+//     const sizeOptions = document.querySelectorAll('.size-option');
+//     const stockCount = document.getElementById('stock-count');
+//     const selectedSizeInput = document.getElementById('selectedSize');
 
-    sizeOptions.forEach(option => {
-      option.addEventListener('click', function(e) {
-        e.preventDefault();
-        const size = this.getAttribute('data-size');
-        const stock = this.getAttribute('data-stock');
+//     sizeOptions.forEach(option => {
+//       option.addEventListener('click', function(e) {
+//         e.preventDefault();
+//         const size = this.getAttribute('data-size');
+//         const stock = this.getAttribute('data-stock');
 
-        selectedSizeInput.value = size;
+//         selectedSizeInput.value = size;
 
-        stockCount.textContent = stock + ' Items in Stock';
-      });
-    });
-  });
+//         stockCount.textContent = stock + ' Items in Stock';
+//       });
+//     });
+//   });
     </script>
     
 

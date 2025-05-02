@@ -2,38 +2,58 @@
 const Cart    = require('../../models/cartSchema');
 const User    = require('../../models/userSchema');
 const Product = require('../../models/productSchema');
+const Wishlist    = require('../../models/wishlistSchema');
+
 
 const addToCart = async (req, res) => {
   try {
     const userId = req.user._id;
     const { productId, quantity = 1, variants = {} } = req.body;
+
+    // 1) Fetch product
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    const validSizes = Object.keys(product.variant.size); 
-    const selectedSize = variants.size;
-
-    if (!selectedSize || !validSizes.includes(selectedSize.toLowerCase())) {
-      return res
-        .status(400)
-        .json({ error: 'Please select a valid product size.' });
+    // 2) Normalize and validate size
+    const normalizedSize = (variants.size || '').toLowerCase();
+    const sizesObj = product.variant.size; // { s: 4, m: 2, ... }
+    if (!sizesObj.hasOwnProperty(normalizedSize)) {
+      return res.status(400).json({ success: false, message: 'Please select a valid product size.' });
     }
-    
 
+    // 3) Get the numeric stock for that size
+    const stockAvailable = sizesObj[normalizedSize]; // e.g. 4
+
+    // 4) Find (or create) user's cart
     let cart = await Cart.findOne({ userId });
-    if (!cart) {
-      cart = new Cart({ userId, items: [] });
-    }
+    if (!cart) cart = new Cart({ userId, items: [] });
 
-    const existing = cart.items.find(i =>
-      i.productId.toString() === productId && i.variants.size === selectedSize
+    // 5) See if cart already has this product+size
+    const existing = cart.items.find(item =>
+      item.productId.toString() === productId &&
+      item.variants.size.toLowerCase() === normalizedSize
     );
 
     if (existing) {
-      existing.quantity += Number(quantity);
+      // 6a) Calculate new total
+      const newQty = existing.quantity + Number(quantity);
+      if (newQty > stockAvailable) {
+        return res.status(400).json({
+          success: false,
+          message: `You already have ${existing.quantity} in your cart. Only ${stockAvailable - existing.quantity} more can be added for size ${normalizedSize.toUpperCase()}.`
+        });
+      }
+      existing.quantity = newQty;
     } else {
+      // 6b) First time adding this size
+      if (Number(quantity) > stockAvailable) {
+        return res.status(400).json({
+          success: false,
+          message: `Only ${stockAvailable} items available for size ${normalizedSize.toUpperCase()}.`
+        });
+      }
       cart.items.push({
         productId,
         name: product.productName,
@@ -41,31 +61,28 @@ const addToCart = async (req, res) => {
         price: product.salePrice,
         basePrice: product.regularPrice,
         productImage: product.productImage[0],
-        variants: { size: selectedSize },
+        variants: { size: normalizedSize },
         category: product.category,
       });
     }
 
+    // 7) Save & respond
     await cart.save();
+    await User.findByIdAndUpdate(userId, { $addToSet: { cart: cart._id } });
 
-    await User.findByIdAndUpdate(userId, {
-      $addToSet: { cart: cart._id }
+    const totalCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
+    return res.status(200).json({
+      success: true,
+      message: 'Added to cart',
+      totalCount
     });
-    console.log("Item:",cart.items);
-     const totalCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
 
-     return res
-       .status(200)
-       .json({
-         message:    "Added to cart",
-         totalCount: cart.items.length  
-       });
-       
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: 'Server error', error: err });
+    return res.status(500).json({ success: false, message: 'Server error', error: err });
   }
 };
+
 
 const getCartPage = async (req, res) => {
   try {

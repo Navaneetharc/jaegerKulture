@@ -2,6 +2,7 @@ const Address = require('../../models/addressSchema');
 const Cart    = require('../../models/cartSchema');
 const Order   = require('../../models/orderSchema');
 const User    = require('../../models/userSchema');
+const Product = require('../../models/productSchema');
 const mongoose = require('mongoose');
 
 
@@ -45,10 +46,9 @@ const getCheckoutPage = async (req, res, next) => {
       }
   
       const addressDetail = addressDoc.details.id(selectedAddress);
-
+  
       console.log('Selected Address:', selectedAddress);
-
-
+  
       if (!addressDetail) {
         return res.redirect('/checkout?error=address-not-found');
       }
@@ -78,12 +78,10 @@ const getCheckoutPage = async (req, res, next) => {
       const tax = subTotal * 0.05;
       const discount = 0;
       const totalAmount = subTotal - discount + deliveryCharge + tax;
-
-                   
   
       // Create the order
       await Order.create({
-        orderId: '#JK'+ Math.floor(Math.random() * 1e9).toString(),
+        orderId: '#JK' + Math.floor(Math.random() * 1e9).toString(),
         userId,
         orderItems,
         address: {
@@ -100,6 +98,36 @@ const getCheckoutPage = async (req, res, next) => {
         status: 'Pending'
       });
   
+      // ✅ Correct stock decrement
+      for (const item of cart.items) {
+        const productId = item.productId._id;
+        const size = item.variants.size.toLowerCase();
+        const quantity = item.quantity;
+      
+        const product = await Product.findById(productId);
+        if (!product) continue;
+      
+        if (
+          product.variant &&
+          product.variant.size &&
+          typeof product.variant.size[size] === 'number'
+        ) {
+          product.variant.size[size] -= quantity;
+          if (product.variant.size[size] < 0) {
+            product.variant.size[size] = 0;
+          }
+      
+          // ✅ Check if all sizes are now 0
+          const allSizesZero = Object.values(product.variant.size).every(qty => qty === 0);
+          if (allSizesZero) {
+            product.status = "Out of stock";
+          }
+      
+          await product.save();
+        }
+      }
+      
+  
       // Clear the cart
       await Cart.deleteOne({ userId });
   
@@ -109,7 +137,7 @@ const getCheckoutPage = async (req, res, next) => {
       next(err);
     }
   };
-
+  
   
   const loadOrderSuccess = async (req, res) => {
     try {

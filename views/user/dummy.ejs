@@ -604,14 +604,12 @@
 
 <!-- The rest of your orderDetails.ejs content should remain unchanged -->
                 <div class="col-lg-9">
-                    <% // Build array of only those items flagged for return %>
-                    <% const itemsRequested = order.orderItems.filter(i => Array.isArray(i.statusHistory) && i.statusHistory.some(h => h.status === 'Return Requested')); %>
-
                     <div class="back-to-orders">
                         <button class="btn btn-sm btn-outline-secondary" onclick="window.location.href='/myorders'">
                             <i class="fi-rs-arrow-left"></i> Back to My Orders
                         </button>
                     </div>
+                    
                     
                     <div class="order-details-card">
                         <div class="card-header">
@@ -808,20 +806,22 @@
                               
                               
                                 <!-- Add this section after the cancel order form -->
-                                <% if (order.status === 'Delivered' && itemsRequested.length === 0) { %>
-                                    <div class="return-section mt-4">
-                                        <h5>Return Options</h5>
-                                        <div class="return-tabs mb-3">
-                                            <ul class="nav nav-tabs" id="returnTabs" role="tablist">
-                                                <li class="nav-role">
-                                                    <a class="nav-link active" id="return-full-tab" data-bs-toggle="tab" href="#return-full" role="tab">Return Entire Order</a>
-                                                </li>
-                                                <li class="nav-role">
-                                                    <a class="nav-link" id="return-items-tab" data-bs-toggle="tab" href="#return-items" role="tab">Return Specific Items</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="tab-content">
+                     <% if (order.status === 'Delivered' && itemsToReturn.length === 0) { %>
+                        <div class="return-section mt-4">
+                            <h5>Return Options</h5>
+                            <br>
+                            <div class="return-tabs mb-3">
+                                <ul class="nav nav-tabs" id="returnTabs" role="tablist">
+                                    <li class="nav-role">
+                                        <a class="nav-link active" id="return-full-tab" data-bs-toggle="tab" href="#return-full" role="tab" aria-controls="return-full" aria-selected="true">Return Entire Order</a>
+                                    </li>
+                                    <li class="nav-role">
+                                        <a class="nav-link" id="return-items-tab" data-bs-toggle="tab" href="#return-items" role="tab" aria-controls="return-items" aria-selected="false">Return Specific Items</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tab-content" id="returnTabsContent">
                                 <!-- Return Entire Order -->
                                 <div class="tab-pane fade show active" id="return-full" role="tabpanel" aria-labelledby="return-full-tab">
                                     <form id="returnFullOrderForm" method="POST" action="/return-order/<%= order._id %>">
@@ -951,57 +951,52 @@
             <% } %>
           
             <!-- Return Item Status Section -->
-            <% if (itemsRequested.length > 0) { %>
-                <div class="return-status-section mt-4 mb-4">
-                  <h5>Your Return Status</h5>
-                  <div class="table-responsive">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Size</th>
-                          <th>Qty</th>
-                          <th>Status</th>
-                          <th>Requested On</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% itemsRequested.forEach(item => {
-                             const reqEntry = item.statusHistory.find(h => h.status === 'Return Requested');
-                        %>
-                        <tr>
-                          <td>
-                            <div class="d-flex align-items-center">
-                              <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" style="width:40px;height:40px;object-fit:cover;margin-right:8px;">
-                              <%= item.product?.productName || 'Unnamed Product' %>
-                            </div>
-                          </td>
-                          <td><%= (item.variant?.size || 'N/A').toUpperCase() %></td>
-                          <td><%= item.quantity %></td>
-                          <td>
-                            <% if (item.currentStatus === 'Returned') { %>
-                              <span class="badge bg-success">Returned & Refunded</span>
-                            <% } else { %>
-                              <span class="badge bg-warning">Return Requested</span>
-                            <% } %>
-                          </td>
-                          <td><%= reqEntry ? new Date(reqEntry.timestamp).toLocaleDateString() : 'N/A' %></td>
-                        </tr>
-                        <% }) %>
-                      </tbody>
+            <% if (order.orderItems.some(item => item.currentStatus === 'Returned' || item.currentStatus === 'Return Requested')) { %>
+            <div class="return-status-section mt-3 mb-4">
+                <h5>Return Status</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Size</th>
+                                <th>Status</th>
+                                <th>Requested On</th>
+                                <th>Last Update</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.orderItems.forEach(item => { 
+                                if (item.currentStatus === 'Returned' || item.currentStatus === 'Return Requested') {
+                                    const requestedDate = item.statusHistory.find(h => h.status === 'Return Requested')?.timestamp;
+                                    const lastUpdateDate = item.statusHistory[item.statusHistory.length - 1]?.timestamp;
+                            %>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
+                                        <span><%= item.product?.productName || "Unnamed Product" %></span>
+                                    </div>
+                                </td>
+                                <td><%= item.variant?.size?.toUpperCase() || 'N/A' %></td>
+                                <td>
+                                    <% if (item.currentStatus === 'Returned') { %>
+                                        <span class="badge bg-success">Returned & Refunded</span>
+                                    <% } else if (item.currentStatus === 'Return Requested') { %>
+                                        <span class="badge bg-warning">Return Requested</span>
+                                    <% } %>
+                                </td>
+                                <td><%= requestedDate ? new Date(requestedDate).toLocaleDateString() : 'N/A' %></td>
+                                <td><%= lastUpdateDate ? new Date(lastUpdateDate).toLocaleDateString() : 'N/A' %></td>
+                            </tr>
+                            <% } }) %>
+                        </tbody>
                     </table>
-                  </div>
-                </div>
-                <% } %>
-                
-                
-
-                        </div>
-                    </div>
-
                 </div>
             </div>
-        </div>
+            <% } %>
+          
+          </div>
     </section>
 </main>
 

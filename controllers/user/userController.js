@@ -1,6 +1,7 @@
 const User = require('../../models/userSchema');
 const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema');
+const Wishlist = require('../../models/wishlistSchema'); 
 const nodemailer = require('nodemailer');
 const env = require('dotenv').config();
 const bcrypt = require('bcrypt');
@@ -36,7 +37,15 @@ const loadHomepage = async (req, res) => {
               .populate('items.productId');
         
             const items = cart?.items || [];
-        
+
+            // Initialize wishlistCount
+            let wishlistCount = 0;
+
+            // Only fetch wishlistCount if user is logged in
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }
             
         // console.log("Found categories:", categories);
 
@@ -58,9 +67,9 @@ const loadHomepage = async (req, res) => {
 
         if(userId){
             const userData = await User.findById(userId);
-            return res.render('home',{user: userData, products: productData,items});
+            return res.render('home',{user: userData, products: productData,items,wishlistCount});
         }else{
-            return res.render("home",{products: productData,items});
+            return res.render("home",{products: productData,items,wishlistCount});
         }
 
     } catch (error) {
@@ -150,6 +159,8 @@ const signup = async(req,res)=>{
         
     }
 }
+
+
 
 const securePassword = async (password)=>{
     try {
@@ -252,10 +263,7 @@ const login = async(req,res)=>{
         if(!passwordMatch){
             return res.render("login",{message:"Incorrect Password"})
         }
-        // console.log("Session Before Setting User:", req.session);
-        req.session.user = findUser._id;
-        // console.log("Session After Setting User:", req.session);
-       
+        req.session.user = findUser._id;       
 
         req.session.save((err) => {
             if (err) {
@@ -265,7 +273,6 @@ const login = async(req,res)=>{
             console.log("Session successfully saved.");
             res.redirect("/");
         });
-
 
     } catch (error) {
         
@@ -328,6 +335,28 @@ const loadShoppingPage = async(req,res)=>{
             query.productName = { $regex: ".*" + searchQuery + ".*", $options: "i" };
         }
         
+        let wishlistItems = [];
+    if (req.session.user) {
+        try {
+            const wishlist = await Wishlist.findOne({ userId: req.session.user });
+            if (wishlist) {
+                wishlistItems = wishlist.products.map(item => item.productId.toString());
+            }
+        } catch (wishlistError) {
+            console.error('Error fetching wishlist:', wishlistError);
+        }
+    }
+
+    // Initialize wishlistCount
+    let wishlistCount = 0;
+
+    // Only fetch wishlistCount if user is logged in
+    if (userId) {
+        const wishlist = await Wishlist.findOne({ userId });
+        wishlistCount = wishlist ? wishlist.products.length : 0;
+    }
+
+
         const products = await Product.find(query)
         .populate('category')
         .sort(sortObject)
@@ -352,6 +381,8 @@ const loadShoppingPage = async(req,res)=>{
             sortOption: sortOption,
             searchQuery: searchQuery,
             items,
+            wishlistItems: wishlistItems || [] ,
+            wishlistCount
         });
 
     } catch (error) {
@@ -418,6 +449,29 @@ const filterProduct = async(req,res)=>{
 
         const categories = await Category.find({ isListed: true });
 
+        let wishlistItems = [];
+    if (req.session.user) {
+        try {
+            const wishlist = await Wishlist.findOne({ userId: req.session.user });
+            if (wishlist) {
+                wishlistItems = wishlist.products.map(item => item.productId.toString());
+            }
+        } catch (wishlistError) {
+            console.error('Error fetching wishlist:', wishlistError);
+        }
+    }
+
+    // Initialize wishlistCount
+    let wishlistCount = 0;
+
+    // Only fetch wishlistCount if user is logged in
+    if (userId) {
+        const wishlist = await Wishlist.findOne({ userId });
+        wishlistCount = wishlist ? wishlist.products.length : 0;
+    }
+
+    
+
         // Pagination
         const page = parseInt(req.query.page) || 1;
         const limit = 6;
@@ -465,6 +519,8 @@ const filterProduct = async(req,res)=>{
             sortOption: sortOption,
             searchQuery: searchQuery,
             items,
+            wishlistItems: wishlistItems || [] ,
+            wishlistCount,
         });
 
     } catch (error) {
@@ -521,6 +577,27 @@ const filterByPrice = async (req, res) => {
         .sort(sortObject)
         .lean();
 
+        let wishlistItems = [];
+    if (req.session.user) {
+        try {
+            const wishlist = await Wishlist.findOne({ userId: req.session.user });
+            if (wishlist) {
+                wishlistItems = wishlist.products.map(item => item.productId.toString());
+            }
+        } catch (wishlistError) {
+            console.error('Error fetching wishlist:', wishlistError);
+        }
+    }
+
+    // Initialize wishlistCount
+    let wishlistCount = 0;
+
+    // Only fetch wishlistCount if user is logged in
+    if (userId) {
+        const wishlist = await Wishlist.findOne({ userId });
+        wishlistCount = wishlist ? wishlist.products.length : 0;
+    }
+
         // Pagination
         const itemsPerPage = 6;
         const currentPage = parseInt(req.query.page) || 1;
@@ -543,6 +620,8 @@ const filterByPrice = async (req, res) => {
             },
             sortOption: sortOption,
             items,
+            wishlistItems: wishlistItems || [] ,
+            wishlistCount,
         });
 
     } catch (error) {
@@ -591,6 +670,27 @@ const searchProducts = async (req, res) => {
           .populate("category")
           .lean();
       }
+
+      let wishlistItems = [];
+      if (req.session.user) {
+          try {
+              const wishlist = await Wishlist.findOne({ userId: req.session.user });
+              if (wishlist) {
+                  wishlistItems = wishlist.products.map(item => item.productId.toString());
+              }
+          } catch (wishlistError) {
+              console.error('Error fetching wishlist:', wishlistError);
+          }
+      }
+
+      // Initialize wishlistCount
+      let wishlistCount = 0;
+
+      // Only fetch wishlistCount if user is logged in
+      if (userId) {
+          const wishlist = await Wishlist.findOne({ userId });
+          wishlistCount = wishlist ? wishlist.products.length : 0;
+      }
   
       if (sortOption === "price_low") {
         products.sort((a, b) => a.salePrice - b.salePrice);
@@ -619,6 +719,8 @@ const searchProducts = async (req, res) => {
         priceRange: req.query.price || null,
         searchQuery: searchTerm,
         items,
+        wishlistItems: wishlistItems || [] ,
+        wishlistCount,
       });
     } catch (error) {
       console.error("Error in searchProducts:", error);
