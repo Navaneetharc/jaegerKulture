@@ -597,232 +597,266 @@
 
     <section class="mt-50 mb-50">
     <div class="container">
-        <form action="/checkout" class="form" id="checkoutForm" method="POST">
+        <form class="form" id="checkoutForm" method="POST" action="/checkout">
             <div class="row">
-                <div class="col-lg-8">
-                    <!-- Shipping Address Section -->
-                    <div class="checkout-section">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Shipping Address</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="address-list">
-                                  <% addresses.forEach((addr) => { %>
-                                    <div
-                                      class="address-card <%= addr.isDefault ? 'selected' : '' %>"
-                                      data-id="<%= addr._id %>"
-                                    >
-                                      <!-- hidden radio to capture selection -->
+              <div class="col-lg-8">
+                <!-- Shipping Address Section -->
+                <div class="checkout-section">
+                  <div class="card">
+                    <div class="card-header"><h4>Shipping Address</h4></div>
+                    <div class="card-body address-list">
+                      <% addresses.forEach(addr => { %>
+                      <label class="address-card <%= addr.isDefault ? 'selected' : '' %>">
+                        <input
+                          type="radio"
+                          name="selectedAddress"
+                          value="<%= addr._id %>"
+                          hidden
+                          <%= addr.isDefault ? 'checked' : '' %>
+                          required
+                        />
+                        <div class="address-name">
+                          <%= addr.name %>
+                          <% if (addr.isDefault) { %>
+                            <span class="default-badge">Default</span>
+                          <% } %>
+                        </div>
+                        <div class="address-details">
+                          <%= addr.addressLine1 %><br />
+                          <% if (addr.addressLine2) { %>
+                            <%= addr.addressLine2 %><br />
+                          <% } %>
+                          <%= addr.city %>, <%= addr.state %> <%= addr.pincode %><br />
+                          Phone: <%= addr.phone %><% if (addr.altPhone) { %> / <%= addr.altPhone %><% } %>
+                        </div>
+                      </label>
+                      <% }) %>
+                      <div class="add-address-btn">
+                        <a href="/addAddresses"><i class="fi-rs-plus"></i> Add New Address</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          
+                <!-- Order Items Section -->
+                <div class="checkout-section">
+                  <div class="card">
+                    <div class="card-header"><h4>Order Items</h4></div>
+                    <div class="card-body checkout-products">
+                      <% items.forEach(item => { %>
+                      <div class="checkout-product">
+                        <img
+                          src="/uploads/product-images/<%= item.productImage %>"
+                          alt="Product"
+                          class="checkout-product-image"
+                        />
+                        <div class="checkout-product-details">
+                          <div class="checkout-product-name"><%= item.name %></div>
+                          <div class="checkout-product-price">₹<%= item.price %></div>
+                        </div>
+                        <div class="checkout-product-quantity">Qty: <%= item.quantity %></div>
+                        <div class="checkout-product-total">₹<%= (item.price * item.quantity).toFixed(2) %></div>
+                      </div>
+                      <% }) %>
+                    </div>
+                  </div>
+                </div>
+          
+                <!-- Payment Methods Section -->
+                <div class="checkout-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Payment Method</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="payment-methods">
+                                <!-- Credit Card -->
+                                <div class="payment-method">
+                                    <div class="payment-method-icon">
+                                        <i class="fi-rs-credit-card" style="font-size: 24px; color: #3BB77E;"></i>
+                                    </div>
+                                    <div class="payment-method-details">
+                                        <div class="payment-method-name">Credit/Debit Card</div>
+                                        <div class="payment-method-description">Pay securely with your credit or debit card</div>
+                                    </div>
+                                    <div class="payment-method-radio">
+                                        <input type="radio" name="payment" >
+                                    </div>
+                                </div>
+                                
+                                <!-- UPI -->
+                                <div class="payment-method">
+                                    <div class="payment-method-icon">
+                                        <img src="https://1.bp.blogspot.com/-mn0etM0nf_c/X943Bn_y0kI/AAAAAAAAOkM/E2RhIJW0TbgzABXbKruLqpzpCfIuyN5JQCLcBGAsYHQ/s808/Picture1.png" alt="UPI">
+                                    </div>
+                                    <div class="payment-method-details">
+                                        <div class="payment-method-name">UPI</div>
+                                        <div class="payment-method-description">Pay using UPI apps like Google Pay, PhonePe, etc.</div>
+                                    </div>
+                                    <div class="payment-method-radio">
+                                        <input type="radio" name="payment">
+                                    </div>
+                                </div>
+                                
+                                <!-- Razorpay -->
+                                <div class="payment-method">
+                                    <div class="payment-method-icon">
+                                      <img src="https://www.yourtechstory.com/wp-content/uploads/2020/01/razorpay.png" alt="Razorpay" style="height: 32px;">
+                                    </div>
+                                    <div class="payment-method-details">
+                                      <div class="payment-method-name">Razorpay (Online)</div>
+                                      <div class="payment-method-description">Pay securely with Razorpay</div>
+                                    </div>
+                                    <div class="payment-method-radio">
                                       <input
                                         type="radio"
-                                        name="selectedAddress"
-                                        value="<%= addr._id %>"
-                                        hidden
-                                        <%= addr.isDefault ? 'checked' : '' %>
+                                        name="paymentMethod"
+                                        value="razorpay"
+                                        required
                                       />
-                                      
-                                      <div class="address-name">
-                                        <%= addr.name %>
-                                        <% if (addr.isDefault) { %>
-                                          <span class="default-badge">Default</span>
-                                        <% } %>
-                                      </div>
-                                      <div class="address-details">
-                                        <%= addr.addressLine1 %><br/>
-                                        <% if (addr.addressLine2) { %>
-                                          <%= addr.addressLine2 %><br/>
-                                        <% } %>
-                                        <%= addr.city %>, <%= addr.state %> <%= addr.pincode %><br/>
-                                        <p>Phone: <%= addr.phone %></p>
-                                        <% if (addr.altPhone) { %>
-                                          <p>Alt Phone: <%= addr.altPhone %></p>
-                                        <% } %>
-                                      </div>
-                                      <div class="address-actions">
-                                        <a href="/addresses/<%= addr._id %>/edit"><i class="fi-rs-edit"></i> Edit</a>
-                                        <% if (!addr.isDefault) { %>
-                                          <a href="#" class="set-default" data-id="<%= addr._id %>">Set as Default</a>
-                                        <% } %>
-                                      </div>
                                     </div>
-                                  <% }) %>
-                                  
-                                  <div class="add-address-btn">
-                                    <a href="/addAddresses"><i class="fi-rs-plus"></i> Add New Address</a>
                                   </div>
-                                </div>
-                              </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Order Items Section -->
-                    <div class="checkout-section">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Order Items</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="checkout-products">
-                                    
-                                    <!-- Product 2 -->
-                                    <% items.forEach(item => { %>
-                                    <div class="checkout-product">
-                                        <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" class="checkout-product-image">
-                                        <div class="checkout-product-details">
-                                            <div class="checkout-product-name"><%= item.name %></div>
-                                            <div class="checkout-product-price">₹<%= item.price%></div>
-                                        </div>
-                                        <div class="checkout-product-quantity">quantity: <%= item.quantity %></div>
-                                        <div class="checkout-product-total">₹<%= (item.price * item.quantity)%></div>
+                                
+                                <!-- PayPal -->
+                                <div class="payment-method">
+                                    <div class="payment-method-icon">
+                                        <img src="https://static.vecteezy.com/system/resources/previews/020/190/502/original/paypal-logo-paypal-logo-free-free-vector.jpg" alt="PayPal">
                                     </div>
-                                    <% }) %>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Payment Methods Section -->
-                    <div class="checkout-section">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Payment Method</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="payment-methods">
-                                    <!-- Credit Card -->
-                                    <div class="payment-method">
-                                        <div class="payment-method-icon">
-                                            <i class="fi-rs-credit-card" style="font-size: 24px; color: #3BB77E;"></i>
-                                        </div>
-                                        <div class="payment-method-details">
-                                            <div class="payment-method-name">Credit/Debit Card</div>
-                                            <div class="payment-method-description">Pay securely with your credit or debit card</div>
-                                        </div>
-                                        <div class="payment-method-radio">
-                                            <input type="radio" name="payment" >
-                                        </div>
+                                    <div class="payment-method-details">
+                                        <div class="payment-method-name">PayPal</div>
+                                        <div class="payment-method-description">Pay securely with PayPal</div>
                                     </div>
-                                    
-                                    <!-- UPI -->
-                                    <div class="payment-method">
-                                        <div class="payment-method-icon">
-                                            <img src="https://1.bp.blogspot.com/-mn0etM0nf_c/X943Bn_y0kI/AAAAAAAAOkM/E2RhIJW0TbgzABXbKruLqpzpCfIuyN5JQCLcBGAsYHQ/s808/Picture1.png" alt="UPI">
-                                        </div>
-                                        <div class="payment-method-details">
-                                            <div class="payment-method-name">UPI</div>
-                                            <div class="payment-method-description">Pay using UPI apps like Google Pay, PhonePe, etc.</div>
-                                        </div>
-                                        <div class="payment-method-radio">
-                                            <input type="radio" name="payment">
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Razorpay -->
-                                    <div class="payment-method">
-                                        <div class="payment-method-icon">
-                                            <img src="https://www.yourtechstory.com/wp-content/uploads/2020/01/razorpay.png" alt="Razorpay">
-                                        </div>
-                                        <div class="payment-method-details">
-                                            <div class="payment-method-name">Razorpay</div>
-                                            <div class="payment-method-description">Pay securely with Razorpay</div>
-                                        </div>
-                                        <div class="payment-method-radio">
-                                            <input type="radio" name="payment">
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- PayPal -->
-                                    <div class="payment-method">
-                                        <div class="payment-method-icon">
-                                            <img src="https://static.vecteezy.com/system/resources/previews/020/190/502/original/paypal-logo-paypal-logo-free-free-vector.jpg" alt="PayPal">
-                                        </div>
-                                        <div class="payment-method-details">
-                                            <div class="payment-method-name">PayPal</div>
-                                            <div class="payment-method-description">Pay securely with PayPal</div>
-                                        </div>
-                                        <div class="payment-method-radio">
-                                            <input type="radio" name="payment">
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Cash on Delivery -->
-                                    <div class="payment-method selected">
-                                        <div class="payment-method-icon">
-                                            <i class="fi-rs-money" style="font-size: 24px; color: #3BB77E;"></i>
-                                        </div>
-                                        <div class="payment-method-details">
-                                            <div class="payment-method-name">Cash on Delivery</div>
-                                            <div class="payment-method-description">Pay with cash upon delivery</div>
-                                        </div>
-                                        <div class="payment-method-radio">
-                                            <input type="radio" name="payment" checked>
-                                        </div>
+                                    <div class="payment-method-radio">
+                                        <input type="radio" name="payment">
                                     </div>
                                 </div>
+                                
+                                <!-- Cash on Delivery -->
+                                <div class="payment-method selected">
+                                    <div class="payment-method-icon">
+                                      <i class="fi-rs-money" style="font-size: 24px; color: #3BB77E;"></i>
+                                    </div>
+                                    <div class="payment-method-details">
+                                      <div class="payment-method-name">Cash on Delivery</div>
+                                      <div class="payment-method-description">Pay with cash upon delivery</div>
+                                    </div>
+                                    <div class="payment-method-radio">
+                                      <input
+                                        type="radio"
+                                        name="paymentMethod"
+                                        value="cod"
+                                        checked
+                                        required
+                                      />
+                                    </div>
+                                  </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <% if (items.length > 0) { %>
-                    <% const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0); %>
-                    <% const shipping = 41; %>
-                    <% const tax = subtotal * 0.05; %>
-                    <% const total = subtotal + shipping + tax; %>
-                
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-body checkout-summary">
-                                <div class="checkout-summary-title">Order Summary</div>
-                                <div class="checkout-summary-row">
-                                    <div class="checkout-summary-label">Subtotal</div>
-                                    <div class="checkout-summary-value subtotal">₹<%= subtotal.toFixed(2) %></div>
-                                </div>
-                                <div class="checkout-summary-row">
-                                    <div class="checkout-summary-label">Shipping</div>
-                                    <div class="checkout-summary-value shipping">₹<%= shipping.toFixed(2) %></div>
-                                </div>
-                                <div class="checkout-summary-row">
-                                    <div class="checkout-summary-label">Tax (5%)</div>
-                                    <div class="checkout-summary-value tax">₹<%= tax.toFixed(2) %></div>
-                                </div>
-                                <div class="checkout-summary-row">
-                                    <div class="checkout-summary-label">Discount</div>
-                                    <div class="checkout-summary-value tax"></div>
-                                </div>
-                                <div class="checkout-summary-row">
-                                    <div class="checkout-summary-label">Total</div>
-                                    <div class="checkout-summary-value total">₹<%= total.toFixed(2) %></div>
-                                </div>
-                                <div class="mt-4">
-                                    <button type="submit" class="place-order-btn">Place Order</button>
-
-                                </div>
-                            </div>
-                        </div>
+                  
+              </div>
+          
+              <!-- Order Summary -->
+              <div class="col-lg-4">
+                <% const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0); %>
+                <% const shipping = 41; %>
+                <% const tax = subtotal * 0.05; %>
+                <% const totalAmount = (subtotal + shipping + tax).toFixed(2); %>
+          
+                <div class="card">
+                  <div class="card-body checkout-summary">
+                    <div class="checkout-summary-title">Order Summary</div>
+                    <div class="checkout-summary-row">
+                      <span>Subtotal</span>
+                      <span>₹<%= subtotal.toFixed(2) %></span>
                     </div>
-                <% } %>
+                    <div class="checkout-summary-row">
+                      <span>Shipping</span>
+                      <span>₹<%= shipping.toFixed(2) %></span>
+                    </div>
+                    <div class="checkout-summary-row">
+                      <span>Tax (5%)</span>
+                      <span>₹<%= tax.toFixed(2) %></span>
+                    </div>
+                    <div class="checkout-summary-row">
+                      <strong>Total</strong>
+                      <strong>₹<%= totalAmount %></strong>
+                    </div>
+                    <button type="submit" class="btn place-order-btn mt-4">Place Order</button>
+                  </div>
+                </div>
+              </div>
             </div>
-        </form>
+          
+            <input type="hidden" id="totalAmount" value="<%= totalAmount %>" />
+          </form>
+          
         </div>
     </section>
 </main>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+
+    if (method === 'razorpay') {
+      // 1. Create Razorpay order
+      const res1 = await fetch('/checkout/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const { order_id, amount } = await res1.json();
+
+      const options = {
+        key: '<%= razorpayKey %>',
+        amount: amount,
+        currency: 'INR',
+        name: 'Your Store',
+        description: 'Order Payment',
+        order_id: order_id,
+        handler: async function(response) {
+          // 3. Verify payment and place order
+          const res2 = await fetch('/checkout/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              selectedAddress
+            })
+          });
+          const data = await res2.json();
+          if (data.success) window.location.href = data.redirect;
+          else window.location.href = '/order-failure';
+        }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    } else {
+      e.target.method = 'POST';
+      e.target.action = '/checkout';
+      e.target.submit();
+    }
+  });
+  </script>
+  
 <script>
 
 
-    // Grab them all
   const cards = document.querySelectorAll('.address-card');
 
 cards.forEach(card => {
   card.addEventListener('click', () => {
-    // ✅ Deselect every card & uncheck its radio
     cards.forEach(c => {
       c.classList.remove('selected');
       c.querySelector('input[type="radio"]').checked = false;
     });
 
-    // 🌟 Select the clicked one
     card.classList.add('selected');
     card.querySelector('input[type="radio"]').checked = true;
   });
@@ -830,18 +864,15 @@ cards.forEach(card => {
 
 
 
-    // Grab all the payment-method blocks
     const methods = document.querySelectorAll('.payment-method');
   
     methods.forEach(method => {
       method.addEventListener('click', () => {
-        // 1️⃣ Deselect all
         methods.forEach(m => {
           m.classList.remove('selected');
           m.querySelector('input[type="radio"]').checked = false;
         });
   
-        // 2️⃣ Select the clicked one
         method.classList.add('selected');
         method.querySelector('input[type="radio"]').checked = true;
       });
@@ -850,13 +881,11 @@ cards.forEach(card => {
 
     // default
 
-    // Add this to your client-side JS file
 document.querySelectorAll('.set-default').forEach(link => {
   link.addEventListener('click', function(e) {
     e.preventDefault();
     const addressId = this.dataset.id;
     
-    // Create a form to submit
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = `/addresses/${addressId}/default`;
@@ -866,7 +895,6 @@ document.querySelectorAll('.set-default').forEach(link => {
 });
 
 
-// place order
 
 document.addEventListener("DOMContentLoaded",()=>{
 
@@ -892,8 +920,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             if (res.ok) {
                 setTimeout(() => {
-                    window.location.href = "/order-success"; // change if your route is different
-                }, 1500); // wait for Swal to finish
+                    window.location.href = "/order-success"; 
+                }, 1500); 
             }
 
         } catch (err) {
@@ -910,3 +938,4 @@ document.addEventListener("DOMContentLoaded",()=>{
   
 
 <%- include('../partials/userL/footer.ejs') %> 
+

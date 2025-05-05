@@ -303,12 +303,19 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <!-- <div class="col-lg-4">
                                                 <div class="mb-4">
                                                     <label class="form-label">Offer Price</label>
                                                     <input placeholder="$" type="number" class="form-control" name="salePrice" required>
                                                 </div>
+                                            </div> -->
+                                            <div class="col-lg-4">
+                                                <div class="mb-4">
+                                                    <label class="form-label">Offer Percentage (%)</label>
+                                                    <input placeholder="e.g. 20" type="number" min="0" max="100" class="form-control" name="productOffer">
+                                                </div>
                                             </div>
+                                        
                                         </div>
                                        
                                     </div>
@@ -404,7 +411,8 @@ function validateForm() {
     const longDescription = document.querySelector('textarea[name="longDescription"]').value.trim();
     const specifications = document.querySelector('textarea[name="specifications"]').value.trim();
     const regularPrice = document.querySelector('input[name="regularPrice"]').value.trim();
-    const salePrice = document.querySelector('input[name="salePrice"]').value.trim();
+    // const salePrice = document.querySelector('input[name="salePrice"]').value.trim();
+    const productOffer = document.querySelector('input[name="productOffer"]').value.trim();
     const category = document.querySelector('select[name="category"]').value;
     const sizeS = document.querySelector('input[name="variant[size][s]"]').value.trim();
     const sizeM = document.querySelector('input[name="variant[size][m]"]').value.trim();
@@ -459,12 +467,16 @@ function validateForm() {
         errors.push('Regular price must be a positive number');
     }
 
-    if (!salePrice) {
-        errors.push('Sale price is required');
-    } else if (isNaN(salePrice) || parseFloat(salePrice) <= 0) {
-        errors.push('Sale price must be a positive number');
-    } else if (parseFloat(salePrice) >= parseFloat(regularPrice)) {
-        errors.push('Sale price must be less than regular price');
+    // if (!salePrice) {
+    //     errors.push('Sale price is required');
+    // } else if (isNaN(salePrice) || parseFloat(salePrice) <= 0) {
+    //     errors.push('Sale price must be a positive number');
+    // } else if (parseFloat(salePrice) >= parseFloat(regularPrice)) {
+    //     errors.push('Sale price must be less than regular price');
+    // }
+
+    if(!productOffer){
+        errors.push('Product offer is required');
     }
 
     // Category validation

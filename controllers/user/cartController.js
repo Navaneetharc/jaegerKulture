@@ -10,34 +10,27 @@ const addToCart = async (req, res) => {
     const userId = req.user._id;
     const { productId, quantity = 1, variants = {} } = req.body;
 
-    // 1) Fetch product
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    // 2) Normalize and validate size
     const normalizedSize = (variants.size || '').toLowerCase();
-    const sizesObj = product.variant.size; // { s: 4, m: 2, ... }
+    const sizesObj = product.variant.size; 
     if (!sizesObj.hasOwnProperty(normalizedSize)) {
       return res.status(400).json({ success: false, message: 'Please select a valid product size.' });
     }
 
-    // 3) Get the numeric stock for that size
-    const stockAvailable = sizesObj[normalizedSize]; // e.g. 4
-
-    // 4) Find (or create) user's cart
+    const stockAvailable = sizesObj[normalizedSize];
     let cart = await Cart.findOne({ userId });
     if (!cart) cart = new Cart({ userId, items: [] });
 
-    // 5) See if cart already has this product+size
     const existing = cart.items.find(item =>
       item.productId.toString() === productId &&
       item.variants.size.toLowerCase() === normalizedSize
     );
 
     if (existing) {
-      // 6a) Calculate new total
       const newQty = existing.quantity + Number(quantity);
       if (newQty > stockAvailable) {
         return res.status(400).json({
@@ -47,7 +40,6 @@ const addToCart = async (req, res) => {
       }
       existing.quantity = newQty;
     } else {
-      // 6b) First time adding this size
       if (Number(quantity) > stockAvailable) {
         return res.status(400).json({
           success: false,
@@ -66,7 +58,6 @@ const addToCart = async (req, res) => {
       });
     }
 
-    // 7) Save & respond
     await cart.save();
     await User.findByIdAndUpdate(userId, { $addToSet: { cart: cart._id } });
 

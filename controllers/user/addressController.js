@@ -1,5 +1,6 @@
 
 const Address = require('../../models/addressSchema'); 
+const mongoose = require('mongoose');
 
 
 const getMyAddresses = async (req, res) => {
@@ -120,8 +121,6 @@ const getMyAddresses = async (req, res) => {
   
 
   const getEditMyAddressPage = async (req, res) => {
-
-
     const userId   = req.user._id;
     const detailId = req.params.detailId;
   
@@ -131,70 +130,89 @@ const getMyAddresses = async (req, res) => {
   
     try {
       const addressDoc = await Address.findOne({ userId });
+      if (!addressDoc) return res.status(404).send('Address document not found');
   
-      if (!addressDoc) {
-        return res.status(404).send('Address document not found');
-      }
-
       const addressDetail = addressDoc.details.id(detailId);
-  
-      if (!addressDetail) {
-        return res.status(404).send('Address not found');
-      }
+      if (!addressDetail) return res.status(404).send('Address not found');
   
       return res.render('editAddresses', {
         address: addressDetail,
-        addressId: detailId
+        detailId
       });
     } catch (error) {
       console.error('Error in getEditMyAddressPage:', error);
       return res.redirect('/pageerror');
     }
   };
-
-  const editMyAddresses = async (req,res) => {
-    try {
-
-        const userId   = req.user._id;
-        const detailId = req.params.detailId;
-        const { addressType, name, addressLine1, addressLine2, city, state, pincode, phone, altPhone, landmark } = req.body;
-        
-      
-    } catch (error) {
-      
-    }
-  }
   
-  const editCategory = async (req, res) => {
+  // **NEW**: Update a specific address in-place
+  const editMyAddresses = async (req, res) => {
     try {
-        const id = req.params.id;
-        const { categoryName, description } = req.body;
-
-        
-        const category = await Category.findById(id);
-        if (!category) {
-            return res.status(404).json({ error: "Category not found" });
-        }
-
-        const existingCategory = await Category.findOne({ 
-            name: categoryName, 
-            _id: { $ne: id }
-        });
-        if (existingCategory) {
-            return res.status(400).json({ error: "Category exists, please choose another name" });
-        }
-
-        category.name = categoryName;
-        category.description = description;
-        
-        await category.save();
-
-        res.status(200).redirect('/admin/category');
+      const userId   = req.user._id;
+      const detailId = req.params.detailId;
+  
+      // 1) Grab the updated sub‑document from the nested form
+      const updated = Array.isArray(req.body.details)
+        ? req.body.details[0]
+        : {};
+  
+      // 2) Destructure your fields out of it
+      const {
+        addressType,
+        name,
+        addressLine1,
+        addressLine2,
+        city,
+        state,
+        pincode,
+        phone,
+        altPhone,
+        landmark
+      } = updated;
+  
+      // 3) Was “Set as default” checked?
+      const makeDefault = req.body.defaultAddress === 'on';
+  
+      // 4) Fetch your parent doc
+      const addressDoc = await Address.findOne({ userId });
+      if (!addressDoc) {
+        return res.redirect('/myAddresses?error=Address not found');
+      }
+  
+      // 5) Find the exact sub‑document
+      const addressDetail = addressDoc.details.id(detailId);
+      if (!addressDetail) {
+        return res.redirect('/myAddresses?error=Address not found');
+      }
+  
+      // 6) Overwrite the fields
+      addressDetail.name         = name;
+      addressDetail.phone        = phone;
+      addressDetail.altPhone     = altPhone;
+      addressDetail.landmark     = landmark;
+      addressDetail.addressLine1 = addressLine1;
+      addressDetail.addressLine2 = addressLine2;
+      addressDetail.city         = city;
+      addressDetail.state        = state;
+      addressDetail.pincode      = pincode;
+      addressDetail.addressType  = addressType;
+  
+      // 7) Handle the default‑address checkbox
+      if (makeDefault) {
+        addressDoc.details.forEach(a => (a.isDefault = false));
+        addressDetail.isDefault = true;
+      }
+  
+      // 8) Save & redirect
+      await addressDoc.save();
+      return res.redirect('/myAddresses?success=Address updated');
     } catch (error) {
-        console.error("Error editing category:", error);
-        res.status(500).json({ error: "Internal server error" });
+      console.error('Error editing address:', error);
+      return res.redirect('/myAddresses?error=Internal Server Error');
     }
-};
+  };
+  
+  
   
 
   module.exports = {
@@ -203,6 +221,7 @@ const getMyAddresses = async (req, res) => {
      getAddMyAddressesPage, 
      addMyAddresses,
      getEditMyAddressPage,
+     editMyAddresses,
      deleteAddress,
      setDefaultAddress,
 

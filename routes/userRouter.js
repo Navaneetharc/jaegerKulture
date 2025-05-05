@@ -89,7 +89,16 @@ router.get('/addAddresses', userAuth, addressController.getAddMyAddressesPage);
 router.post('/addAddresses',userAuth, addressController.addMyAddresses);
 router.post('/addresses/:addressId/default', userAuth, addressController.setDefaultAddress);
 router.delete('/delete-address/:detailId',userAuth,addressController.deleteAddress);
-router.get('/editAddress', userAuth, addressController.getEditMyAddressPage);
+router.get('/myAddresses/edit/:detailId',userAuth,addressController.getEditMyAddressPage);
+router.post('/myAddresses/edit/:detailId', userAuth, addressController.editMyAddresses);
+router.post('/myAddresses/edit/:detailId', userAuth, addressController.editMyAddresses);
+router.post('/save-address/:detailId', userAuth, addressController.editMyAddresses);
+  
+   
+  
+  
+  
+
 
 
 router.get('/myOrders', userAuth, orderController.getMyOrdersPage);
@@ -109,16 +118,23 @@ router.get('/cart', userAuth, cartController.getCartPage);
 router.post('/cart/add', userAuth, cartController.addToCart);
 router.put('/cart', userAuth, cartController.updateCart);
 router.patch('/cart/:itemId',userAuth, cartController.updateCartItem);
+
 // Remove an item from the cart
 router.delete('/cart/remove', userAuth, cartController.removeFromCart);
+
+// checout routes
 router.get('/checkout', userAuth, checkoutController.getCheckoutPage);
 router.post('/checkout', userAuth, checkoutController.placeOrder); 
+// razorpay
+router.post('/checkout/create-order', userAuth, checkoutController.createRazorPay);
+router.post('/checkout/verify', userAuth, checkoutController.verifyRazorpayPayment);
+// order success & failure routes
 router.get('/order-success',userAuth, checkoutController.loadOrderSuccess);
+router.get('/order-failure', userAuth,checkoutController.loadOrderFailurePage);
 
 // Wallet routes
 router.get('/wallet',userAuth, walletController.getMyWalletPage);
 router.get('/wallet/transactions',userAuth, walletController.getWalletTransactions);
-
 router.post('/wallet/refund',userAuth, walletController.refundMoney);
 
 

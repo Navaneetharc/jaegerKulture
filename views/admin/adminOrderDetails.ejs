@@ -241,40 +241,47 @@
                   <div class="row">
                       <div class="col-lg-7">
                           <div class="table-responsive">
-                              <table class="table">
-                                  <thead>
-                                      <tr>
-                                          <th width="40%">Product</th>
-                                          <th width="20%">Unit Price</th>
-                                          <th width="20%">Quantity</th>
-                                          <th width="20%" class="text-end">Total</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      <% order.orderItems.forEach(item => { %>
-                                          <tr>
-                                              <td>
-                                                  <a class="itemside" href="#">
-                                                      <div class="left">
-                                                          <img src="/Uploads/product-images/<%= item.productImage %>" width="40" height="40" class="img-xs" alt="Item">
-                                                      </div>
-                                                      <div class="info">
-                                                          <%= item.product?.productName || "Unnamed Product" %><br>
-                                                          <% if (item.variant && item.variant.size) { %>
-                                                              Size: <%= (item.variant.size).toUpperCase() %>
-                                                          <% } else { %>
-                                                              Size: Not specified
-                                                          <% } %>
-                                                      </div>
-                                                  </a>
-                                              </td>
-                                              <td>₹<%= item.product.salePrice %> </td>
-                                              <td><%= item.quantity %></td>
-                                              <td class="text-end">₹<%= (item.product.salePrice) * item.quantity %></td>
-                                          </tr>
-                                      <% }) %>
-                                  </tbody>
+                            <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th width="40%">Product</th>
+                                    <th width="20%">Unit Price</th>
+                                    <th width="20%">Quantity</th>
+                                    <th width="20%" class="text-end">Total</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <% order.orderItems.forEach(item => { %>
+                                    <tr>
+                                      <td>
+                                        <a class="itemside" href="#">
+                                          <div class="left">
+                                            <img src="/Uploads/product-images/<%= item.productImage %>" width="40" height="40" class="img-xs" alt="Item">
+                                          </div>
+                                          <div class="info">
+                                            <%= item.product?.productName || "Unnamed Product" %><br>
+                                            <% if (item.variant && item.variant.size) { %>
+                                              Size: <%= (item.variant.size).toUpperCase() %><br>
+                                            <% } else { %>
+                                              Size: Not specified<br>
+                                            <% } %>
+                              
+                                            <% if (item.currentStatus === 'Return Requested') { %>
+                                              <span class="badge bg-warning text-dark">Return Requested</span>
+                                            <% } else if (item.currentStatus === 'Returned') { %>
+                                              <span class="badge bg-success">Returned & Refunded</span>
+                                            <% } %>
+                                          </div>
+                                        </a>
+                                      </td>
+                                      <td>₹<%= item.product.salePrice %> </td>
+                                      <td><%= item.quantity %></td>
+                                      <td class="text-end">₹<%= (item.product.salePrice) * item.quantity %></td>
+                                    </tr>
+                                  <% }) %>
+                                </tbody>
                               </table>
+                              
                           </div>
       
                           <a 
@@ -319,8 +326,8 @@
                                               <option value="Order Confirmed" <%= order.status === 'Order Confirmed' ? 'selected' : '' %>>Order Confirmed</option>
                                               <option value="Order Shipped" <%= order.status === 'Order Shipped' ? 'selected' : '' %>>Order Shipped</option>
                                               <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                              <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
-                                              <option value="Payment Failed" <%= order.status === 'Payment Failed' ? 'selected' : '' %>>Payment Failed</option>
+                                              <!-- <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                              <option value="Payment Failed" <%= order.status === 'Payment Failed' ? 'selected' : '' %>>Payment Failed</option> -->
                                           </select>
                                       </div>
                                       <button type="submit" class="btn btn-primary">Update Status</button>
@@ -332,7 +339,6 @@
               </div> <!-- card-body -->
           </div> <!-- card -->
       
-          <!-- Return Request Modal -->
           <!-- Return Request Modal -->
 <% if (order.status === 'Delivered' && order.returnRequest && order.returnRequest.status === 'Pending') { %>
     <!-- Trigger for Return Request Modal -->

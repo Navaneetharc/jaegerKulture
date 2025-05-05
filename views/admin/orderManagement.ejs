@@ -11,7 +11,7 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
@@ -26,7 +26,7 @@
                         <span class="text">Products</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
                     </a>                    
@@ -93,12 +93,7 @@
                         <input list="search_terms" type="text" class="form-control" placeholder="Search term">
                         <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
                     </div>
-                    <datalist id="search_terms">
-                        <option value="Products">
-                        <option value="New orders">
-                        <option value="Apple iphone">
-                        <option value="Ahmed Hassan">
-                    </datalist>
+                    
                 </form>
             </div>
             <div class="col-nav">
@@ -153,9 +148,17 @@
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control">
-                        </div>
+                        <form method="GET" action="<%= baseUrl %>" class="d-flex col-lg-4 col-md-6 me-auto">
+                            <input
+                              type="text"
+                              name="search"
+                              placeholder="Search by Order ID, Name, or Email"
+                              class="form-control me-2"
+                              value="<%= typeof search !== 'undefined' ? search : '' %>"
+                            />
+                            
+                          </form>
+                          
                         
                     </div>
                 </header> <!-- card-header end// -->
@@ -215,18 +218,40 @@
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
+            <div class="pagination-area mt-4">
+                <nav aria-label="Page navigation">
+                  <ul class="pagination justify-content-center">
+              
+                    <% if (currentPage > 1) { %>
+                      <li class="page-item">
+                        <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage - 1 %>">
+                          <i class="fi-rs-angle-double-small-left"></i>
+                        </a>
+                      </li>
+                    <% } %>
+              
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                      <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="<%= baseUrl %>?page=<%= i %>"><%= i %></a>
+                      </li>
+                    <% } %>
+              
+                    <% if (currentPage < totalPages) { %>
+                      <li class="page-item">
+                        <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage + 1 %>">
+                          <i class="fi-rs-angle-double-small-right"></i>
+                        </a>
+                      </li>
+                    <% } %>
+              
+                  </ul>
                 </nav>
-            </div>
+              </div>
+              
+              
+              
+              
+              
         </section>
         
         <footer class="main-footer font-xs">

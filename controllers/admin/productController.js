@@ -4,6 +4,7 @@ const User = require("../../models/userSchema");
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
+const { kMaxLength } = require("buffer");
 
 const getProductAddPage = async (req,res)=>{
     try {       
@@ -41,39 +42,37 @@ const addProducts = async (req,res)=>{
             validationErrors.push('Regular price must be a positive number');
         }
 
-        if (!products.salePrice || isNaN(products.salePrice) || parseFloat(products.salePrice) <= 0) {
-            validationErrors.push('Sale price must be a positive number');
-        } else if (parseFloat(products.salePrice) >= parseFloat(products.regularPrice)) {
-            validationErrors.push('Sale price must be less than regular price');
+       
+        if (!products.productOffer || products.productOffer < 0 || products.productOffer > 100) {
+            validationErrors.push('Offer percentage must be between 0 and 100');
         }
+        
 
         if (!products.category) {
             validationErrors.push('Category is required');
-        }
+        }       
 
-        const sizes = [
-            products.variant?.size?.s,
-            products.variant?.size?.m,
-            products.variant?.size?.l,
-            products.variant?.size?.x,
-            products.variant?.size?.xl
-        ];
-        const sizeLabels = ['S', 'M', 'L', 'X', 'XL'];
-        let totalStock = 0;
 
-        sizes.forEach((size, index) => {
-            if (!size && size !== '') {
-                if (isNaN(size) || parseInt(size) < 0) {
-                    validationErrors.push(`Size ${sizeLabels[index]} must be a non-negative number`);
+        const { s = '', m = '', l = '', x = '', xl = '' } = products.variant?.size || {};
+            const sizeInputs = [s, m, l, x, xl];
+            const sizeLabels = ['S', 'M', 'L', 'X', 'XL'];
+
+            let totalStock = 0;
+
+            sizeInputs.forEach((rawQty, idx) => {
+                const qty = rawQty === '' ? 0 : parseInt(rawQty, 10);
+
+                if (isNaN(qty) || qty < 0) {
+                    validationErrors.push(`Size ${sizeLabels[idx]} must be a non-negative number`);
                 } else {
-                    totalStock += parseInt(size);
+                    totalStock += qty;
                 }
-            }
-        });
+            });
 
-        if (totalStock === 0) {
-            validationErrors.push('At least one size must have stock quantity');
-        }
+            if (totalStock === 0) {
+                validationErrors.push('At least one size must have stock quantity');
+            }
+
 
         // Image validation
         if (!req.files || req.files.length !== 3) {
@@ -147,6 +146,12 @@ const addProducts = async (req,res)=>{
             }
         }
 
+        const regularPrice  = parseFloat(products.regularPrice);
+        const productOffer = isNaN(parseFloat(products.productOffer)) ? 0 : parseFloat(products.productOffer);
+
+        const salePrice = regularPrice - (regularPrice * (productOffer / 100));
+
+
         const categoryId = await Category.findOne({name: products.category});
 
         if(!categoryId){
@@ -159,8 +164,9 @@ const addProducts = async (req,res)=>{
             longDescription: products.longDescription.trim(),
             specifications: products.specifications.trim(),
             category: categoryId._id,
-            regularPrice: parseFloat(products.regularPrice),
-            salePrice: parseFloat(products.salePrice),
+            regularPrice: regularPrice,
+            salePrice:salePrice,
+            productOffer:productOffer,
             variant: {
                 size: {
                     s: parseInt(products.variant?.size?.s) || 0,
@@ -282,7 +288,8 @@ const editProduct = async (req, res) => {
             specifications,
             category,
             regularPrice,
-            salePrice,
+            // salePrice,
+            productOffer,
             variant,
             removedImages
         } = req.body;
@@ -293,7 +300,7 @@ const editProduct = async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        if (!productName || !description || !longDescription || !specifications || !category || !regularPrice || !salePrice) {
+        if (!productName || !description || !longDescription || !specifications || !category || !regularPrice || !productOffer) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -348,7 +355,8 @@ const editProduct = async (req, res) => {
         product.specifications = specifications;
         product.category = category;
         product.regularPrice = regularPrice;
-        product.salePrice = salePrice;
+        product.salePrice = regularPrice - (regularPrice * (productOffer / 100));
+        product.productOffer = productOffer;
         product.variant = variant;
         product.productImage = images.filter(img => img !== null);
 

@@ -51,11 +51,6 @@ const orderSchema = new Schema({
         cancelReason: {
             type: String
         },
-        currentStatus: {
-            type: String,
-            enum: ['Pending', 'Order Placed', 'Order Confirmed', 'Order Shipped', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed', 'Return Requested'],
-            default: 'Pending'
-        },
         statusHistory: [{
             status: {
                 type: String,
@@ -69,7 +64,6 @@ const orderSchema = new Schema({
         }]
     }],
 
-    // In the order schema
 address: {
     addressDocId: {
         type: Schema.Types.ObjectId,
@@ -83,7 +77,7 @@ address: {
 
     paymentMethod: {
         type: String,
-        enum: ['cod', 'card', 'wallet', 'netbanking'],
+        enum: ['cod','wallet','razorpay','paypal'],
         required: true
     },
 
@@ -92,7 +86,13 @@ address: {
         required: true,
         enum: ['Pending', 'Paid', 'Failed']
     },
-
+    paypalOrderId: {
+        type: String
+    },
+    paymentVerified: {
+        type: Boolean,
+        default: false
+    },    
     paymentId: {
         type: String
     },

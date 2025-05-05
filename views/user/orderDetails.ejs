@@ -650,7 +650,46 @@
                             %>
                     
                             <div class="order-items">
-                                <% order.orderItems.forEach(item => { %>
+                                <% order.orderItems.forEach((item, itemIndex) => { 
+                                    // Determine the status for this specific item
+                                    let itemStatus = 'Delivered'; // Default status
+                                    
+                                    // Debug info array
+                                    let debugInfo = [];
+                                    debugInfo.push(`Item ${itemIndex} initial status: ${itemStatus}`);
+                                    
+                                    if (Array.isArray(item.statusHistory)) {
+                                        debugInfo.push(`Item has statusHistory with ${item.statusHistory.length} entries`);
+                                        
+                                        // Check if this item has a returned status
+                                        const returnedEntry = item.statusHistory.find(h => h.status === 'Returned');
+                                        const requestedEntry = item.statusHistory.find(h => h.status === 'Return Requested');
+                                        
+                                        debugInfo.push(`Has 'Returned' entry: ${!!returnedEntry}`);
+                                        debugInfo.push(`Has 'Return Requested' entry: ${!!requestedEntry}`);
+                                        
+                                        // Only mark as returned if THIS specific item has been returned
+                                        if (returnedEntry) {
+                                            itemStatus = 'Returned';
+                                            debugInfo.push(`Setting status to: ${itemStatus}`);
+                                        } else if (requestedEntry) {
+                                            itemStatus = 'Return Requested';
+                                            debugInfo.push(`Setting status to: ${itemStatus}`);
+                                        }
+                                    } else {
+                                        debugInfo.push(`Item has no statusHistory or it's not an array`);
+                                    }
+                                    
+                                    // Check if 'currentStatus' property exists and use it if available
+                                    if (item.currentStatus) {
+                                        debugInfo.push(`Item has currentStatus property: ${item.currentStatus}`);
+                                        // Use currentStatus if it exists
+                                        itemStatus = item.currentStatus;
+                                    }
+                                    
+                                    // For debugging, log to console
+                                    console.log(`Item ${itemIndex} (${item.product?.productName || 'unnamed'}): ${debugInfo.join(' | ')}`);
+                                %>
                                 <div class="order-item">
                                     <img src="/uploads/product-images/<%= item.productImage %>" alt="Product">
                                     <div class="order-item-details">
@@ -659,6 +698,26 @@
                                         <div class="order-item-quantity">
                                             Quantity: <%= item.quantity %><br>
                                             <span>Size: <%= item?.variant?.size?.toUpperCase?.() || 'N/A' %></span>
+                                        </div>
+                                        <!-- Add item status badge -->
+                                        <div class="item-status mt-2">
+                                            <% if (item.currentStatus === 'Returned') { %>
+                                                <span class="badge bg-success">Returned & Refunded</span>
+                                              <% } else if (item.currentStatus === 'Return Requested') { %>
+                                                <span class="badge bg-warning text-dark">Return Requested</span>
+                                              <% } else if (item.currentStatus === 'Cancelled') { %>
+                                                <span class="badge bg-danger">Cancelled</span>
+                                              <% } else { %>
+                                                <span class="badge bg-secondary"><%= item.currentStatus %></span>
+                                              <% } %>
+                                        </div>
+                                        
+                                        <!-- Debug information (remove in production) -->
+                                        <div class="debug-info small text-muted mt-1">
+                                            Status: <%= itemStatus %>
+                                            <% if (item.statusHistory) { %>
+                                                | History: <%= item.statusHistory.map(h => h.status).join(', ') %>
+                                            <% } %>
                                         </div>
                                     </div>
                                     <div class="order-item-total">₹<%= item.product.salePrice * item.quantity %></div>
@@ -686,9 +745,11 @@
                             </div>
                     
                             <!-- Add status history timeline -->
+                            
+<!-- In the order timeline section, update to handle per-item status -->
                             <div class="order-timeline">
                                 <div class="order-timeline-title">Order Timeline</div>
-                            
+
                                 <% if (order.status === 'Cancelled') { %>
                                     <!-- CANCELLED -->
                                     <div class="order-timeline-item cancelled">
@@ -700,7 +761,7 @@
                                             Reason: <%= order.cancelReason || 'No reason provided' %>
                                         </div>
                                     </div>
-                            
+
                                 <% } else { 
                                     const steps = [
                                         { key: 'order placed',    title: 'Order Placed',    description: 'Your order has been placed successfully.', fallbackDate: order.createdAt },
@@ -708,7 +769,7 @@
                                         { key: 'order shipped',   title: 'Order Shipped',   description: 'Your order has been shipped.', fallbackDate: null },
                                         { key: 'delivered',       title: 'Order Delivered', description: 'Your order has been delivered.', fallbackDate: null }
                                     ];
-                            
+                                
                                     const hist = {};
                                     if (order.statusHistory && Array.isArray(order.statusHistory)) {
                                         order.statusHistory.forEach(h => {
@@ -717,10 +778,13 @@
                                             }
                                         });
                                     }
-                            
-                                    const currentIndex = steps.findIndex(s => s.key === (order.status || '').toLowerCase());
+                                
+                                    // Use the base order status for the timeline (not affected by individual item returns)
+                                    // We'll consider an order "Delivered" even if some items are returned
+                                    const orderBaseStatus = order.status === 'Returned' ? 'Delivered' : order.status;
+                                    const currentIndex = steps.findIndex(s => s.key === (orderBaseStatus || '').toLowerCase());
                                 %>
-                            
+                                
                                     <% steps.forEach((step, idx) => {
                                         const done = idx <= currentIndex;
                                         const date = hist[step.key] || step.fallbackDate;
@@ -745,7 +809,42 @@
                                             </div>
                                         </div>
                                     <% }) %>
-                            
+
+                                    <% // Add returned items section if any items have been returned %>
+                                    <% const returnedItems = order.orderItems.filter(i => 
+                                        Array.isArray(i.statusHistory) && 
+                                        i.statusHistory.some(h => h.status === 'Returned')); %>
+                                    
+                                    <% if (returnedItems.length > 0) { %>
+                                        <div class="order-timeline-item completed">
+                                            <div class="order-timeline-date">
+                                                <% 
+                                                // Find the most recent return timestamp
+                                                let latestReturnDate = null;
+                                                returnedItems.forEach(item => {
+                                                    const returnEntry = item.statusHistory.find(h => h.status === 'Returned');
+                                                    if (returnEntry && returnEntry.timestamp) {
+                                                        const returnDate = new Date(returnEntry.timestamp);
+                                                        if (!latestReturnDate || returnDate > latestReturnDate) {
+                                                            latestReturnDate = returnDate;
+                                                        }
+                                                    }
+                                                });
+                                                %>
+                                                <% if (latestReturnDate) { %>
+                                                    <%= latestReturnDate.toLocaleDateString() %>
+                                                    <%= latestReturnDate.toLocaleTimeString() %>
+                                                <% } else { %>
+                                                    <%= new Date().toLocaleDateString() %>
+                                                    <%= new Date().toLocaleTimeString() %>
+                                                <% } %>
+                                            </div>
+                                            <div class="order-timeline-title">Partial Return Processed</div>
+                                            <div class="order-timeline-description">
+                                                <%= returnedItems.length %> item<%= returnedItems.length > 1 ? 's' : '' %> from this order <%= returnedItems.length > 1 ? 'have' : 'has' %> been returned and refunded.
+                                            </div>
+                                        </div>
+                                    <% } %>
                                 <% } %>
                             </div>
                             

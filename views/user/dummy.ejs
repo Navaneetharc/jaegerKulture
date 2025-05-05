@@ -82,304 +82,358 @@
         color: #3BB77E;
     }
 
-    /* Order details styles */
-    .order-details-card {
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
+    /* Checkout styles */
+    .checkout-section {
+        margin-bottom: 2rem;
+    }
+
+    .checkout-section-title {
+        font-weight: 600;
+        font-size: 1.1rem;
         margin-bottom: 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .order-details-card:hover {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-    }
-
-    .order-details-card .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #f8f9fa;
-        padding: 1rem;
+        padding-bottom: 0.5rem;
         border-bottom: 1px solid #dee2e6;
     }
 
-    .order-details-card .card-body {
+    /* Address styles */
+    .address-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .address-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
         padding: 1rem;
+        position: relative;
+        transition: all 0.3s ease;
     }
 
-    .order-details-card .order-id {
+    .address-card:hover {
+        border-color: #3BB77E;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .address-card.selected {
+        border-color: #3BB77E;
+        background-color: rgba(59, 183, 126, 0.05);
+    }
+
+    .address-card .address-type {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: #f8f9fa;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
         font-weight: 600;
-        color: #3BB77E;
+        color: #6c757d;
     }
 
-    .order-details-card .order-date {
+    .address-card .address-type.default {
+        background-color: #3BB77E;
+        color: white;
+    }
+
+    .address-card .address-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        padding-right: 4rem;
+    }
+
+    .address-card .address-details {
         color: #6c757d;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .address-card .address-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+
+    .address-card .address-actions a {
+        color: #3BB77E;
+        margin-left: 1rem;
         font-size: 0.9rem;
     }
 
-    .order-details-card .order-status {
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-
-    .order-details-card .order-status.pending {
-        background-color: #fff3cd;
-        color: #856404;
-    }
-
-    .order-details-card .order-status.processing {
-        background-color: #cce5ff;
-        color: #004085;
-    }
-
-    .order-details-card .order-status.shipped {
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-    .order-details-card .order-status.delivered {
-        background-color: #d1e7dd;
-        color: #0f5132;
-    }
-
-    .order-details-card .order-status.cancelled {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
-
-    .order-details-card .order-total {
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
-
-    .order-details-card .order-items {
-        margin-top: 1rem;
-        border-top: 1px solid #dee2e6;
-        padding-top: 1rem;
-    }
-
-    .order-details-card .order-item {
+    .add-address-btn {
         display: flex;
         align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #f5f5f5;
+        justify-content: center;
+        padding: 1rem;
+        border: 1px dashed #dee2e6;
+        border-radius: 8px;
+        color: #3BB77E;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
 
-    .order-details-card .order-item:last-child {
-        margin-bottom: 0;
-        padding-bottom: 0;
+    .add-address-btn:hover {
+        border-color: #3BB77E;
+        background-color: rgba(59, 183, 126, 0.05);
+    }
+
+    .add-address-btn i {
+        margin-right: 0.5rem;
+        font-size: 1.25rem;
+    }
+
+    /* Product styles */
+    .checkout-products {
+        margin-bottom: 1.5rem;
+    }
+
+    .checkout-product {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .checkout-product:last-child {
         border-bottom: none;
     }
 
-    .order-details-card .order-item img {
+    .checkout-product-image {
         width: 80px;
         height: 80px;
         object-fit: cover;
-        margin-right: 1rem;
         border-radius: 4px;
+        margin-right: 1rem;
     }
 
-    .order-details-card .order-item-details {
+    .checkout-product-details {
         flex-grow: 1;
     }
 
-    .order-details-card .order-item-name {
-        font-weight: 600;
-        font-size: 1.05rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .order-details-card .order-item-price {
-        color: #3BB77E;
+    .checkout-product-name {
         font-weight: 600;
         margin-bottom: 0.25rem;
     }
 
-    .order-details-card .order-item-quantity {
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    .order-details-card .order-item-total {
-        font-weight: 600;
-        color: #333;
-    }
-
-    .order-details-card .order-summary {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .order-details-card .order-summary-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-    }
-
-    .order-details-card .order-summary-row:last-child {
-        margin-bottom: 0;
-        padding-top: 0.5rem;
-        border-top: 1px solid #dee2e6;
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
-
-    .order-details-card .order-summary-label {
-        color: #6c757d;
-    }
-
-    .order-details-card .order-summary-value {
-        font-weight: 500;
-    }
-
-    .order-details-card .order-actions {
-        margin-top: 1.5rem;
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.5rem;
-    }
-
-    .order-details-card .order-actions .btn {
-        padding: 0.5rem 1rem;
-    }
-
-    .order-details-card .order-timeline {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .order-details-card .order-timeline-title {
-        font-weight: 600;
-        margin-bottom: 1rem;
-    }
-
-    .order-details-card .order-timeline-item {
-        position: relative;
-        padding-left: 1.5rem;
-        padding-bottom: 1rem;
-    }
-
-    .order-details-card .order-timeline-item:last-child {
-        padding-bottom: 0;
-    }
-
-    .order-details-card .order-timeline-item::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0.5rem;
-        width: 0.75rem;
-        height: 0.75rem;
-        border-radius: 50%;
-        background-color: #3BB77E;
-    }
-
-    .order-details-card .order-timeline-item.completed::before {
-        background-color: #3BB77E;
-    }
-    .order-details-card .order-timeline-item.cancelled::before {
-        background-color: #ff0000;
-    }
-
-    .order-details-card .order-timeline-item.pending::before {
-        background-color: #ffc107;
-    }
-
-    .order-details-card .order-timeline-item.future::before {
-        background-color: #dee2e6;
-    }
-
-    .order-details-card .order-timeline-date {
+    .checkout-product-variant {
         font-size: 0.85rem;
         color: #6c757d;
         margin-bottom: 0.25rem;
     }
 
-    .order-details-card .order-timeline-title {
+    .checkout-product-price {
+        color: #3BB77E;
+        font-weight: 600;
+    }
+
+    .checkout-product-quantity {
+        margin: 0 1.5rem;
+        font-weight: 500;
+    }
+
+    .checkout-product-total {
+        font-weight: 600;
+        min-width: 80px;
+        text-align: right;
+    }
+
+    /* Summary styles */
+    .checkout-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    .checkout-summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .checkout-summary-row:last-child {
+        margin-bottom: 0;
+        padding-top: 0.75rem;
+        border-top: 1px solid #dee2e6;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .checkout-summary-title{
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .checkout-summary-label {
+        color: #6c757d;
+    }
+
+    .checkout-summary-value {
+        font-weight: 500;
+    }
+
+    .checkout-summary-value.discount {
+        color: #3BB77E;
+    }
+
+    /* Payment methods */
+    .payment-methods {
+        margin-top: 1.5rem;
+    }
+
+    .payment-method {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .payment-method:hover {
+        border-color: #3BB77E;
+        background-color: rgba(59, 183, 126, 0.05);
+    }
+
+    .payment-method.selected {
+        border-color: #3BB77E;
+        background-color: rgba(59, 183, 126, 0.05);
+    }
+
+    .payment-method-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .payment-method-icon img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .payment-method-details {
+        flex-grow: 1;
+    }
+
+    .payment-method-name {
         font-weight: 600;
         margin-bottom: 0.25rem;
     }
 
-    .order-details-card .order-timeline-description {
+    .payment-method-description {
+        font-size: 0.85rem;
         color: #6c757d;
-        font-size: 0.9rem;
     }
 
-    .order-details-card .shipping-address,
-    .order-details-card .billing-address {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #dee2e6;
+    .payment-method-radio {
+        margin-left: 1rem;
     }
 
-    .order-details-card .address-title {
+    /* Place order button */
+    .place-order-btn {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background-color: #3BB77E;
+        color: white;
+        border: none;
+        border-radius: 8px;
         font-weight: 600;
-        margin-bottom: 1rem;
-    }
-
-    .order-details-card .address-details {
-        color: #6c757d;
-        line-height: 1.6;
-    }
-
-    .order-details-card .payment-method {
+        text-align: center;
         margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #dee2e6;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
 
-    .order-details-card .payment-method-title {
-        font-weight: 600;
-        margin-bottom: 1rem;
+    .place-order-btn:hover {
+        background-color: #2f9b6a;
     }
 
-    .order-details-card .payment-method-details {
-        color: #6c757d;
-        line-height: 1.6;
+    /* Responsive adjustments */
+    @media (max-width: 767.98px) {
+        .address-list {
+            grid-template-columns: 1fr;
+        }
+
+        .checkout-product {
+            flex-wrap: wrap;
+        }
+
+        .checkout-product-image {
+            margin-bottom: 1rem;
+        }
+
+        .checkout-product-quantity {
+            margin: 0.5rem 0;
+            width: 100%;
+        }
+
+        .checkout-product-total {
+            width: 100%;
+            text-align: left;
+            margin-top: 0.5rem;
+        }
     }
 
-    .order-details-card .payment-method-icon {
-        margin-right: 0.5rem;
-        color: #3BB77E;
-    }
-
-    .back-to-orders {
-        margin-bottom: 1rem;
-    }
-    /* cancell button */
- 
-.cancel-order-section {
-    margin-top: 20px;
+    .payment-method {
+  border: 2px solid transparent;   
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
 }
 
-.cancel-order-section .form-control {
-    font-size: 14px;
-    resize: vertical;
+.payment-method.selected {
+  border-color: #3BB77E;            
 }
 
-.cancel-order-section .btn {
-    margin-top: 8px;
+.address-card {
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
 }
 
-/* order track */
-
-.order-timeline-item.future {
-    opacity: 0.5;
-}
-.order-timeline-item.completed {
-    color: green;
-    font-weight: 600;
-}
-.order-timeline-item.cancelled {
-    color: red;
-    font-weight: 600;
+.address-card.selected {
+  border-color: #3BB77E;
 }
 
+
+/* default */
+
+.default-badge {
+  background-color: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 12px;
+  margin-left: 8px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.set-default {
+  margin-left: 10px;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.selected {
+  border: 2px solid #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
 
 
 </style>
@@ -408,9 +462,9 @@
                                     <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
                                 </a>
                                 <ul class="language-dropdown">
-                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                 </ul>
                             </li>
                             <% if (typeof user !== 'undefined' && user) { %>
@@ -434,7 +488,7 @@
         <div class="container">
             <div class="header-wrap">
                 <div class="logo logo-width-1">
-                   <img src="/assets/imgs/theme/jaeger.png" alt="logo">
+                   <img src="assets/imgs/theme/jaeger.png" alt="logo">
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
@@ -446,14 +500,14 @@
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
                                 <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="/assets2/imgs/theme/icons/icon-heart.svg">
+                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
                                     <span class="pro-count blue">0</span>
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="/assets2/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue">0</span>
+                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                    <span class="pro-count blue">3</span>
                                 </a>
                             </div>
                         </div>
@@ -466,7 +520,7 @@
         <div class="container">
             <div class="header-wrap header-space-between position-relative">
                 <div class="logo logo-width-1 d-block d-lg-none">
-                    <a href="/"><img src="/assets/imgs/theme/jaeger.png" alt="logo"></a>
+                    <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
                 </div>
                 <div class="header-nav d-none d-lg-flex">
                     <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
@@ -535,500 +589,392 @@
         <div class="container">
             <div class="breadcrumb">
                 <a href="/" rel="nofollow">Home</a>
-                <span></span> <a href="/myorders">My Orders</a>
-                <span></span> Order Details
+                <span></span> <a href="/cart">Cart</a>
+                <span></span> Checkout
             </div>
         </div>
     </div>
 
     <section class="mt-50 mb-50">
-        <div class="container">
+    <div class="container">
+        <form class="form" id="checkoutForm" method="POST" action="/checkout">
             <div class="row">
-                <div class="col-lg-3">
-                    <div class="dashboard-menu">
-                        <ul class="nav flex-column" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profileinfo">
-                                    <i class="fi-rs-user-check"></i> Personal Information
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/myorders">
-                                    <i class="fi-rs-shopping-cart"></i> My Orders
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/addresses">
-                                    <i class="fi-rs-marker"></i> My Addresses
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wishlist">
-                                    <i class="fi-rs-heart"></i> Wishlist
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wallet">
-                                    <i class="fi-rs-credit-card"></i> My Wallet
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/security">
-                                    <i class="fi-rs-shield-check"></i> Security Settings
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/help">
-                                    <i class="fi-rs-help"></i> Help Center
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/logout">
-                                    <i class="fi-rs-exit"></i> Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Add this section near the top of your orderDetails.ejs file -->
-
-<!-- add this at the top of your template -->
-
-  
-
-<!-- The rest of your orderDetails.ejs content should remain unchanged -->
-                <div class="col-lg-9">
-                    <% // Build array of only those items flagged for return %>
-                    <% const itemsRequested = order.orderItems.filter(i => Array.isArray(i.statusHistory) && i.statusHistory.some(h => h.status === 'Return Requested')); %>
-
-                    <div class="back-to-orders">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="window.location.href='/myorders'">
-                            <i class="fi-rs-arrow-left"></i> Back to My Orders
-                        </button>
-                    </div>
-                    
-                    <div class="order-details-card">
-                        <div class="card-header">
-                            <div>
-                                <span class="order-id">Order <%= order.orderId %></span>
-                                <span class="order-date ms-2">Placed on: <%= order.createdAt.toLocaleDateString() %></span>
-                            </div>
-                    
-                                                        <%
-                            const statusClassMap = {
-                                'Pending'        : 'pending',
-                                'Order Placed'   : 'placed',
-                                'Order Confirmed': 'confirmed',
-                                'Order Shipped'  : 'shipped',
-                                'Delivered'      : 'delivered',
-                                'Cancelled'      : 'cancelled',
-                                'Returned'       : 'returned',
-                                'Payment Failed' : 'failed'
-                            };
-                            // pick the class, default to 'pending' if status is unknown
-                            const cssClass = statusClassMap[order.status] || 'pending';
-                            %>
-                            <span class="order-status <%= cssClass %>"><%= order.status %></span>
-
+              <div class="col-lg-8">
+                <!-- Shipping Address Section -->
+                <div class="checkout-section">
+                  <div class="card">
+                    <div class="card-header"><h4>Shipping Address</h4></div>
+                    <div class="card-body address-list">
+                      <% addresses.forEach(addr => { %>
+                      <label class="address-card <%= addr.isDefault ? 'selected' : '' %>">
+                        <input
+                          type="radio"
+                          name="selectedAddress"
+                          value="<%= addr._id %>"
+                          hidden
+                          <%= addr.isDefault ? 'checked' : '' %>
+                          required
+                        />
+                        <div class="address-name">
+                          <%= addr.name %>
+                          <% if (addr.isDefault) { %>
+                            <span class="default-badge">Default</span>
+                          <% } %>
                         </div>
-                    
-                        <div class="card-body">
-                            <% 
-                            let subtotal = 0; 
-                            order.orderItems.forEach(item => {
-                                subtotal += item.product.salePrice * item.quantity;
-                            });
-                            let tax = 0.05 * subtotal; // 5% tax
-                            let deliveryCharge = 41;
-                            let total = subtotal + tax + deliveryCharge;
-                            %>
-                    
-                            <div class="order-items">
-                                <% order.orderItems.forEach(item => { %>
-                                <div class="order-item">
-                                    <img src="/uploads/product-images/<%= item.productImage %>" alt="Product">
-                                    <div class="order-item-details">
-                                        <div class="order-item-name"><%= item.product?.productName || "Unnamed Product" %></div>
-                                        <div class="order-item-price">₹<%= item.product.salePrice %></div>
-                                        <div class="order-item-quantity">
-                                            Quantity: <%= item.quantity %><br>
-                                            <span>Size: <%= item?.variant?.size?.toUpperCase?.() || 'N/A' %></span>
-                                        </div>
-                                    </div>
-                                    <div class="order-item-total">₹<%= item.product.salePrice * item.quantity %></div>
-                                </div>
-                                <% }) %>
-                            </div>
-                    
-                            <div class="order-summary">
-                                <div class="order-summary-row">
-                                    <div class="order-summary-label">Subtotal</div>
-                                    <div class="order-summary-value">₹<%= subtotal.toFixed(2) %></div>
-                                </div>
-                                <div class="order-summary-row">
-                                    <div class="order-summary-label">Delivery charge</div>
-                                    <div class="order-summary-value">₹<%= deliveryCharge.toFixed(2) %></div>
-                                </div>
-                                <div class="order-summary-row">
-                                    <div class="order-summary-label">Tax (5%)</div>
-                                    <div class="order-summary-value">₹<%= tax.toFixed(2) %></div>
-                                </div>
-                                <div class="order-summary-row">
-                                    <div class="order-summary-label">Total</div>
-                                    <div class="order-summary-value">₹<%= total.toFixed(2) %></div>
-                                </div>
-                            </div>
-                    
-                            <!-- Add status history timeline -->
-                            <div class="order-timeline">
-                                <div class="order-timeline-title">Order Timeline</div>
-                            
-                                <% if (order.status === 'Cancelled') { %>
-                                    <!-- CANCELLED -->
-                                    <div class="order-timeline-item cancelled">
-                                        <div class="order-timeline-date">
-                                            <%= new Date(order.updatedAt).toLocaleDateString() %>
-                                        </div>
-                                        <div class="order-timeline-title">Order Cancelled</div>
-                                        <div class="order-timeline-description">
-                                            Reason: <%= order.cancelReason || 'No reason provided' %>
-                                        </div>
-                                    </div>
-                            
-                                <% } else { 
-                                    const steps = [
-                                        { key: 'order placed',    title: 'Order Placed',    description: 'Your order has been placed successfully.', fallbackDate: order.createdAt },
-                                        { key: 'order confirmed', title: 'Order Confirmed', description: 'Your order has been confirmed.', fallbackDate: null },
-                                        { key: 'order shipped',   title: 'Order Shipped',   description: 'Your order has been shipped.', fallbackDate: null },
-                                        { key: 'delivered',       title: 'Order Delivered', description: 'Your order has been delivered.', fallbackDate: null }
-                                    ];
-                            
-                                    const hist = {};
-                                    if (order.statusHistory && Array.isArray(order.statusHistory)) {
-                                        order.statusHistory.forEach(h => {
-                                            if (h && h.status) {
-                                                hist[h.status.toLowerCase()] = h.timestamp;
-                                            }
-                                        });
-                                    }
-                            
-                                    const currentIndex = steps.findIndex(s => s.key === (order.status || '').toLowerCase());
-                                %>
-                            
-                                    <% steps.forEach((step, idx) => {
-                                        const done = idx <= currentIndex;
-                                        const date = hist[step.key] || step.fallbackDate;
-                                    %>
-                                        <div class="order-timeline-item <%= done ? 'completed' : 'future' %>">
-                                            <div class="order-timeline-date">
-                                                <% if (date) { %>
-                                                    <%= new Date(date).toLocaleDateString() %> 
-                                                    <%= new Date(date).toLocaleTimeString() %>
-                                                <% } else { %>
-                                                    <% if (done) { %>
-                                                        <%= new Date().toLocaleDateString() %>
-                                                        <%= new Date().toLocaleTimeString() %>
-                                                    <% } else { %>
-                                                        &nbsp;
-                                                    <% } %>
-                                                <% } %>
-                                            </div>
-                                            <div class="order-timeline-title"><%= step.title %></div>
-                                            <div class="order-timeline-description">
-                                                <%= step.description %>
-                                            </div>
-                                        </div>
-                                    <% }) %>
-                            
-                                <% } %>
-                            </div>
-                            
-                                  
-                              
-                                
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="shipping-address">
-                                        <div class="address-title">Shipping Address</div>
-                                        <div class="address-details">
-                                            <% if (order.userId) { %>
-                                            <p><strong><%= order.userId.name || 'N/A' %></strong></p>
-                                            <% } else { %>
-                                                Unknown User
-                                            <% } %>
-                                            <% 
-                                            let addressDetail;
-                                            if (order?.address?.addressDocId?.details && order.address.addressDetailId) {
-                                                addressDetail = order.address.addressDocId.details.find(d => d._id.toString() === order.address.addressDetailId.toString());
-                                            }
-                                        %>
-                                            <p><%= addressDetail?.addressLine1 || 'N/A' %></p>
-                                            <p><%= addressDetail?.addressLine2 || 'N/A' %></p>
-                                            <p><%= addressDetail?.city || 'N/A' %></p>
-                                            <p>Phone: <%= addressDetail?.phone || 'N/A' %></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    
-                            <div class="payment-method">
-                                <div class="payment-method-title">Payment Method</div>
-                                <div class="payment-method-details">
-                                    <p><i class="fi-rs payment-method-icon"></i><%= order.paymentMethod.toUpperCase() || 'N/A' %></p>
-                                </div>
-                            </div>
-                    
-                            <div class="order-actions">
-                                <% const invoiceAllowedStatuses = ['Order Confirmed', 'Order Shipped', 'Delivered','Returned','Return Requested']; %>
-                                <% if (invoiceAllowedStatuses.includes(order.status)) { %>
-                                  <a href="/invoice/<%= order._id %>" class="btn btn-primary">Download Invoice</a>
-                                <% } %>
-                            </div>
-                    
-                            <!-- Cancel order form (show if order is not yet cancelled) -->
-                            <% if (order.status !== 'Cancelled' && (order.status === 'Order Placed' || order.status === 'Pending')) { %>
-                                <div class="cancel-order-section mt-3">
-                                  <form id="cancelOrderForm" method="POST" action="/cancel-order/<%= order._id %>">
-                                    <input type="hidden" name="productId" value="<%= order.orderItems[0].product._id %>">
-                                    <div class="mb-2">
-                                      <label for="cancelReason" class="form-label">Reason for Cancellation</label>
-                                      <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3" required placeholder="Please mention the reason..."></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancel Order</button>
-                                  </form>
-                                </div>
-                              <% } else { %>
-                                <br>
-                                <br>
-                                <h6 class="text-danger">Can't cancel the order after order confirmation</h6>
-                              <% } %>
-                              
-                              
-                                <!-- Add this section after the cancel order form -->
-                                <% if (order.status === 'Delivered' && itemsRequested.length === 0) { %>
-                                    <div class="return-section mt-4">
-                                        <h5>Return Options</h5>
-                                        <div class="return-tabs mb-3">
-                                            <ul class="nav nav-tabs" id="returnTabs" role="tablist">
-                                                <li class="nav-role">
-                                                    <a class="nav-link active" id="return-full-tab" data-bs-toggle="tab" href="#return-full" role="tab">Return Entire Order</a>
-                                                </li>
-                                                <li class="nav-role">
-                                                    <a class="nav-link" id="return-items-tab" data-bs-toggle="tab" href="#return-items" role="tab">Return Specific Items</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="tab-content">
-                                <!-- Return Entire Order -->
-                                <div class="tab-pane fade show active" id="return-full" role="tabpanel" aria-labelledby="return-full-tab">
-                                    <form id="returnFullOrderForm" method="POST" action="/return-order/<%= order._id %>">
-                                        <input type="hidden" name="returnType" value="full">
-                                        <div class="mb-3">
-                                            <label for="returnFullReason" class="form-label">Reason for Return</label>
-                                            <select class="form-select" id="returnFullReason" name="returnReason" required>
-                                                <option value="">Select a reason</option>
-                                                <option value="Damaged product">Damaged product</option>
-                                                <option value="Wrong product received">Wrong product received</option>
-                                                <option value="Product quality issue">Product quality issue</option>
-                                                <option value="Missing parts/accessories">Missing parts/accessories</option>
-                                                <option value="Other">Other reason</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3" id="otherReasonFull" style="display: none;">
-                                            <label for="otherReturnFullReason" class="form-label">Please specify</label>
-                                            <textarea class="form-control" id="otherReturnFullReason" name="otherReason" rows="3" placeholder="Please provide details..."></textarea>
-                                        </div>
-                                        
-                                        <button type="submit" class="btn btn-danger">Return Entire Order</button>
-                                    </form>
-                                </div>
-                                
-                                <!-- Return Specific Items -->
-                                <div class="tab-pane fade" id="return-items" role="tabpanel" aria-labelledby="return-items-tab">
-                                    <form id="returnItemsForm" method="POST" action="/return-items/<%= order._id %>">
-                                        <div class="mb-3">
-                                            <div class="return-item-selection">
-                                                <% order.orderItems.forEach((item, index) => { %>
-                                                    <div class="return-item-checkbox mb-2">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="returnItems[]" value="<%= item._id %>" id="returnItem<%= index %>">
-                                                            <label class="form-check-label" for="returnItem<%= index %>">
-                                                                <div class="d-flex align-items-center">
-                                                                    <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
-                                                                    <div>
-                                                                        <div><%= item.product?.productName || "Unnamed Product" %></div>
-                                                                        <div class="text-muted small">Size: <%= item?.variant?.size?.toUpperCase?.() || 'N/A' %>, Qty: <%= item.quantity %></div>
-                                                                    </div>
-                                                                </div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                <% }) %>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="returnItemsReason" class="form-label">Reason for Return</label>
-                                            
-                                            <select class="form-select" id="returnItemsReason" name="returnReason" required>
-                                                <option value="">Select a reason</option>
-                                                <option value="Damaged product">Damaged product</option>
-                                                <option value="Wrong product received">Wrong product received</option>
-                                                <option value="Product quality issue">Product quality issue</option>
-                                                <option value="Sizing/fit issue">Sizing/fit issue</option>
-                                                <option value="Other">Other reason</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3" id="otherReasonItems" style="display: none;">
-                                            <label for="otherReturnItemsReason" class="form-label">Please specify</label>
-                                            <textarea class="form-control" id="otherReturnItemsReason" name="otherReason" rows="3" placeholder="Please provide details..."></textarea>
-                                        </div>
-                                        
-                                        <button type="submit" class="btn btn-danger">Return Selected Items</button>
-                                    </form>
-                                </div>
-                            </div>
+                        <div class="address-details">
+                          <%= addr.addressLine1 %><br />
+                          <% if (addr.addressLine2) { %>
+                            <%= addr.addressLine2 %><br />
+                          <% } %>
+                          <%= addr.city %>, <%= addr.state %> <%= addr.pincode %><br />
+                          Phone: <%= addr.phone %><% if (addr.altPhone) { %> / <%= addr.altPhone %><% } %>
                         </div>
-                        
-                        <script>
-                            // Show/hide "other reason" textarea based on selection
-                            document.getElementById('returnFullReason').addEventListener('change', function() {
-                                document.getElementById('otherReasonFull').style.display = 
-                                    this.value === 'Other' ? 'block' : 'none';
-                            });
-                            
-                            document.getElementById('returnItemsReason').addEventListener('change', function() {
-                                document.getElementById('otherReasonItems').style.display = 
-                                    this.value === 'Other' ? 'block' : 'none';
-                            });
-                        </script>
-                    <% } %>
-                        </div>
+                      </label>
+                      <% }) %>
+                      <div class="add-address-btn">
+                        <a href="/addAddresses"><i class="fi-rs-plus"></i> Add New Address</a>
+                      </div>
                     </div>
-                    
-                </div>
-            </div>
-        </div>
-        <style>
-            .return-panel {
-              max-width: 1460px;        /* adjust this to your sidebar’s inner width */
-              font-size: 0.85rem;
-              padding-left: 450px;     /* gently shrink everything to help it fit */
-            }
-            .return-panel .table-responsive {
-              overflow-x: auto;        /* allow inner scroll if something still overflows */
-            }
-            .return-panel .table {
-              table-layout: fixed;     /* force cells to share the width */
-              width: 100%;             /* fill the panel exactly */
-            }
-            .return-panel th,
-            .return-panel td {
-              word-wrap: break-word;   /* wrap long text rather than expand */
-            }
-          </style>
-          
-          <!-- wrap your entire existing block in this -->
-          <div class="return-panel">
-          
-            <!-- Return Request Confirmation -->
-            <% if (locals.session?.returnRequested) { %>
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <strong>Return Request Submitted!</strong> We've received your return request and will review it soon.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <% locals.session.returnRequested = null; %> <!-- Clear the message after displaying -->
-            <% } %>
-          
-            <!-- Display for approved returns -->
-            <% if (locals.hasReturnedItems && locals.latestApprovedRefund) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong>Return Approved!</strong> Your return request has been approved and the refund has been credited to your wallet.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <% } %>
-          
-            <!-- Return Item Status Section -->
-            <% if (itemsRequested.length > 0) { %>
-                <div class="return-status-section mt-4 mb-4">
-                  <h5>Your Return Status</h5>
-                  <div class="table-responsive">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Size</th>
-                          <th>Qty</th>
-                          <th>Status</th>
-                          <th>Requested On</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% itemsRequested.forEach(item => {
-                             const reqEntry = item.statusHistory.find(h => h.status === 'Return Requested');
-                        %>
-                        <tr>
-                          <td>
-                            <div class="d-flex align-items-center">
-                              <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" style="width:40px;height:40px;object-fit:cover;margin-right:8px;">
-                              <%= item.product?.productName || 'Unnamed Product' %>
-                            </div>
-                          </td>
-                          <td><%= (item.variant?.size || 'N/A').toUpperCase() %></td>
-                          <td><%= item.quantity %></td>
-                          <td>
-                            <% if (item.currentStatus === 'Returned') { %>
-                              <span class="badge bg-success">Returned & Refunded</span>
-                            <% } else { %>
-                              <span class="badge bg-warning">Return Requested</span>
-                            <% } %>
-                          </td>
-                          <td><%= reqEntry ? new Date(reqEntry.timestamp).toLocaleDateString() : 'N/A' %></td>
-                        </tr>
-                        <% }) %>
-                      </tbody>
-                    </table>
                   </div>
                 </div>
-                <% } %>
-                
-                
-
+          
+                <!-- Order Items Section -->
+                <div class="checkout-section">
+                  <div class="card">
+                    <div class="card-header"><h4>Order Items</h4></div>
+                    <div class="card-body checkout-products">
+                      <% items.forEach(item => { %>
+                      <div class="checkout-product">
+                        <img
+                          src="/uploads/product-images/<%= item.productImage %>"
+                          alt="Product"
+                          class="checkout-product-image"
+                        />
+                        <div class="checkout-product-details">
+                          <div class="checkout-product-name"><%= item.name %></div>
+                          <div class="checkout-product-price">₹<%= item.price %></div>
                         </div>
+                        <div class="checkout-product-quantity">Qty: <%= item.quantity %></div>
+                        <div class="checkout-product-total">₹<%= (item.price * item.quantity).toFixed(2) %></div>
+                      </div>
+                      <% }) %>
                     </div>
-
+                  </div>
                 </div>
+          
+                <!-- Payment Methods Section -->
+                <div class="checkout-section">
+                  <div class="card">
+                    <div class="card-header"><h4>Payment Method</h4></div>
+                    <div class="card-body payment-methods">
+                      <label class="payment-method">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="cod"
+                          checked
+                          required
+                        />
+                        <span class="payment-method-name">Cash on Delivery</span>
+                      </label>
+                      <label class="payment-method">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value="razorpay"
+                          required
+                        />
+                        <span class="payment-method-name">Razorpay (Online)</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          
+              <!-- Order Summary -->
+              <div class="col-lg-4">
+                <% const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0); %>
+                <% const shipping = 41; %>
+                <% const tax = subtotal * 0.05; %>
+                <% const totalAmount = (subtotal + shipping + tax).toFixed(2); %>
+          
+                <div class="card">
+                  <div class="card-body checkout-summary">
+                    <div class="checkout-summary-title">Order Summary</div>
+                    <div class="checkout-summary-row">
+                      <span>Subtotal</span>
+                      <span>₹<%= subtotal.toFixed(2) %></span>
+                    </div>
+                    <div class="checkout-summary-row">
+                      <span>Shipping</span>
+                      <span>₹<%= shipping.toFixed(2) %></span>
+                    </div>
+                    <div class="checkout-summary-row">
+                      <span>Tax (5%)</span>
+                      <span>₹<%= tax.toFixed(2) %></span>
+                    </div>
+                    <div class="checkout-summary-row">
+                      <strong>Total</strong>
+                      <strong>₹<%= totalAmount %></strong>
+                    </div>
+                    <button type="submit" class="btn place-order-btn mt-4">Place Order</button>
+                  </div>
+                </div>
+              </div>
             </div>
+          
+            <!-- Hidden total for JS -->
+            <input type="hidden" id="totalAmount" value="<%= totalAmount %>" />
+          </form>
+          
         </div>
     </section>
 </main>
-
-<%- include('../partials/userL/footer.ejs') %>
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Simple JavaScript for basic interactions
-    const downloadInvoiceButtons = document.querySelectorAll('.btn-outline-primary');
-    downloadInvoiceButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Add download invoice logic here
-            console.log('Downloading invoice');
-        });
+    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+
+    if (method === 'razorpay') {
+      // 1. Create Razorpay order
+      const res1 = await fetch('/checkout/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const { order_id, amount } = await res1.json();
+
+      // 2. Open Razorpay
+      const options = {
+        key: '<%= razorpayKey %>',
+        amount: amount,
+        currency: 'INR',
+        name: 'Your Store',
+        description: 'Order Payment',
+        order_id: order_id,
+        handler: async function(response) {
+          // 3. Verify payment and place order
+          const res2 = await fetch('/checkout/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              selectedAddress
+            })
+          });
+          const data = await res2.json();
+          if (data.success) window.location.href = data.redirect;
+          else window.location.href = '/order-failure';
+        }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    } else {
+      // COD fallback
+      e.target.method = 'POST';
+      e.target.action = '/checkout';
+      e.target.submit();
+    }
+  });
+  </script>
+  
+<script>
+
+
+    // Grab them all
+  const cards = document.querySelectorAll('.address-card');
+
+cards.forEach(card => {
+  card.addEventListener('click', () => {
+    // ✅ Deselect every card & uncheck its radio
+    cards.forEach(c => {
+      c.classList.remove('selected');
+      c.querySelector('input[type="radio"]').checked = false;
     });
 
-    const reorderButtons = document.querySelectorAll('.btn-outline-secondary');
-    reorderButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Add reorder logic here
-            console.log('Reordering items');
-        });
-    });
+    // 🌟 Select the clicked one
+    card.classList.add('selected');
+    card.querySelector('input[type="radio"]').checked = true;
+  });
 });
-</script> 
+
+
+
+    // Grab all the payment-method blocks
+    const methods = document.querySelectorAll('.payment-method');
+  
+    methods.forEach(method => {
+      method.addEventListener('click', () => {
+        // 1️⃣ Deselect all
+        methods.forEach(m => {
+          m.classList.remove('selected');
+          m.querySelector('input[type="radio"]').checked = false;
+        });
+  
+        // 2️⃣ Select the clicked one
+        method.classList.add('selected');
+        method.querySelector('input[type="radio"]').checked = true;
+      });
+    });
+
+
+    // default
+
+    // Add this to your client-side JS file
+document.querySelectorAll('.set-default').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const addressId = this.dataset.id;
+    
+    // Create a form to submit
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/addresses/${addressId}/default`;
+    document.body.appendChild(form);
+    form.submit();
+  });
+});
+
+
+// place order
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault(); 
+
+    try {
+            const res = await fetch('/checkout', {
+                method: 'POST',
+                body: new FormData(form)
+            });
+
+            const data = await res.json();
+
+            Swal.fire({
+                icon: res.ok ? "success" : "error",
+                text: data.message || data.error || (res.ok ? "Order placed successfully!" : "Failed to place order"),
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            if (res.ok) {
+                setTimeout(() => {
+                    window.location.href = "/order-success"; // change if your route is different
+                }, 1500); // wait for Swal to finish
+            }
+
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                text: "An error occurred while placing the order.",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    });    
+})
+  </script>
+  
+
+<%- include('../partials/userL/footer.ejs') %> 
+
+
+
+<div class="checkout-section">
+    <div class="card">
+        <div class="card-header">
+            <h4>Payment Method</h4>
+        </div>
+        <div class="card-body">
+            <div class="payment-methods">
+                <!-- Credit Card -->
+                <div class="payment-method">
+                    <div class="payment-method-icon">
+                        <i class="fi-rs-credit-card" style="font-size: 24px; color: #3BB77E;"></i>
+                    </div>
+                    <div class="payment-method-details">
+                        <div class="payment-method-name">Credit/Debit Card</div>
+                        <div class="payment-method-description">Pay securely with your credit or debit card</div>
+                    </div>
+                    <div class="payment-method-radio">
+                        <input type="radio" name="payment" >
+                    </div>
+                </div>
+                
+                <!-- UPI -->
+                <div class="payment-method">
+                    <div class="payment-method-icon">
+                        <img src="https://1.bp.blogspot.com/-mn0etM0nf_c/X943Bn_y0kI/AAAAAAAAOkM/E2RhIJW0TbgzABXbKruLqpzpCfIuyN5JQCLcBGAsYHQ/s808/Picture1.png" alt="UPI">
+                    </div>
+                    <div class="payment-method-details">
+                        <div class="payment-method-name">UPI</div>
+                        <div class="payment-method-description">Pay using UPI apps like Google Pay, PhonePe, etc.</div>
+                    </div>
+                    <div class="payment-method-radio">
+                        <input type="radio" name="payment">
+                    </div>
+                </div>
+                
+                <!-- Razorpay -->
+                <div class="payment-method">
+                    <div class="payment-method-icon">
+                      <img src="https://www.yourtechstory.com/wp-content/uploads/2020/01/razorpay.png" alt="Razorpay" style="height: 32px;">
+                    </div>
+                    <div class="payment-method-details">
+                      <div class="payment-method-name">Razorpay (Online)</div>
+                      <div class="payment-method-description">Pay securely with Razorpay</div>
+                    </div>
+                    <div class="payment-method-radio">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="razorpay"
+                        required
+                      />
+                    </div>
+                  </div>
+                
+                <!-- PayPal -->
+                <div class="payment-method">
+                    <div class="payment-method-icon">
+                        <img src="https://static.vecteezy.com/system/resources/previews/020/190/502/original/paypal-logo-paypal-logo-free-free-vector.jpg" alt="PayPal">
+                    </div>
+                    <div class="payment-method-details">
+                        <div class="payment-method-name">PayPal</div>
+                        <div class="payment-method-description">Pay securely with PayPal</div>
+                    </div>
+                    <div class="payment-method-radio">
+                        <input type="radio" name="payment">
+                    </div>
+                </div>
+                
+                <!-- Cash on Delivery -->
+                <div class="payment-method selected">
+                    <div class="payment-method-icon">
+                      <i class="fi-rs-money" style="font-size: 24px; color: #3BB77E;"></i>
+                    </div>
+                    <div class="payment-method-details">
+                      <div class="payment-method-name">Cash on Delivery</div>
+                      <div class="payment-method-description">Pay with cash upon delivery</div>
+                    </div>
+                    <div class="payment-method-radio">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="cod"
+                        checked
+                        required
+                      />
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
