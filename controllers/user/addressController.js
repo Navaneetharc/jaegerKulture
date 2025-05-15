@@ -70,7 +70,6 @@ const getMyAddresses = async (req, res) => {
     }
   };
 
-  // default
 
   const setDefaultAddress = async (req, res) => {
     try {
@@ -80,16 +79,13 @@ const getMyAddresses = async (req, res) => {
       const addressDoc = await Address.findOne({ userId });
       if (!addressDoc) return res.status(404).send('Address not found');
       
-      // Set all addresses to non-default
       addressDoc.details.forEach(addr => {
         addr.isDefault = false;
       });
       
-      // Find the address we want to set as default
       const addressToDefault = addressDoc.details.id(addressId);
       if (!addressToDefault) return res.status(404).send('Address not found');
       
-      // Set it as default
       addressToDefault.isDefault = true;
       
       await addressDoc.save();
@@ -100,7 +96,6 @@ const getMyAddresses = async (req, res) => {
       return res.status(500).send('Server error');
     }
   };
-  // fghjk
 
   const deleteAddress = async (req, res) => {
     try {
@@ -145,18 +140,15 @@ const getMyAddresses = async (req, res) => {
     }
   };
   
-  // **NEW**: Update a specific address in-place
   const editMyAddresses = async (req, res) => {
     try {
       const userId   = req.user._id;
       const detailId = req.params.detailId;
   
-      // 1) Grab the updated sub‑document from the nested form
       const updated = Array.isArray(req.body.details)
         ? req.body.details[0]
         : {};
   
-      // 2) Destructure your fields out of it
       const {
         addressType,
         name,
@@ -170,22 +162,18 @@ const getMyAddresses = async (req, res) => {
         landmark
       } = updated;
   
-      // 3) Was “Set as default” checked?
       const makeDefault = req.body.defaultAddress === 'on';
   
-      // 4) Fetch your parent doc
       const addressDoc = await Address.findOne({ userId });
       if (!addressDoc) {
         return res.redirect('/myAddresses?error=Address not found');
       }
   
-      // 5) Find the exact sub‑document
       const addressDetail = addressDoc.details.id(detailId);
       if (!addressDetail) {
         return res.redirect('/myAddresses?error=Address not found');
       }
   
-      // 6) Overwrite the fields
       addressDetail.name         = name;
       addressDetail.phone        = phone;
       addressDetail.altPhone     = altPhone;
@@ -197,13 +185,11 @@ const getMyAddresses = async (req, res) => {
       addressDetail.pincode      = pincode;
       addressDetail.addressType  = addressType;
   
-      // 7) Handle the default‑address checkbox
       if (makeDefault) {
         addressDoc.details.forEach(a => (a.isDefault = false));
         addressDetail.isDefault = true;
       }
   
-      // 8) Save & redirect
       await addressDoc.save();
       return res.redirect('/myAddresses?success=Address updated');
     } catch (error) {

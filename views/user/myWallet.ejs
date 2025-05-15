@@ -523,58 +523,99 @@
                 <button class="filter-btn">Added</button>
                 <button class="filter-btn">Spent</button>
                 <button class="filter-btn">Refunded</button>
+                 <button class="filter-btn">Referrals</button>
               </div>
   
               <% if (transactions && transactions.length > 0) { %>
                 <% transactions.forEach(txn => {
-                     // Determine icon, title, CSS class, and sign
-                     let icon, title, cssClass, sign;
-                     if (txn.entryType === 'CREDIT' && txn.type === 'add_money') {
-                       icon = 'add_circle'; title = 'Money Added'; cssClass = 'credit'; sign = '+';
-                     } else if (txn.entryType === 'CREDIT' && txn.type === 'refund') {
-                       icon = 'replay'; title = 'Refund Received'; cssClass = 'credit'; sign = '+';
-                     } else if (txn.entryType === 'DEBIT' && txn.type === 'product_purchase') {
-                       icon = 'remove_circle'; title = 'Order Payment'; cssClass = 'debit'; sign = '−';
-                     } else {
-                       icon = 'account_balance_wallet';
-                       title = (txn.type || '').replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
-                       cssClass = txn.entryType === 'CREDIT' ? 'credit' : 'debit';
-                       sign = txn.entryType === 'CREDIT' ? '+' : '−';
-                     }
-                     // Format date/time
-                     const dt = new Date(txn.createdAt);
-                     const dateStr = dt.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
-                     const timeStr = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-                 %>
-                  <div class="transaction-card">
-                    <div class="transaction-header d-flex justify-content-between align-items-center">
-                      <h5 class="transaction-title">
-                        <i class="material-icons text-<%= cssClass === 'credit' ? 'success' : 'danger' %>"><%= icon %></i>
-                        <%= title %>
-                      </h5>
-                      <span class="transaction-amount <%= cssClass %>"><%= sign %>₹<%= txn.amount.toFixed(2) %></span>
-                    </div>
-                    <div class="transaction-body">
-                      <div class="transaction-date"><%= dateStr %> • <%= timeStr %></div>
-                      <div class="transaction-details">
-                        <% if (txn.type === 'add_money') { %>
-                          Added via <%= (txn.payment_type || '').toUpperCase() %> (<%= txn.transactionId %>)
-                        <% } else if (txn.type === 'refund') { %>
-                          Refund for Order #<%= txn.orderId %>
-                        <% } else if (txn.type === 'product_purchase') { %>
-                          Payment for Order #<%= txn.orderId %>
-                        <% } else { %>
-                          <%= title %>
-                        <% } %>
-                      </div>
-                      <% if (txn.orderId) { %>
-                        <div class="text-end mt-2">
-                          <a href="/orderDetails?id=<%= txn.orderId %>" class="btn btn-sm btn-outline-primary">View Order</a>
-                        </div>
-                      <% } %>
-                    </div>
-                  </div>
-                <% }) %>
+     let icon, title, cssClass, sign;
+
+     // New: referral bonus
+     if (txn.entryType === 'CREDIT' && txn.type === 'referral') {
+       icon     = 'card_giftcard';               // pick any Material icon you like
+       title    = 'Referral Bonus';
+       cssClass = 'credit';
+       sign     = '+';
+     }
+     // Money added (non-referral)
+     else if (txn.entryType === 'CREDIT' && txn.type === 'add_money') {
+       icon     = 'add_circle';
+       title    = 'Money Added';
+       cssClass = 'credit';
+       sign     = '+';
+     }
+     // Refund received
+     else if (txn.entryType === 'CREDIT' && txn.type === 'refund') {
+       icon     = 'replay';
+       title    = 'Refund Received';
+       cssClass = 'credit';
+       sign     = '+';
+     }
+     // Purchase debit
+     else if (txn.entryType === 'DEBIT' && txn.type === 'product_purchase') {
+       icon     = 'remove_circle';
+       title    = 'Order Payment';
+       cssClass = 'debit';
+       sign     = '−';
+     }
+     // fallback
+     else {
+       icon     = 'account_balance_wallet';
+       title    = (txn.type || '')
+                   .replace('_', ' ')
+                   .replace(/\b\w/g, c => c.toUpperCase());
+       cssClass = txn.entryType === 'CREDIT' ? 'credit' : 'debit';
+       sign     = txn.entryType === 'CREDIT' ? '+' : '−';
+     }
+
+     // format date/time…
+%>
+  <div class="transaction-card">
+    <div class="transaction-header d-flex justify-content-between align-items-center">
+      <h5 class="transaction-title">
+        <i class="material-icons text-<%= cssClass === 'credit' ? 'success' : 'danger' %>">
+          <%= icon %>
+        </i>
+        <%= title %>
+      </h5>
+      <span class="transaction-amount <%= cssClass %>">
+        <%= sign %>₹<%= txn.amount.toFixed(2) %>
+      </span>
+    </div>
+    <div class="transaction-body">
+      <div class="transaction-date">
+        <%= (new Date(txn.createdAt))
+             .toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' })
+        %> • 
+        <%= (new Date(txn.createdAt))
+             .toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })
+        %>
+      </div>
+      <div class="transaction-details">
+        <% if (txn.payment_type === 'referral') { %>
+          Bonus for referring a new user
+        <% } else if (txn.type === 'add_money') { %>
+          Added via <%= (txn.payment_type || '').toUpperCase() %>
+          (<%= txn.transactionId %>)
+        <% } else if (txn.type === 'refund') { %>
+          Refund for Order #<%= txn.orderId %>
+        <% } else if (txn.type === 'product_purchase') { %>
+          Payment for Order #<%= txn.orderId %>
+        <% } else { %>
+          <%= title %>
+        <% } %>
+      </div>
+      <% if (txn.orderId) { %>
+        <div class="text-end mt-2">
+          <a href="/orderDetails?id=<%= txn.orderId %>" class="btn btn-sm btn-outline-primary">
+            View Order
+          </a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+<% }) %>
+
               <% } else { %>
                 <p>No transaction history available.</p>
               <% } %>

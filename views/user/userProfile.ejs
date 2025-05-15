@@ -125,6 +125,85 @@
         background-color: #f8f9fa;
         color: #3BB77E;
     }
+
+    /* Referral code styles */
+    .referral-container {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .referral-title {
+        color: #3BB77E;
+        font-size: 18px;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .referral-subtitle {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .referral-code-container {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        border: 1px dashed #3BB77E;
+        border-radius: 6px;
+        padding: 12px 15px;
+        position: relative;
+    }
+
+    .referral-code {
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: #333;
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+
+    .copy-btn {
+        background-color: #3BB77E;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .copy-btn:hover {
+        background-color: #2ea76d;
+    }
+
+    .copy-tooltip {
+        position: absolute;
+        background-color: #333;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        bottom: -30px;
+        right: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .copy-tooltip.show {
+        opacity: 1;
+        visibility: visible;
+    }
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -406,6 +485,19 @@
                                 </div>
                                 <% } %>
                             </form>
+
+                            <!-- Referral Code Section -->
+                            <div class="referral-container">
+                                <h4 class="referral-title">Your Referral Code</h4>
+                                <p class="referral-subtitle">Share this code with friends and earn rewards when they sign up!</p>
+                                <div class="referral-code-container">
+                                    <div class="referral-code" id="referral-code"><%= user.referralCode || '-' %></div>
+                                    <button class="copy-btn" onclick="copyReferralCode()">
+                                        <i class="fi-rs-copy"></i>
+                                    </button>
+                                    <div class="copy-tooltip" id="copy-tooltip">Copied!</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -437,5 +529,30 @@ function previewImage(input) {
         
         reader.readAsDataURL(input.files[0]);
     }
+}
+
+function copyReferralCode() {
+    const referralCode = document.getElementById('referral-code').innerText;
+    const tooltip = document.getElementById('copy-tooltip');
+    
+    // Create a temporary input element
+    const tempInput = document.createElement('input');
+    tempInput.value = referralCode;
+    document.body.appendChild(tempInput);
+    
+    // Select and copy the text
+    tempInput.select();
+    document.execCommand('copy');
+    
+    // Remove the temporary input
+    document.body.removeChild(tempInput);
+    
+    // Show the tooltip
+    tooltip.classList.add('show');
+    
+    // Hide the tooltip after 2 seconds
+    setTimeout(function() {
+        tooltip.classList.remove('show');
+    }, 2000);
 }
 </script>

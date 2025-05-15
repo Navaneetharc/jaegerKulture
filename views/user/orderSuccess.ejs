@@ -236,37 +236,53 @@
                            </div>
                            <% }) %>
                         </div>
+<div class="order-summary">
+  <div class="order-summary-title">Payment Summary</div>
 
-                        <!-- Order Summary - Static Example -->
-                        <div class="order-summary">
-                            <div class="order-summary-title">Payment Summary</div>
-                            <div class="order-summary-row">
-                                <div class="order-summary-label">Subtotal</div>
-                                <div class="order-summary-value"><p>₹<%= subtotal %></p></div>
-                            </div>
-                            <div class="order-summary-row">
-                                <div class="order-summary-label">Delivery Charge</div>
-                                <div class="order-summary-value">₹<%= order.deliveryCharge.toFixed(2) %></div>
-                            </div>
-                            <div class="order-summary-row">
-                                <div class="order-summary-label">Tax (5%)</div>
-                                <div class="order-summary-value">₹<%= order.tax.toFixed(2) %></div>
-                            </div>
-                            <div class="order-summary-row">
-                                <div class="order-summary-label">Discount</div>
-                                <div class="order-summary-value discount">₹<%= order.coupon.toFixed(2) %></div>
-                            </div>
-                            <div class="order-summary-row">
-                                <div class="order-summary-label">Total</div>
-                                <div class="order-summary-value">₹<%= order.totalAmount.toFixed(2) %></div>
-                            </div>
-                            <div class="mt-2">
-                                <p>Payment Method: <strong><%= order.paymentMethod.toUpperCase() %></strong></p>
-                                <p class="<%= order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning' %>">
-                                    Payment Status: <strong><%= order.paymentStatus %></strong>
-                                </p>
-                            </div>
-                        </div>
+  <div class="order-summary-row">
+    <div class="order-summary-label">Subtotal</div>
+    <div class="order-summary-value">₹<%= subtotal.toFixed(2) %></div>
+  </div>
+
+  <div class="order-summary-row">
+    <div class="order-summary-label">Delivery Charge</div>
+    <div class="order-summary-value">₹<%= deliveryCharge.toFixed(2) %></div>
+  </div>
+
+  <div class="order-summary-row">
+    <div class="order-summary-label">Tax (5%)</div>
+    <div class="order-summary-value">₹<%= tax.toFixed(2) %></div>
+  </div>
+
+<div class="order-summary-row">
+  <div class="order-summary-label">
+    Discount
+    <% if (couponName || couponCode) { %>
+      <small>(<%= couponName || couponCode %>)</small>
+    <% } %>
+  </div>
+  <!-- use discount, not order.couponDiscount -->
+  <div class="order-summary-value discount">
+    -₹<%= discount.toFixed(2) %>
+  </div>
+</div>
+
+
+ <div class="order-summary-row">
+  <div class="order-summary-label">Total</div>
+  <div class="order-summary-value">₹<%= totalAmount.toFixed(2) %></div>
+</div>
+
+
+  <div class="mt-2">
+    <p>Payment Method: <strong><%= paymentMethod.toUpperCase() %></strong></p>
+    <p class="<%= paymentStatus === 'Paid' ? 'text-success' : 'text-warning' %>">
+      Payment Status: <strong><%= paymentStatus %></strong>
+    </p>
+  </div>
+</div>
+
+
                         
                         <div class="action-buttons">
                             <a href="/orderDetails/<%= order._id %>" class="action-btn primary-btn">Track Order</a>

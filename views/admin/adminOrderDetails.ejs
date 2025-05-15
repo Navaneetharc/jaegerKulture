@@ -295,21 +295,28 @@
       
                       <div class="col-lg-4">
                           <div class="box shadow-sm bg-light mb-4">
-                              <h6 class="mb-15">Payment Info</h6>
-                              <p>
-                                  Payment Method: <%= order.paymentMethod.toUpperCase() %> <br>
-                                  Payment Status:
-                                  <span class="badge rounded-pill <%= statusClass %>">
-                                      <%= order.status %>
-                                  </span> <br>
-                                  <% if (order.paymentId) { %>
-                                      Payment ID: <%= order.paymentId %> <br>
-                                  <% } %>
-                                  <% if (order.paymentStatus === 'Failed' && order.failureReason) { %>
-                                      Failure Reason: <%= order.failureReason %> <br>
-                                  <% } %>
-                              </p>
-                          </div>
+  <h6 class="mb-15">Payment Info</h6>
+  <p>
+      Payment Method: <%= order.paymentMethod.toUpperCase() %> <br>
+      Payment Status:
+      <span class="badge rounded-pill <%= statusClass %>">
+          <%= order.status %>
+      </span> <br>
+      
+      <% if (order.paymentId) { %>
+          Payment ID: <%= order.paymentId %> <br>
+      <% } %>
+      
+      <% if (order.paymentStatus === 'Failed' && order.failureReason) { %>
+          Failure Reason: <%= order.failureReason %> <br>
+      <% } %>
+      
+      <% if (order.status === 'Cancelled' && order.cancelReason) { %>
+          <strong>Cancellation Reason:</strong> <%= order.cancelReason %> <br>
+      <% } %>
+  </p>
+</div>
+
       
                           <!-- only show these buttons if not cancelled -->
                           <% if (order.status !== 'Cancelled') { %>

@@ -1,4 +1,5 @@
 const User = require('../../models/userSchema');
+const Wallet = require('../../models/walletSchema');
 const Category = require('../../models/categorySchema');
 const Product = require('../../models/productSchema');
 const Wishlist = require('../../models/wishlistSchema'); 
@@ -27,7 +28,6 @@ const loadSignup = async (req,res)=>{
     }
 }
 
-
 const loadHomepage = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -38,16 +38,12 @@ const loadHomepage = async (req, res) => {
         
             const items = cart?.items || [];
 
-            // Initialize wishlistCount
             let wishlistCount = 0;
 
-            // Only fetch wishlistCount if user is logged in
             if (userId) {
                 const wishlist = await Wishlist.findOne({ userId });
                 wishlistCount = wishlist ? wishlist.products.length : 0;
-            }
-            
-        // console.log("Found categories:", categories);
+            }           
 
         let productData = await Product.find({
             isBlocked: false,
@@ -57,8 +53,6 @@ const loadHomepage = async (req, res) => {
         .limit(4)
         .populate('category');
         
-        // console.log("Found products:", JSON.stringify(productData, null, 2));
-        // console.log("Product image paths:", productData.map(p => p.productImage));
         
         if(!productData || productData.length === 0) {
             
@@ -79,13 +73,11 @@ const loadHomepage = async (req, res) => {
 };
 
 
-
 function generateOtp() {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     console.log("Generated OTP:", otp);  
     return otp;
 }
-
 
 async function sendVerificationEmail(email,otp){
     try {
@@ -117,46 +109,52 @@ async function sendVerificationEmail(email,otp){
     }
 }
 
-const signup = async(req,res)=>{
+const signup = async(req, res) => {
+    try {       
+        const {name, phone, email, password, gender, referralCode} = req.body;
+        // console.log(req.body);
 
-    try {
-        
-        const {name,phone,email,password,cPassword,gender} = req.body;
-
-        console.log(req.body);
-        
         const findUser = await User.findOne({ email });
         if (findUser) {
-            
             return res.render("signup", { message: "User with this email already exists" });
-        }
+        }        
         
+        if (referralCode) {
+            if (!/^[A-Za-z0-9#]{5,15}$/.test(referralCode)) {
+                return res.render("signup", { message: "Invalid referral code format" });
+            }
+            
+            const referrer = await User.findOne({ referralCode });
+            if (!referrer) {
+                return res.render("signup", { message: "Invalid referral code" });
+            }
+            
+            req.session.referrerId = referrer._id;
+            req.session.referralCode = referralCode;
+        }
+
         console.log("Calling generateOtp...");
         const otp = generateOtp();
         console.log("OTP:", otp);
 
+        const emailSent = await sendVerificationEmail(email, otp);
 
-        const emailSent = await sendVerificationEmail(email,otp);
-
-        if(!emailSent){
+        if(!emailSent) {
             return res.json({ error: 'Failed to send email' });
         }
 
         req.session.userOtp = otp;
-        req.session.userData = {name,phone,email,password,gender};
+        req.session.userData = {name, phone, email, password, gender};
 
         res.render("verify-otp");
         
         if (process.env.NODE_ENV === 'development') {
             console.log("OTP Sent:", otp);
         }
-        
 
     } catch (error) {
-
-        console.error('signup error',error);
-        res.redirect('/login')
-        
+        console.error('signup error', error);
+        res.redirect('/login');
     }
 }
 
@@ -172,44 +170,90 @@ const securePassword = async (password)=>{
     } catch (error) {
         
     }
+
+    
 }
 
-const verifyOtp = async(req,res)=>{
-    try {
-        const {otp} = req.body;
-        console.log("Recieved OTP:",otp);
-        console.log("Expected OTP:",req.session.userOtp);
+const verifyOtp = async (req, res) => {
+  try {
+    const { otp } = req.body;
+    console.log("Received OTP:", otp);
+    console.log("Expected OTP:", req.session.userOtp);
 
-        if (!req.session.userOtp) {
-            return res.status(400).json({success: false, message: "OTP has expired. Please request a new one"});
-        }
-
-        if(otp===req.session.userOtp){
-            const user = req.session.userData;
-            const passwordHash = await securePassword(user.password);
-            const saveUserData = new User({
-                name:user.name,
-                email:user.email,
-                phone:user.phone,
-                password:passwordHash,
-                gender:user.gender
-            })
-
-            await saveUserData.save();
-            req.session.user = saveUserData._id;
-            delete req.session.userOtp; // Clear the OTP after successful verification
-            return res.json({success:true,redirectUrl:"/"})
-        }else{
-            return res.status(400).json({success:false, message:"Invalid OTP, Please Try Again"})
-        }
-
-    } catch (error) {
-
-        console.error("Error verifying OTP",error);
-        return res.status(500).json({success:false,message:"An error occured"})
-        
+    if (!req.session.userOtp) {
+      return res
+        .status(400)
+        .json({ success: false, message: "OTP has expired. Please request a new one" });
     }
-}
+
+    if (otp !== req.session.userOtp) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid OTP, Please Try Again" });
+    }
+
+    const { name, email, phone, password, gender } = req.session.userData;
+    const passwordHash = await securePassword(password);
+
+    const newUser = new User({
+      name,
+      email,
+      phone,
+      password: passwordHash,
+      gender,
+      isActive: true
+    });
+    const savedUser = await newUser.save();
+
+    if (req.session.referrerId) {
+      try {
+        const referrer = await User.findById(req.session.referrerId);
+        if (referrer) {
+          await User.findByIdAndUpdate(referrer._id, {
+            $inc: { wallet: 25 },
+            $push: {
+              walletHistory: {
+                type:        "credit",
+                amount:      25,
+                description: "Referral bonus: new signup"
+              }
+            },
+            $push: { redeemedUsers: savedUser._id }
+          });
+
+          await new Wallet({
+            userId:        referrer._id,
+            transactionId: `REF-${Date.now()}`,
+            payment_type:  "referral",
+            amount:        25,
+            status:        "completed",
+            entryType:     "CREDIT",
+            type:          'referral'
+          }).save();
+
+          console.log("Referral bonus of ₹25 added to referrer's wallet");
+        }
+      } catch (refErr) {
+        console.error("Error processing referral bonus:", refErr);
+      }
+    }
+
+    req.session.user = savedUser._id;
+    delete req.session.userOtp;
+    delete req.session.referrerId;
+    delete req.session.referralCode;
+
+    return res.json({ success: true, redirectUrl: "/" });
+  } catch (err) {
+    console.error("Error verifying OTP", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "An error occurred" });
+  }
+};
+
+
+
 
 const resendOtp = async(req,res)=>{
     try {
@@ -320,9 +364,9 @@ const loadShoppingPage = async(req,res)=>{
         let sortObject = { createdAt: -1 };
         
         if (sortOption === 'price_low') {
-            sortObject = { salePrice: 1 }; // Sort by price low to high
+            sortObject = { salePrice: 1 }; 
         } else if (sortOption === 'price_high') {
-            sortObject = { salePrice: -1 }; // Sort by price high to low
+            sortObject = { salePrice: -1 };
         }
         
         let query = {
@@ -347,10 +391,8 @@ const loadShoppingPage = async(req,res)=>{
         }
     }
 
-    // Initialize wishlistCount
     let wishlistCount = 0;
 
-    // Only fetch wishlistCount if user is logged in
     if (userId) {
         const wishlist = await Wishlist.findOne({ userId });
         wishlistCount = wishlist ? wishlist.products.length : 0;
@@ -362,7 +404,6 @@ const loadShoppingPage = async(req,res)=>{
         .sort(sortObject)
         .lean();
 
-        // Pagination setup
         const page = parseInt(req.query.page) || 1;
         const itemsPerPage = 6;
         const startIndex = (page - 1) * itemsPerPage;
@@ -438,9 +479,9 @@ const filterProduct = async(req,res)=>{
         let sortObject = { createdAt: -1 }; 
         
         if (sortOption === 'price_low') {
-            sortObject = { salePrice: 1 }; // Sort by price low to high
+            sortObject = { salePrice: 1 }; 
         } else if (sortOption === 'price_high') {
-            sortObject = { salePrice: -1 }; // Sort by price high to low
+            sortObject = { salePrice: -1 }; 
         }
 
         const products = await Product.find(query)
@@ -461,10 +502,8 @@ const filterProduct = async(req,res)=>{
         }
     }
 
-    // Initialize wishlistCount
     let wishlistCount = 0;
 
-    // Only fetch wishlistCount if user is logged in
     if (userId) {
         const wishlist = await Wishlist.findOne({ userId });
         wishlistCount = wishlist ? wishlist.products.length : 0;
@@ -472,7 +511,6 @@ const filterProduct = async(req,res)=>{
 
     
 
-        // Pagination
         const page = parseInt(req.query.page) || 1;
         const limit = 6;
         const startIndex = (page - 1) * limit;
@@ -480,7 +518,6 @@ const filterProduct = async(req,res)=>{
         const paginatedProducts = products.slice(startIndex, endIndex);
         const totalPages = Math.ceil(products.length / limit);
 
-        // Get user data if logged in
         let userData = null;
         if (user) {
             userData = await User.findById(user);
@@ -557,12 +594,12 @@ const filterByPrice = async (req, res) => {
             }
         }
 
-        let sortObject = { createdAt: -1 }; // Default sort
+        let sortObject = { createdAt: -1 }; 
         
         if (sortOption === 'price_low') {
-            sortObject = { salePrice: 1 }; // Sort by price low to high
+            sortObject = { salePrice: 1 };
         } else if (sortOption === 'price_high') {
-            sortObject = { salePrice: -1 }; // Sort by price high to low
+            sortObject = { salePrice: -1 };
         }
 
         const findProducts = await Product.find({
@@ -589,16 +626,13 @@ const filterByPrice = async (req, res) => {
         }
     }
 
-    // Initialize wishlistCount
     let wishlistCount = 0;
 
-    // Only fetch wishlistCount if user is logged in
     if (userId) {
         const wishlist = await Wishlist.findOne({ userId });
         wishlistCount = wishlist ? wishlist.products.length : 0;
     }
 
-        // Pagination
         const itemsPerPage = 6;
         const currentPage = parseInt(req.query.page) || 1;
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -683,10 +717,8 @@ const searchProducts = async (req, res) => {
           }
       }
 
-      // Initialize wishlistCount
       let wishlistCount = 0;
 
-      // Only fetch wishlistCount if user is logged in
       if (userId) {
           const wishlist = await Wishlist.findOne({ userId });
           wishlistCount = wishlist ? wishlist.products.length : 0;
@@ -700,7 +732,6 @@ const searchProducts = async (req, res) => {
         products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       }
   
-      // Pagination setup
       const itemsPerPage = 6;
       const currentPage = parseInt(req.query.page) || 1;
       const startIndex = (currentPage - 1) * itemsPerPage;

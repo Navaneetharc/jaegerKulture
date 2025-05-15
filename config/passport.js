@@ -19,7 +19,7 @@ passport.use(new GoogleStrategy(
                     name: profile.displayName,
                     email: profile.emails[0].value,
                     googleId: profile.id,
-                    isVerified: true // Since Google has verified the email
+                    isVerified: true 
                 });
                 await user.save();
                 return done(null, user);

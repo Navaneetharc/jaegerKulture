@@ -10,9 +10,6 @@ const productDetails = async (req, res) => {
         const userId = req.session?.user || null;
         const productId = req.query.id;
         if (!productId) return res.redirect('/pageNotFound');
-        // let cart = await Cart.findOne({ userId });
-
-
 
         const [userData, productDoc] = await Promise.all([
             userId ? User.findById(userId).lean() : null,
@@ -21,23 +18,19 @@ const productDetails = async (req, res) => {
 
         if (!productDoc) return res.redirect('/pageNotFound');
 
-        // Get related products from the same category
         const relatedProducts = await Product.find({
             category: productDoc.category._id,
-            _id: { $ne: productId }, // Exclude current product
+            _id: { $ne: productId },
             isBlocked: false
         })
         .limit(4)
         .populate('category')
         .lean();
 
-        // Modify productDoc to match your EJS requirements:
-        // - Add a 'stock' field from productDoc.variant.size
-        // - Rename description to shortDescription
         const product = {
             ...productDoc,
-            stock: productDoc.variant.size,       // { s: Number, m: Number, l: Number, x: Number, xl: Number }
-            shortDescription: productDoc.description // use description as the short description
+            stock: productDoc.variant.size,       
+            shortDescription: productDoc.description 
         };
 
         let cart = await Cart
@@ -53,7 +46,7 @@ const productDetails = async (req, res) => {
             product,
             items,
             category: product.category,
-            products: relatedProducts // Add related products to the template
+            products: relatedProducts
         });
     } catch (error) {
         console.log('Error in fetching product details:', error);

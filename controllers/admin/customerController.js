@@ -53,7 +53,6 @@ const customerBlocked = async(req,res)=>{
                 if (error) {
                     console.error("Error accessing session store:", error);
                 } else {
-                    // Find and destroy sessions for this user
                     Object.keys(sessions).forEach(sessionId => {
                         const session = sessions[sessionId];
                         if (session.user === id) {

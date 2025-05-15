@@ -10,6 +10,7 @@ const categoryController = require("../controllers/admin/categoryController");
 const productController = require('../controllers/admin/productController');
 const {userAuth,adminAuth} = require("../middlewares/auth");
 const orderController = require("../controllers/admin/orderController");
+const couponController = require("../controllers/admin/couponController");
 const inventoryController = require('../controllers/admin/inventoryController')
 
 const uploadDir = path.join(__dirname, '../public/uploads/product-images');
@@ -47,6 +48,8 @@ router.get("/pageerror",adminController.pageerror);
 router.get('/login',adminController.loadLogin);
 router.post('/login',adminController.login);
 router.get('/', adminAuth,adminController.loadDashboard);
+router.post('/dashboard/filter',adminController.updateDashboard);
+router.post('/generate-report', adminAuth, adminController.generateReport);
 router.get('/logout',adminController.logout);
 
 // customer management
@@ -63,7 +66,7 @@ router.get('/unlistCategory',adminAuth,categoryController.getUnlistCategory);
 router.get('/editCategory',adminAuth,categoryController.getEditCategory);
 router.put('/editCategory/:id', adminAuth, categoryController.editCategory);
 
-// product Management
+// product Management  
 router.get('/addProducts',adminAuth,productController.getProductAddPage);
 router.post("/addProducts",adminAuth,uploads.array('images', 3),productController.addProducts);
 router.get('/products/:page?', adminAuth, productController.getAllProducts);
@@ -86,5 +89,14 @@ router.post('/approve-return/:orderId', adminAuth, orderController.approveReturn
 router.post('/cancel-return/:orderId', adminAuth, orderController.rejectReturns);
 // stock/inventory management
 router.get('/stock',inventoryController.getStockManagement);
+
+
+// coupon management
+router.get('/coupons',adminAuth,couponController.loadCouponManagement);
+router.post('/coupons', adminAuth, couponController.addCoupon);
+router.post('/coupons/update', adminAuth, couponController.updateCoupon);
+router.get('/coupons/activate/:id', adminAuth, couponController.activateCoupon);
+router.get('/coupons/deactivate/:id', adminAuth, couponController.deactivateCoupon);
+router.get('/coupons/delete/:id', adminAuth, couponController.deleteCoupon);
   
 module.exports = router

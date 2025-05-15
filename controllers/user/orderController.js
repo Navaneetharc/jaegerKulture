@@ -1,6 +1,8 @@
+const mongoose = require("mongoose");
 const Order = require('../../models/orderSchema');
 const User = require('../../models/userSchema');
 const Refund = require('../../models/refundSchema');
+const Wallet   = require('../../models/walletSchema');
 
 const getMyOrdersPage = async (req, res) => {
   try {
@@ -58,37 +60,62 @@ const getOrderDetails = async (req, res) => {
 };
 
 const cancelOrder = async (req, res) => {
-    try {
-        const orderId = req.params.id;
-        const { cancelReason } = req.body;
+  try {
+    const orderId = req.params.id;
+    const { cancelReason } = req.body;
 
-        const order = await Order.findById(orderId);
-
-        if (!order) {
-            return res.status(404).render('notFound');
-        }
-
-        if (!order.statusHistory) {
-            order.statusHistory = [];
-        }
-
-        order.status = 'Cancelled';
-        order.cancelReason = cancelReason;
-
-        order.statusHistory.push({
-            status: 'Cancelled',
-            date: new Date(),
-            reason: cancelReason,
-        });
-
-        await order.save();
-
-        res.redirect(`/orderDetails/${orderId}`);
-    } catch (error) {
-        console.error('Error cancelling order:', error);
-        res.redirect('/admin/pageerror');
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).render('notFound');
     }
+
+    order.status = 'Cancelled';
+    order.cancelReason = cancelReason;
+    order.statusHistory = order.statusHistory || [];
+    order.statusHistory.push({
+      status: 'Cancelled',
+      timestamp: new Date(),
+      reason: cancelReason
+    });
+    await order.save();
+
+    const paymentMethod = (order.paymentMethod || '').toLowerCase();
+    if (paymentMethod !== 'cod' && order.paymentStatus === 'Paid') {
+      const userId = order.userId;
+      const refundAmount = order.totalAmount || order.walletAmountUsed || 0;
+
+      await new Wallet({
+        userId:        userId,
+        transactionId: `REFUND-${Date.now()}`,
+        payment_type:  'refund',
+        amount:        refundAmount,
+        status:        'completed',
+        entryType:     'CREDIT',
+        type:          'refund',
+        orderId:       order._id
+      }).save();
+
+      await User.findByIdAndUpdate(userId, {
+        $inc: { wallet: refundAmount },
+        $push: {
+          walletHistory: {
+            type:        'credit',
+            amount:      refundAmount,
+            description: `Refund for cancelled order #${order._id}`
+          }
+        }
+      });
+    }
+
+    res.redirect(`/orderDetails/${orderId}`);
+  } catch (error) {
+    console.error('Error cancelling order:', error);
+    res.redirect('/admin/pageerror');
+  }
 };
+
+
+
 
 const returnFullOrder = async (req, res) => {
     try {

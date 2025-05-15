@@ -96,7 +96,6 @@ const requestEmailOTP = async (req, res) => {
   }
 };
 
-// Resend OTP for email change
 const resendEmailOTP = async (req, res) => {
   try {
     const { email } = req.body;

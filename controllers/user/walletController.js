@@ -5,7 +5,7 @@ const User   = require('../../models/userSchema');
 const getMyWalletPage = async (req, res) => {
   try {
     const userIdRaw = req.user._id;
-    console.log('Fetching wallet for userId:', userIdRaw);
+    // console.log('wallet userId:', userIdRaw);
 
     const userId = typeof userIdRaw === 'string'
       ? mongoose.Types.ObjectId(userIdRaw)
@@ -17,7 +17,7 @@ const getMyWalletPage = async (req, res) => {
       .find({ userId })
       .sort({ createdAt: -1 })
       .lean();
-    console.log('Transactions fetched:', transactions);
+    // console.log('Transactions:', transactions);
 
     res.render('myWallet', { balance, transactions });
   } catch (error) {

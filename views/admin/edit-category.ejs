@@ -185,6 +185,10 @@
                                     <input type="text" name="categoryName" value="<%=category.name%>" placeholder="Type here" class="form-control" id="product_name">
                                 </div>
                                 <div class="mb-4">
+                                    <label for="applyingOffer" class="form-label">Applying Offer (%)</label>
+                                    <input type="number" name="categoryOffer" value="<%=category.categoryOffer%>" class="form-control" id="categoryOffer" placeholder="Enter offer percentage" min="0" max="100" step="1" />
+                                </div>
+                                <div class="mb-4">
                                     <label class="form-label">description</label>
                                     <textarea placeholder="Type here" name="description" class="form-control" rows="4"><%= category.description %></textarea>
                                 </div>
@@ -215,6 +219,7 @@
                     },
                     body: JSON.stringify({
                         categoryName: formData.get('categoryName'),
+                        categoryOffer: Number(formData.get('categoryOffer')),
                         description: formData.get('description')
                     })
                 })

@@ -4,7 +4,6 @@ const path        = require('path');
 function generateInvoice(order, res) {
   const doc = new PDFDocument({ size: 'A4', margin: 50 });
 
-  // Header: logo + company name
   
     try {
     doc.image(path.join(__dirname, '../assets/imgs/theme/jaeger.png'), 50, 45, { width: 50 });
@@ -18,10 +17,8 @@ function generateInvoice(order, res) {
     .text('www.jaegerkulture.com', 200, 65, { align: 'right' })        
     .moveDown();
 
-  // Divider
   doc.moveTo(50, 100).lineTo(550, 100).stroke();
 
-  // Invoice metadata
   const metaTop = 120;
   doc
     .font('Helvetica-Bold')
@@ -34,7 +31,6 @@ function generateInvoice(order, res) {
     .text(`#${order._id}`, 150, metaTop)
     .text(order.date, 350, metaTop);
 
-  // Billing address
   const billTop = metaTop + 30;
   doc
     .font('Helvetica-Bold')
@@ -44,11 +40,9 @@ function generateInvoice(order, res) {
     .text(order.customerName, 110, billTop)
     .text(order.address, 110, billTop + 15);
 
-  // Dynamically calculate gap for table based on number of address lines
   const addressLines = order.address.split('\n').length;
   const tableTop = billTop + 30 + addressLines * 15;
 
-  // Table Header
   doc
     .font('Helvetica-Bold')
     .fontSize(12)
@@ -58,7 +52,6 @@ function generateInvoice(order, res) {
     .text('Price',      410, tableTop, { width: 70, align: 'right' })
     .text('Line Total', 490, tableTop, { width: 70, align: 'right' });
 
-  // Table Rows
   let y = tableTop + 20;
   order.items.forEach(item => {
     doc
@@ -75,7 +68,6 @@ function generateInvoice(order, res) {
     y += 20;
   });
 
-  // Grand Total
   doc
     .font('Helvetica-Bold')
     .fontSize(12)
@@ -84,7 +76,6 @@ function generateInvoice(order, res) {
       width: 500
     });
 
-  // Send PDF
   res.setHeader(
     'Content-Disposition',
     `attachment; filename=invoice-${order._id}.pdf`

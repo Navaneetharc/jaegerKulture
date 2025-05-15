@@ -182,6 +182,10 @@
                                     </select>
                                 </div>
                                 <div class="mb-4">
+                                    <label for="applyingOffer" class="form-label">Applying Offer (%)</label>
+                                    <input type="number" name="categoryOffer" class="form-control" id="categoryOffer" placeholder="Enter offer percentage" min="0" max="100" step="1" required />
+                                </div>
+                                <div class="mb-4">
                                     <label class="form-label">Description</label>
                                     <textarea placeholder="Type here" name="description" id="descriptionId" class="form-control" required></textarea>
                                 </div>
@@ -262,119 +266,112 @@
                 </div> <!-- card body .// -->
             </div> <!-- card .// -->
 
-            <!-- <div class="pagination-container">
-       
-                <ul class="pagination pagination-sm">
-                    <% if (currentPage > 1) { %>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                                <span aria-hidden="true">«</span>
-                            </a>
-                        </li>
-                    <% } %>
-                    <% for(let i = 1; i <= totalPages; i++) { %>
-                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                        </li>
-                    <% } %>
-                    <% if (currentPage < totalPages) { %>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                                <span aria-hidden="true">»</span>
-                            </a>
-                        </li>
-                    <% } %>
-                </ul>
 
-               
-            </div> -->
             <div class="pagination-area mt-15 mb-50">
                 <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <% for(let i = 1; i <= totalPages; i++) { %>
-                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                <a class="page-link" href="/admin/categories/<%= i %>"><%= i.toString().padStart(2, '0') %></a>
-                            </li>
-                        <% } %>
-                        <% if (currentPage < totalPages) { %>
-                            <li class="page-item">
-                                <a class="page-link" href="/admin/categories/<%= currentPage + 1 %>">
-                                    <i class="material-icons md-chevron_right"></i>
-                                </a>
-                            </li>
-                        <% } %>
-                    </ul>
+                  <ul class="pagination justify-content-start">
+                    <% for(let i = 1; i <= totalPages; i++) { %>
+                      <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="/admin/categories?page=<%= i %>">
+                          <%= i.toString().padStart(2, '0') %>
+                        </a>
+                      </li>
+                    <% } %>
+                    <% if (currentPage < totalPages) { %>
+                      <li class="page-item">
+                        <a class="page-link" href="/admin/categories?page=<%= currentPage + 1 %>">
+                          <i class="material-icons md-chevron_right"></i>
+                        </a>
+                      </li>
+                    <% } %>
+                  </ul>
                 </nav>
-            </div>
+              </div>
+              
             
             
         </section> <!-- content-main end// -->
 
         <script>
 
-            function handleFormSubmit(event){
-
+            function handleFormSubmit(event) {
                 event.preventDefault();
-                if(!validateForm()){
-                    return 
+
+                if (!validateForm()) {
+                    return;
                 }
+
                 const name = document.getElementsByName("name")[0].value;
                 const description = document.getElementById("descriptionId").value;
+                const categoryOffer = Number(document.getElementById("categoryOffer").value);
                 const visibility = document.getElementById("visibility").value;
 
-                fetch('/admin/addCategory',{
-                    method:'POST',
-                    headers:{
-                        'content-type':'application/json'
+                fetch('/admin/addCategory', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
                     },
-                    body:JSON.stringify({name,description, Visibility: visibility})
+                    body: JSON.stringify({ name, description, visibility, categoryOffer })  
                 })
-                .then(response=>{
-                    if(!response.ok){
-                        return response.json().then(err =>{
-                            throw  new Error(err.error);
-                        })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error);
+                        });
                     }
                     return response.json();
                 })
-                .then(data=>{
+                .then(data => {
                     location.reload();
                 })
-                .catch(error=>{
-                    if(error.message === "Category already exists"){
+                .catch(error => {
+                    if (error.message === "Category already exists") {
                         Swal.fire({
-
-                            icon:'error',
-                            title:'Oops',
-                            text:'Category already exists'
-                        })
-                    }else{
+                            icon: 'error',
+                            title: 'Oops',
+                            text: 'Category already exists'
+                        });
+                    } else {
                         Swal.fire({
-                            icon:"error",
-                            title:"Oops",
-                            text:"An error occured while adding the category",
+                            icon: "error",
+                            title: "Oops",
+                            text: "An error occurred while adding the category",
                         });
                     }
                 });
             }
 
-            function validateForm (){
+
+            function validateForm() {
                 clearErrorMessages();
+                let isValid = true;
+
                 const name = document.getElementsByName('name')[0].value.trim();
                 const description = document.getElementById('descriptionId').value.trim();
-                isValid = true;
+                const categoryOffer = document.getElementById('categoryOffer');
+                const offerValue = categoryOffer.value.trim();
 
-                if(name===""){
-                    displayErrorMessage("name-error","please enter a name");
-                    isValid = false
-                }else if(!/^[a-zA-Z\s]+$/.test(name)){
-                    displayErrorMessage("name-error","Category name should contain only alphabetic characters");
+                if (name === "") {
+                    displayErrorMessage("name-error", "Please enter a name");
+                    isValid = false;
+                } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+                    displayErrorMessage("name-error", "Category name should contain only alphabetic characters");
                     isValid = false;
                 }
-                if(description===""){
-                    displayErrorMessage("description-error","Please enter a description");
+
+                if (description === "") {
+                    displayErrorMessage("description-error", "Please enter a description");
                     isValid = false;
                 }
+
+                if (offerValue === "") {
+                    displayErrorMessage("categoryOffer-error", "Must add a category offer");
+                    isValid = false;
+                } else if (isNaN(Number(offerValue)) || Number(offerValue) < 0 || Number(offerValue) > 100) {
+                    displayErrorMessage("categoryOffer-error", "Offer must be a number between 0 and 100");
+                    isValid = false;
+                }
+
                 return isValid;
             }
 

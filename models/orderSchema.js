@@ -107,10 +107,17 @@ address: {
     failureReason: {
         type: String
     },
-
-    coupon: {
-        type: Number,
-        default: 0
+   couponCode: {
+    type: String,
+    default: null
+    },
+    couponName: {
+    type: String,
+    default: null
+    },
+    couponDiscount: {
+    type: Number,
+    default: 0
     },
 
     deliveryCharge: {

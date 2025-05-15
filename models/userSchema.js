@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-// Sub-schema for wallet history entries
 const walletEntrySchema = new Schema({
   type: {
     type: String,
@@ -40,7 +39,7 @@ const userSchema = new Schema({
   phone: {
     type: String,
     unique: true,
-    sparse: true,
+    sparse: true,  
     default: null
   },
   profileImage: {
@@ -53,8 +52,7 @@ const userSchema = new Schema({
     sparse: true
   },
   password: {
-    type: String,
-    required: false
+    type: String
   },
   isBlocked: {
     type: Boolean,
@@ -89,7 +87,8 @@ const userSchema = new Schema({
     default: Date.now
   },
   referralCode: {
-    type: String
+    type: String,
+    unique: true
   },
   redeemed: {
     type: Boolean,
@@ -111,107 +110,43 @@ const userSchema = new Schema({
   }]
 });
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+userSchema.pre('save', function(next) {
+  if (this.isNew && !this.referralCode) {
+    let hint = (this.name || '').trim().slice(0, 3).toUpperCase();
+    if (hint.length < 2) hint = 'USR';
 
+    const rand4 = Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, '0');
 
-// const mongoose = require('mongoose');
-// const {Schema} = mongoose;
+    this.referralCode = `#JK${hint}${rand4}`;
+  }
+  next();
+});
 
-// const userSchema = new Schema({
-//     name:{
-//         type:String,
-//         required:true
-//     },
-//     email:{
-//         type:String,
-//         required:true,
-//         unique:true,
-//     },
-//     gender:{
-//         type:String,
-//         enum:['male', 'female'],
-//         default:null
-//     },
-//     phone:{
-//         type:String,
-//         required:false,
-//         unique:true,
-//         sparse:true,
-//         default:null
-//     },
-//     profileImage: {
-//         type: String,
-//         default: null
-//     },
-//     googleId:{
-//         type:String,
-//         unique:true,
-//         sparse:true
-//     },
-//     password:{
-//         type:String,
-//         required:false
-//     },
-//     isBlocked:{
-//         type:Boolean,
-//         default:false
-//     },
-//     isActive:{
-//        type:Boolean,
-//        default:false
-//     },
-//     isAdmin:{
-//         type:Boolean,
-//         default:false
-//     },
-//     cart:[{
-//         type:Schema.Types.ObjectId,
-//         ref:"Cart",
-//     }],
-//     wallet:{
-//         type:Number,
-//         default:0,
-//     },
-//     walletHistory: [{
-//         type: Schema.Types.ObjectId,
-//         ref: 'Wallet'
-//       }],
-   
-//     orderHistory:[{
-//         type:Schema.Types.ObjectId,
-//         ref:"Order"
-//     }],
-//     createdOn:{
-//         type:Date,
-//         default:Date.now,
-//     },
-//     referalCode:{
-//         type:String,
-//         // required:true
-//     },
-//     redeemed:{
-//         type:Boolean,
-//         // required:true
-//     },
-//     reedemedUsers:[{
-//         type:Schema.Types.ObjectId,
-//         ref:"User",
-//         // required:true
-//     }],
-//     searchHistory:[{
-//         category:{
-//             type: Schema.Types.ObjectId,
-//             ref:"Category",
-//         },
-        
-//         searchOn:{
-//             type:Date,
-//             default:Date.now
-//         }
-//     }]
-// })
+userSchema.post('save', function(error, doc, next) {
+  if (
+    error.name === 'MongoServerError' &&
+    error.code === 11000 &&
+    error.keyPattern?.referralCode
+  ) {
+    doc.referralCode = undefined;
+    return doc.save()
+      .then(() => next())
+      .catch(err => next(err));
+  }
+  next(error);
+});
 
+userSchema.post('save', function(error, doc, next) {
+  if (
+    error.name === 'MongoServerError' &&
+    error.code === 11000 &&
+    error.keyPattern?.phone
+  ) {
+    return next(new Error('Phone number already exists.'));
+  }
+  next(error);
+});
 
-// const User = mongoose.model("User",userSchema);
-// module.exports = User
+module.exports = mongoose.model('User', userSchema);

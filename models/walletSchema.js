@@ -8,7 +8,7 @@ const walletSchema = new Schema({
         required: true
     },
     address: {
-        addressDocId: { type: Schema.Types.ObjectId, ref: 'Address', required: true },
+        addressDocId: { type: Schema.Types.ObjectId, ref: 'Address'},
         addressDetailId: { type: Schema.Types.ObjectId }
     },  
     orderId: {
@@ -38,7 +38,7 @@ const walletSchema = new Schema({
     },
     type: {
         type: String,
-        enum: ['add_money', 'product_purchase', 'refund', 'cancel'],
+        enum: ['add_money', 'product_purchase', 'refund', 'cancel','referral'],
         required: true
     },
 },{timestamps : true});

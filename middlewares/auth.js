@@ -9,7 +9,6 @@ const userAuth = (req,res,next)=>{
                 req.user = data;
                 next();
             }else{
-                // If user is blocked or doesn't exist, destroy their session and redirect to login
                 req.session.destroy(err => {
                     if(err) console.log("Error destroying session:", err);
                     res.redirect("/login");
@@ -27,7 +26,6 @@ const userAuth = (req,res,next)=>{
 
 const adminAuth = (req,res,next)=>{
     if(req.session.admin){
-        // Find the admin
         User.findOne({isAdmin: true})
         .then(admin => {
             if(admin){

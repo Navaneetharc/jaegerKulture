@@ -434,7 +434,109 @@
   border: 2px solid #4caf50;
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
+coupon
+  .coupon-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .coupon-input {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .coupon-input input {
+    flex: 1;
+    padding: 8px 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px 0 0 4px;
+    font-size: 14px;
+  }
+  
+  .coupon-input button {
+    padding: 8px 15px;
+    background-color: #3BB77E;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .coupon-input button:hover {
+    background-color: #2f9b6a;
+  }
+  
+  .coupon-dropdown {
+    display: none;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+  }
+  
+  .coupon-dropdown.active {
+    display: block;
+  }
+  
+  .coupon-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .coupon-item:last-child {
+    border-bottom: none;
+  }
+  
+  .coupon-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .coupon-code {
+    font-weight: 600;
+    color: #3BB77E;
+    margin-right: 10px;
+  }
+  
+  .coupon-description {
+    font-size: 12px;
+    color: #6c757d;
+  }
+  
+  .coupon-invalid {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+  }
+  
+  .coupon-valid {
+    color: #3BB77E;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+  }
+  
+  .coupon-summary-row {
+    color: #3BB77E;
+    font-weight: 500;
+  }
 
+  .remove-coupon-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 12px;
+  padding: 0 5px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.remove-coupon-btn:hover {
+  text-decoration: underline;
+}
 
 </style>
 
@@ -655,6 +757,8 @@
                           <div class="checkout-product-price">₹<%= item.price %></div>
                         </div>
                         <div class="checkout-product-quantity">Qty: <%= item.quantity %></div>
+               
+
                         <div class="checkout-product-total">₹<%= (item.price * item.quantity).toFixed(2) %></div>
                       </div>
                       <% }) %>
@@ -767,6 +871,33 @@
                 <div class="card">
                   <div class="card-body checkout-summary">
                     <div class="checkout-summary-title">Order Summary</div>
+                    <div class="coupon-section">
+                    <div class="coupon-input">
+                        <input type="text" id="couponCode" placeholder="Enter coupon code">
+                        <button type="button" id="applyCoupon">Apply</button>
+                    </div>
+                    <div id="couponInvalid" class="coupon-invalid">Invalid coupon code</div>
+                    <div id="couponValid" class="coupon-valid">Coupon applied successfully!</div>
+                    
+                    <div id="couponDropdown" class="coupon-dropdown">
+                    <% if (coupons && coupons.length) { %>
+                        <% coupons.forEach(c => { %>
+                        <div 
+                            class="coupon-item" 
+                            data-code="<%= c.code %>" 
+                            data-discount="<%= c.offerPrice %>" 
+                            data-type="<%= c.offerPrice < 100 ? 'percent' : 'fixed' %>">
+                            <span class="coupon-code"><%= c.code %></span>
+                            <span class="coupon-description"><%= c.description %></span>
+                        </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="coupon-no-item">No coupons available right now.</div>
+                    <% } %>
+                    </div>
+
+                    </div>
+
                     <div class="checkout-summary-row">
                       <span>Subtotal</span>
                       <span>₹<%= subtotal.toFixed(2) %></span>
@@ -789,36 +920,311 @@
               </div>
             </div>
           
-            <input type="hidden" id="totalAmount" value="<%= totalAmount %>" />
+            <input 
+            type="hidden" 
+            id="totalAmount" 
+            name="totalAmount" 
+            value="<%= total.toFixed(2) %>" 
+            />
+
+
           </form>
           
         </div>
     </section>
 </main>
+<!-- Add this to your CSS section -->
+<style>
+  /* Coupon section styles */
+  .coupon-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .coupon-input {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  .coupon-input input {
+    flex: 1;
+    padding: 8px 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px 0 0 4px;
+    font-size: 14px;
+  }
+  
+  .coupon-input button {
+    padding: 8px 15px;
+    background-color: #3BB77E;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .coupon-input button:hover {
+    background-color: #2f9b6a;
+  }
+  
+  .coupon-dropdown {
+    display: none;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+  }
+  
+  .coupon-dropdown.active {
+    display: block;
+  }
+  
+  .coupon-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .coupon-item:last-child {
+    border-bottom: none;
+  }
+  
+  .coupon-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .coupon-code {
+    font-weight: 600;
+    color: #3BB77E;
+    margin-right: 10px;
+  }
+  
+  .coupon-description {
+    font-size: 12px;
+    color: #6c757d;
+  }
+  
+  .coupon-invalid {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+  }
+  
+  .coupon-valid {
+    color: #3BB77E;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+  }
+  
+  .coupon-summary-row {
+    color: #3BB77E;
+    font-weight: 500;
+  }
+</style>
+
+
+
+<!-- Add this JavaScript code at the end of your script tag -->
+<script>
+// Replace all your coupon-related JavaScript with this simplified version
+document.addEventListener('DOMContentLoaded', function() {
+  // Direct approach with minimal code
+  const applyButton = document.getElementById('applyCoupon');
+  const couponInput = document.getElementById('couponCode');
+  const couponDropdown = document.getElementById('couponDropdown');
+  const couponItems = document.querySelectorAll('.coupon-item');
+  
+  // Show dropdown on input focus
+  couponInput.addEventListener('focus', function() {
+    couponDropdown.style.display = 'block';
+  });
+  
+  // Select coupon on click
+  couponItems.forEach(item => {
+    item.addEventListener('click', function() {
+      couponInput.value = this.getAttribute('data-code');
+      couponDropdown.style.display = 'none';
+    });
+  });
+  
+  // Apply coupon with direct DOM manipulation
+applyButton.onclick = function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const code = couponInput.value.trim();
+    if (!code) {
+      alert("Please enter a coupon code");
+      return;
+    }
+    
+    // Find matching coupon
+    let foundCoupon = null;
+    couponItems.forEach(item => {
+      if (item.getAttribute('data-code') === code) {
+        foundCoupon = {
+          discount: parseFloat(item.getAttribute('data-discount')),
+          type: item.getAttribute('data-type')
+        };
+      }
+    });
+    
+    if (foundCoupon) {
+      console.log("Found coupon:", foundCoupon);
+      
+      // Get all summary rows to inspect the structure
+      const summaryRows = document.querySelectorAll('.checkout-summary-row');
+      console.log("Summary rows:", summaryRows);
+      
+      // Extract subtotal more reliably
+      const subtotalElement = summaryRows[0].querySelector('span:last-child');
+      console.log("Subtotal element:", subtotalElement);
+      const subtotalText = subtotalElement.textContent.trim();
+      console.log("Subtotal text:", subtotalText);
+      const subtotal = parseFloat(subtotalText.replace('₹', ''));
+      console.log("Subtotal value:", subtotal);
+      
+      // Calculate discount
+      let discountValue = foundCoupon.type === 'percent' 
+          ? subtotal * (foundCoupon.discount / 100)
+          : foundCoupon.discount;
+          
+      // Cap discount if needed
+      if (foundCoupon.type === 'percent' && foundCoupon.discount === 20 && discountValue > 200) {
+        discountValue = 200;
+      }
+      console.log("Discount value:", discountValue);
+      
+      // Remove existing discount row if any
+      const existingDiscountRow = document.querySelector('.coupon-summary-row');
+      if (existingDiscountRow) {
+        existingDiscountRow.remove();
+      }
+      
+      // Insert discount row
+     // Insert discount row with remove button
+      const discountRow = document.createElement('div');
+      discountRow.className = 'checkout-summary-row coupon-summary-row';
+      discountRow.innerHTML = `
+        <span>Discount <button id="removeCoupon" class="remove-coupon-btn" type="button">Remove</button></span>
+        <span class="discount">-₹${discountValue.toFixed(2)}</span>
+      `;
+            // Find where to insert it - more reliably
+      const summaryElement = document.querySelector('.checkout-summary');
+      const totalRow = summaryRows[summaryRows.length - 1]; // Last row should be total
+      
+      // Insert before total
+      summaryElement.insertBefore(discountRow, totalRow);
+
+      // Add event listener to remove button
+document.getElementById('removeCoupon').addEventListener('click', function() {
+  // Remove the discount row
+  discountRow.remove();
+  
+  // Reset total to original
+  const newTotal = subtotal + shipping + tax;
+  totalElement.textContent = `₹${newTotal.toFixed(2)}`;
+  
+  // Update hidden field
+  totalAmountField.value = newTotal.toFixed(2);
+  
+  // Clear coupon input and hide messages
+  couponInput.value = '';
+  document.getElementById('couponValid').style.display = 'none';
+  
+  // Remove coupon from form
+  const hiddenCouponInput = document.querySelector('input[name="couponCode"]');
+  if (hiddenCouponInput) {
+    hiddenCouponInput.value = '';
+  }
+  
+  console.log("Coupon removed, total reset to:", newTotal);
+});
+      
+      // Update total - extract values more reliably
+      const shippingElement = summaryRows[1].querySelector('span:last-child');
+      const taxElement = summaryRows[2].querySelector('span:last-child');
+      
+      const shipping = parseFloat(shippingElement.textContent.replace('₹', ''));
+      const tax = parseFloat(taxElement.textContent.replace('₹', ''));
+      
+      console.log("Shipping:", shipping);
+      console.log("Tax:", tax);
+      
+      const newTotal = subtotal + shipping + tax - discountValue;
+      console.log("New total:", newTotal);
+      
+      // Update total display - more reliable selector
+      const totalElement = totalRow.querySelector('strong:last-child');
+      console.log("Total element:", totalElement);
+      totalElement.textContent = `₹${newTotal.toFixed(2)}`;
+      
+      // Update hidden field
+      const totalAmountField = document.getElementById('totalAmount');
+      totalAmountField.value = newTotal.toFixed(2);
+      console.log("Updated hidden field to:", totalAmountField.value);
+      
+      document.getElementById('couponValid').style.display = 'block';
+      document.getElementById('couponInvalid').style.display = 'none';
+      
+      // Add coupon to form
+      const form = document.getElementById('checkoutForm');
+      let couponInput = form.querySelector('input[name="couponCode"]');
+      if (!couponInput) {
+        couponInput = document.createElement('input');
+        couponInput.type = 'hidden';
+        couponInput.name = 'couponCode';
+        form.appendChild(couponInput);
+      }
+      couponInput.value = code;
+      
+      document.getElementById('couponValid').style.display = 'block';
+      document.getElementById('couponInvalid').style.display = 'none';
+    } else {
+      alert("Invalid coupon code");
+      document.getElementById('couponValid').style.display = 'none';
+      document.getElementById('couponInvalid').style.display = 'block';
+    }
+    
+    return false;
+  };
+});
+</script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+   document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const method = document.querySelector('input[name="paymentMethod"]:checked').value;
     const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
+    const couponCode = document.getElementById('couponCode').value.trim();
 
     if (method === 'razorpay') {
       // 1. Create Razorpay order
+      const newTotal = document.getElementById('totalAmount').value;
       const res1 = await fetch('/checkout/create-order', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          couponCode, 
+          totalAmount: parseFloat(newTotal)
+        })
       });
       const { order_id, amount } = await res1.json();
 
+      // 2. Open Razorpay
       const options = {
         key: '<%= razorpayKey %>',
-        amount: amount,
+        amount,
         currency: 'INR',
         name: 'Your Store',
         description: 'Order Payment',
-        order_id: order_id,
+        order_id,
         handler: async function(response) {
-          // 3. Verify payment and place order
+          // 3. Verify payment and place order - now with couponCode
           const res2 = await fetch('/checkout/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -826,7 +1232,8 @@
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              selectedAddress
+              selectedAddress,
+              couponCode           // ← this is the missing bit
             })
           });
           const data = await res2.json();
@@ -834,10 +1241,11 @@
           else window.location.href = '/order-failure';
         }
       };
-
       const rzp = new Razorpay(options);
       rzp.open();
+
     } else {
+      // COD flow
       e.target.method = 'POST';
       e.target.action = '/checkout';
       e.target.submit();

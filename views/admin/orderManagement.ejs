@@ -182,8 +182,8 @@
                                     <% orders.forEach(order => { %>
                                         <tr>
                                             <td><%= order.orderId %></td>
-                                            <td><%= order.userId.name %></td> <!-- Displaying the user's name from the populated userId -->
-                                            <td><%= order.userId.email %></td> <!-- Displaying the user's email from the populated userId -->
+                                            <td><%= order.userId && order.userId.name ? order.userId.name : 'User Deleted' %></td>
+                                            <td><%= order.userId && order.userId.email ? order.userId.email : 'Email Unavailable' %></td>
                                             <td>₹<%= order.totalAmount.toFixed(2) %></td> <!-- Displaying the total amount with proper formatting -->
                                             <td>
                                                 <span class="badge rounded-pill 

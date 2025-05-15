@@ -16,7 +16,6 @@ const getProductAddPage = async (req,res)=>{
         res.redirect('/admin/pageerror');
     }
 };
-// express validator
 const addProducts = async (req,res)=>{
     try {
         const products = req.body;
@@ -74,7 +73,6 @@ const addProducts = async (req,res)=>{
             }
 
 
-        // Image validation
         if (!req.files || req.files.length !== 3) {
             validationErrors.push('Exactly 3 product images are required');
         } else {
@@ -93,12 +91,10 @@ const addProducts = async (req,res)=>{
             }
         }
 
-        // Return validation errors if any
         if (validationErrors.length) {
             return res.status(400).json({ errors: validationErrors });
         }
 
-        // Check for duplicate product name
         const productExists = await Product.findOne({
             productName: products.productName.trim(),
         });
@@ -121,7 +117,6 @@ const addProducts = async (req,res)=>{
                 const resizedImagePath = path.join(uploadDir, filename);
 
                 try {
-                    // Resize and save image
                     await sharp(file.path)
                         .resize(440, 440, {
                             fit: 'cover',
@@ -132,7 +127,6 @@ const addProducts = async (req,res)=>{
 
                     images.push(filename);
 
-                    // Delete the temporary file
                     await fs.promises.unlink(file.path);
                 } catch (error) {
                     console.error('Error processing image:', error);
@@ -149,24 +143,31 @@ const addProducts = async (req,res)=>{
         const regularPrice  = parseFloat(products.regularPrice);
         const productOffer = isNaN(parseFloat(products.productOffer)) ? 0 : parseFloat(products.productOffer);
 
-        const salePrice = regularPrice - (regularPrice * (productOffer / 100));
+        const category = await Category.findOne({name: products.category});
 
-
-        const categoryId = await Category.findOne({name: products.category});
-
-        if(!categoryId){
+        if(!category){
             return res.status(400).json({ error: "Invalid category name" });
         }
+
+        const categoryOffer = category.categoryOffer || 0;
+        const effectiveOffer = Math.max(productOffer, categoryOffer);
+        const rawSalePrice = regularPrice * (1 - effectiveOffer / 100);
+        const salePrice = Math.round(rawSalePrice * 100) / 100;
+
+        // const salePrice = regularPrice - (regularPrice * (productOffer / 100));
+       // const categoryId = await Category.findOne({name: products.category});
+
+        
 
         const newProduct = new Product({
             productName: products.productName.trim(),
             description: products.description.trim(),
             longDescription: products.longDescription.trim(),
             specifications: products.specifications.trim(),
-            category: categoryId._id,
+            category: category._id,
             regularPrice: regularPrice,
-            salePrice:salePrice,
-            productOffer:productOffer,
+            salePrice: salePrice,
+            productOffer: productOffer,
             variant: {
                 size: {
                     s: parseInt(products.variant?.size?.s) || 0,
@@ -288,13 +289,11 @@ const editProduct = async (req, res) => {
             specifications,
             category,
             regularPrice,
-            // salePrice,
             productOffer,
             variant,
             removedImages
         } = req.body;
 
-        // product already undoo??
         const product = await Product.findOne({ _id: id });
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
@@ -326,7 +325,6 @@ const editProduct = async (req, res) => {
             });
         }
 
-        // Handle new image 
         if (req.files) {
             if (Array.isArray(req.files)) {
                 req.files.forEach(file => {
@@ -348,15 +346,27 @@ const editProduct = async (req, res) => {
             }
         }
 
+        const categoryDoc = await Category.findById(category);
+        if(!categoryDoc){
+            return res.status(400).json({message: "Invalid category"});
+        }
+
+        const categoryOffer = categoryDoc.categoryOffer || 0;
+        const parsedProductOffer = parseFloat(productOffer) || 0;
+        const effectiveOffer = Math.max(parsedProductOffer, categoryOffer);
+        const parsedRegularPrice = parseFloat(regularPrice);
+        const rawSalePrice = parsedRegularPrice * (1 - effectiveOffer / 100);
+        const salePrice = Math.round(rawSalePrice * 100) / 100;
+
         // Update 
         product.productName = productName;
         product.description = description;
         product.longDescription = longDescription;
         product.specifications = specifications;
         product.category = category;
-        product.regularPrice = regularPrice;
-        product.salePrice = regularPrice - (regularPrice * (productOffer / 100));
-        product.productOffer = productOffer;
+        product.regularPrice  = parsedRegularPrice;
+        product.salePrice     = salePrice;
+        product.productOffer  = parsedProductOffer;
         product.variant = variant;
         product.productImage = images.filter(img => img !== null);
 

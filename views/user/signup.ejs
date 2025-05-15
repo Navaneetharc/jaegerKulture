@@ -8,6 +8,42 @@
     display:none;
 }
 
+/* Referral code styling */
+.referral-wrap {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.referral-code-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.referral-input-container {
+    position: relative;
+}
+
+.referral-code-input {
+    padding-right: 40px;
+    width: 100%;
+    border: 1px solid #ebebeb;
+    background-color: #fff;
+    height: 45px;
+    line-height: 45px;
+    padding-left: 20px;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.referral-optional {
+    color: #888;
+    font-size: 12px;
+    margin-left: 5px;
+    font-style: italic;
+}
+
 </style>
 
     <main class="main">
@@ -25,42 +61,6 @@
                 <div class="row">
                     <div class="col-lg-10 m-auto">
                         <div class="row">
-
-
-
-                            <!-- <div class="col-lg-5">
-                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
-                                    <div class="padding_eight_all bg-white">
-                                        <div class="heading_s1">
-                                            <h3 class="mb-30">Login</h3>
-                                        </div>
-                                        <form method="post" action="/signup">
-                                            <div class="form-group">
-                                                <input type="text" name="email" placeholder="Your Email">
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="password" name="password" placeholder="Password">
-                                            </div>
-                                            <div class="login_footer form-group">
-                                                <div class="chek-form">
-                                                    <div class="custome-checkbox">
-                                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="">
-                                                        <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
-                                                    </div>
-                                                </div>
-                                                <a class="text-muted" href="#">Forgot password?</a>
-                                            </div>
-                                            <div class="form-group">
-                                                <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Log in</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-1"></div> -->
-
-
-
 
                             <div class="col-lg-6">
                                 <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
@@ -105,6 +105,14 @@
                                                 <input  type="password" name="confirm-password" id="confirm-password" placeholder="Confirm password">
                                                 <div id="error5" class="error-message"></div>
                                             </div>
+
+                                            <div class="form-group">
+                                                <div class="referral-wrap">
+                                                    <input type="text" name="referralCode" id="referralCode" placeholder="Referral Code (if any)" class="referral-code-input">
+                                                    <div id="error7" class="error-message"></div>
+                                                </div>
+                                            </div>
+                                            
                                             <%if(locals.message && message.length>0){%>
                                                 <div class="alert alert-danger text-center">
                                                     <%=message%>
@@ -151,12 +159,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const phoneid = document.getElementById("phone");
     const passid = document.getElementById("password");
     const cpassid = document.getElementById("confirm-password");
+    const referralCodeid = document.getElementById("referralCode");
 
     const error1 = document.getElementById("error1");
     const error2 = document.getElementById("error2");
     const error3 = document.getElementById("error3");
-    const error4 = document.getElementById("error4"); // Fixed typo
+    const error4 = document.getElementById("error4"); 
     const error5 = document.getElementById("error5");
+    const error7 = document.getElementById("error7");
 
     const signform = document.getElementById("signform");
 
@@ -190,7 +200,7 @@ function emailValidateChecking() {
 
 function phoneValidateChecking() {
     const phoneval = phoneid.value.trim();
-    const phonepattern = /^[6-9]\d{9}$/; // Ensures 10 digits & starts with 6-9
+    const phonepattern = /^[6-9]\d{9}$/; 
 
     if (phoneval === "") {
         error3.style.display = "block";
@@ -236,7 +246,18 @@ function genderValidateChecking() {
     }
 }
 
-
+function referralCodeValidateChecking() {
+    const referralCodeval = referralCodeid.value.trim();
+    
+    if (referralCodeval !== "" && !/^[A-Za-z0-9#]{5,15}$/.test(referralCodeval)) {
+        error7.style.display = "block";
+        error7.innerHTML = "Please enter a valid referral code";
+        return false;
+    } else {
+        error7.style.display = "none";
+        return true;
+    }
+}
 
     if (!signform) {
         console.error("Form element not found");
@@ -252,6 +273,7 @@ function genderValidateChecking() {
         phoneValidateChecking();
         passValidateChecking();
         genderValidateChecking();
+        referralCodeValidateChecking();
 
         if (
             error1.style.display === "block" ||
@@ -259,7 +281,8 @@ function genderValidateChecking() {
             error3.style.display === "block" ||
             error4.style.display === "block" ||
             error5.style.display === "block" ||
-            error6.style.display === "block"
+            error6.style.display === "block" ||
+            error7.style.display === "block"
         ) {
             console.log("Fix form errors before submitting.");
         } else {
@@ -270,5 +293,3 @@ function genderValidateChecking() {
 });
 
    </script>
-
-
