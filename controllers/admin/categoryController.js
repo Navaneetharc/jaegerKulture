@@ -4,12 +4,10 @@ const Product = require("../../models/productSchema");
 
 const categoryInfo = async (req,res)=>{
     try {
-        // ----
         let search = "";
         if(req.query.search){
             search = req.query.search;
         }
-        // ----
         const page = parseInt(req.query.page) || 1;
         const limit = 4;
         const skip = (page-1)*limit;

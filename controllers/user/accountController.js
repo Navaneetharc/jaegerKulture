@@ -1,6 +1,8 @@
 require('dotenv').config();
 const User = require('../../models/userSchema');
 const fs = require("fs");
+const Wishlist = require('../../models/wishlistSchema')
+const Cart = require('../../models/cartSchema');
 const path = require("path");
 const sharp = require("sharp");
 const bcrypt = require("bcrypt");
@@ -18,7 +20,19 @@ const getAccountInfoPage = async (req, res) => {
     if (!user) {
       return res.redirect('/login');
     }
-    res.render('userProfile', { user });
+    let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+
+            let wishlistCount = 0;
+
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }      
+    res.render('userProfile', { user, items, wishlistCount});
   } catch (error) {
     console.error('Error in account info page', error);
     res.redirect('/pageNotFound');
@@ -28,11 +42,25 @@ const getAccountInfoPage = async (req, res) => {
 const getEditAccountInfoPage = async (req, res) => {
   try {
     const id = req.params.id;
+    const userId = req.session.user;
     const user = await User.findById(id);
     if (!user) {
       return res.redirect('/pageNotFound');
     }
-    res.render("edit-profile", { user });
+
+     let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+
+            let wishlistCount = 0;
+
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }      
+    res.render("edit-profile", { user , items, wishlistCount});
   } catch (error) {
     console.error('Edit user profile error:', error);
     res.redirect('/pageNotFound');
@@ -261,7 +289,21 @@ const getSecurityPage = async (req, res) => {
     if (!user) {
       return res.redirect('/login');
     }
-    res.render('security', { user });
+
+    let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+
+            let wishlistCount = 0;
+
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }  
+
+    res.render('security', { user , items, wishlistCount});
   } catch (error) {
     console.error("Error in getSecurityPage:", error);
     res.redirect('/admin/pageerror');
@@ -367,7 +409,20 @@ const renderSecurityPage = async (req, res) => {
       return res.redirect('/login');
     }
 
-    return res.render('security', { user });
+    let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+
+            let wishlistCount = 0;
+
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }  
+
+    return res.render('security', { user , items, wishlistCount});
   } catch (error) {
     console.error("Error rendering security page:", error);
     return res.status(500).render('error', { message: "Server error occurred: " + error.message });

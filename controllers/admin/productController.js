@@ -154,8 +154,6 @@ const addProducts = async (req,res)=>{
         const rawSalePrice = regularPrice * (1 - effectiveOffer / 100);
         const salePrice = Math.round(rawSalePrice * 100) / 100;
 
-        // const salePrice = regularPrice - (regularPrice * (productOffer / 100));
-       // const categoryId = await Category.findOne({name: products.category});
 
         
 

@@ -33,6 +33,25 @@
             position: relative;
             z-index: 500;
         }
+
+        .hot {
+  background-color: #28a745; /* Green */
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* For the "Out of Stock" Badge */
+.out-of-stock {
+  background-color: #dc3545; /* Red */
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: block;
+}
+
     </style>
     <header class="header-area header-style-1 header-height-2">
         <div class="header-top header-top-ptb-1 d-none d-lg-block">
@@ -172,7 +191,7 @@
                                     <h2 class="animated fw-900">Supper value deals</h2>
                                     <h1 class="animated fw-900 text-brand">On all Samurai Accessories</h1>
                                     <p class="animated">Save more with coupons & up to 70% off</p>
-                                    <a class="animated btn btn-brush btn-brush-3" href="shop-product-right.html"> Shop Now </a>
+                                    <a class="animated btn btn-brush btn-brush-3" href="/shop"> Shop Now </a>
                                 </div>
                             </div>
                             <div class="col-lg-7 col-md-6">
@@ -193,7 +212,7 @@
                                     <h2 class="animated fw-900">Big Deals From</h2>
                                     <h1 class="animated fw-900 text-8">Manufacturer</h1>
                                     <p class="animated">Clothing, Wall decors, Desktop setup...</p>
-                                    <a class="animated btn btn-brush btn-brush-1" href="shop-product-right.html"> Shop Now </a>
+                                    <a class="animated btn btn-brush btn-brush-1" href="/shop"> Shop Now </a>
                                 </div>
                             </div>
                             <div class="col-lg-7 col-md-6">
@@ -280,17 +299,37 @@
                                                     </a>
                                                 </div>
                                                 <div class="product-action-1">
-                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addToWishlist?id=<%= products[i]._id %>">
-                                                        <i class="fi-rs-heart"></i>
-                                                    </a>
-                                                </div>
-                                                <div class="product-badges product-badges-position product-badges-mrg">
-                                                    <span class="hot">Hot</span>
-                                                </div>
+                                      <a aria-label="Add To Wishlist" 
+                                         class="action-btn hover-up add-to-wishlist" 
+                                         href="#" 
+                                         data-product-id="<%= products[i]._id %>">
+                                        <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
+                                           <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
+                                             style="fill: red;"
+                                           <% } %>
+                                        ></i>
+                                      </a>
+                                    </div>
+                                               
+                                                 <% const allSizesOutOfStock = products[i].variant.size.s === 0 && 
+                                                                 products[i].variant.size.m === 0 && 
+                                                                 products[i].variant.size.l === 0 && 
+                                                                 products[i].variant.size.x === 0 && 
+                                                                 products[i].variant.size.xl === 0; %>
+                          
+                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                      <% if (allSizesOutOfStock) { %>
+                                        <!-- Display the 'Out of Stock' badge -->
+                                        <span class="out-of-stock">Out of Stock</span>
+                                      <% } else { %>
+                                        <!-- Display the 'Hot' badge -->
+                                        <span class="hot">Hot</span>
+                                      <% } %>
+                                    </div>
                                             </div>
                                             <div class="product-content-wrap">
                                                 <div class="product-category">
-                                                    <a href="shop-grid-right.html"><%= products[i].category.name %></a>
+                                                    <a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].category.name %></a>
                                                 </div>
                                                 <h2>
                                                     <a href="/productDetails?id=<%= products[i]._id %>">
@@ -304,9 +343,7 @@
                                                     <span>₹<%= products[i].salePrice %></span>
                                                     <span class="old-price">₹<%= products[i].regularPrice %></span>
                                                 </div>
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart?id=<%= products[i]._id %>">
-                                                    <i class="fi-rs-shopping-bag-add"></i>
-                                                </a>
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -326,7 +363,7 @@
                     <div class="banner-text d-md-block d-none">
                         <h4 class="mb-15 mt-40 text-brand">Anime-Inspired Apparel</h4>
                         <h1 class="fw-600 mb-20">Explore jaegerKulture! <br>Anime fashion for True fans.</h1>
-                        <a href="shop-grid-right.html" class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
+                        <a href="/shop" class="btn">See shop<i class="fi-rs-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -366,6 +403,66 @@
         </section>
               
     </main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.querySelectorAll('.add-to-wishlist').forEach(button => {
+    button.addEventListener('click', async function (e) {
+      e.preventDefault();
+
+      const productId = this.getAttribute('data-product-id');
+      const icon = this.querySelector('i');
+
+      const isInWishlist = icon.classList.contains('text-danger');
+      const endpoint = isInWishlist ? '/wishlist/remove' : '/wishlist/add';
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ productId })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          return Swal.fire({
+            icon: 'error',
+            title: 'Oops!',
+            text: result.message || 'Failed to update wishlist.'
+          });
+        }
+
+        // Toggle icon color
+        icon.classList.toggle('text-danger', !isInWishlist);
+        icon.style.fill = !isInWishlist ? 'red' : '';
+
+        // Success alert
+        Swal.fire({
+          icon: 'success',
+          title: isInWishlist ? 'Removed from Wishlist!' : 'Added to Wishlist!',
+          text: result.message || (isInWishlist
+            ? 'Product successfully removed.'
+            : 'Product successfully added.'),
+          timer: 1500,
+          showConfirmButton: false
+        });
+
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Server Error',
+          text: 'Something went wrong. Please try again later.'
+        });
+      }
+    });
+  });
+</script>
+
 
     <script>
         function handleSearch(form) {

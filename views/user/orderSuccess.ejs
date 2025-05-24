@@ -215,76 +215,7 @@
                     <p>A confirmation email has been sent to <strong><%= email %></strong></p>
                 </div>
                 
-                <div class="row mt-4">
-                    <div class="col-lg-8 mx-auto">
-                        <div class="card order-details-card">
-                            <div class="card-header">
-                                <h4>Order Details</h4>
-                            </div>
-                            <% order.orderItems.forEach(item => { %>
-                            <div class="card-body">
-                                <!-- Order Products - Static Example -->
-                                <div class="order-product">
-                                    <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" class="order-product-image">
-                                    <div class="order-product-details">
-                                        <div class="order-product-name"><%= item.product.productName %></div>
-                                        <div class="order-product-price">₹<%= item.price %></div>
-                                    </div>
-                                    <div class="order-product-quantity">Qty: <%= item.quantity %></div>
-                                    <div class="order-product-total">₹<%= (item.price * item.quantity).toFixed(2) %></div>
-                                </div>
-                           </div>
-                           <% }) %>
-                        </div>
-<div class="order-summary">
-  <div class="order-summary-title">Payment Summary</div>
-
-  <div class="order-summary-row">
-    <div class="order-summary-label">Subtotal</div>
-    <div class="order-summary-value">₹<%= subtotal.toFixed(2) %></div>
-  </div>
-
-  <div class="order-summary-row">
-    <div class="order-summary-label">Delivery Charge</div>
-    <div class="order-summary-value">₹<%= deliveryCharge.toFixed(2) %></div>
-  </div>
-
-  <div class="order-summary-row">
-    <div class="order-summary-label">Tax (5%)</div>
-    <div class="order-summary-value">₹<%= tax.toFixed(2) %></div>
-  </div>
-
-<div class="order-summary-row">
-  <div class="order-summary-label">
-    Discount
-    <% if (couponName || couponCode) { %>
-      <small>(<%= couponName || couponCode %>)</small>
-    <% } %>
-  </div>
-  <!-- use discount, not order.couponDiscount -->
-  <div class="order-summary-value discount">
-    -₹<%= discount.toFixed(2) %>
-  </div>
-</div>
-
-
- <div class="order-summary-row">
-  <div class="order-summary-label">Total</div>
-  <div class="order-summary-value">₹<%= totalAmount.toFixed(2) %></div>
-</div>
-
-
-  <div class="mt-2">
-    <p>Payment Method: <strong><%= paymentMethod.toUpperCase() %></strong></p>
-    <p class="<%= paymentStatus === 'Paid' ? 'text-success' : 'text-warning' %>">
-      Payment Status: <strong><%= paymentStatus %></strong>
-    </p>
-  </div>
-</div>
-
-
-                        
-                        <div class="action-buttons">
+                       <div class="action-buttons">
                             <a href="/orderDetails/<%= order._id %>" class="action-btn primary-btn">Track Order</a>
                             <a href="/shop" class="action-btn secondary-btn">Continue Shopping</a>
                         </div>
@@ -294,5 +225,3 @@
         </div>
     </section>
 </main>
-
-<%- include('../partials/userL/footer.ejs') %>

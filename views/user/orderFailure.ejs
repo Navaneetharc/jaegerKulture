@@ -217,47 +217,7 @@
                     </ul>
                 </div>
                 
-                <div class="row mt-4">
-                    <div class="col-lg-8 mx-auto">
-                        <div class="card order-details-card">
-                            <div class="card-header">
-                                <h4>Order Details</h4>
-                            </div>
-                            <% order.orderItems.forEach(item => { %>
-                            <div class="card-body">
-                                <!-- Order Products - Static Example -->
-                                <div class="order-product">
-                                    <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" class="order-product-image">
-                                    <div class="order-product-details">
-                                        <div class="order-product-name"><%= item.product.productName %></div>
-                                        <div class="order-product-price">₹<%= item.price %></div>
-                                    </div>
-                                    <div class="order-product-quantity">Qty: <%= item.quantity %></div>
-                                    <div class="order-product-total">₹<%= (item.price * item.quantity).toFixed(2) %></div>
-                                </div>
-                           </div>
-                           <% }) %>
-                        </div>
-                                  
-
-                        <!-- What to do next section -->
-                        <div class="what-next">
-                            <h4>What can you do next?</h4>
-                            <ol>
-                                <li>Check your payment details and try again</li>
-                                <li>Try a different payment method</li>
-                                <li>Contact your bank if payment was declined</li>
-                                <li>Reach out to our customer support for assistance</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="action-buttons">
-                            <a href="/checkout" class="action-btn primary-btn">Try Again</a>
-                            <a href="/cart" class="action-btn secondary-btn">Return to Cart</a>
-                            <a href="/contact" class="action-btn outline-btn">Contact Support</a>
-                        </div>
-                    </div>
-                </div>
+        
             </div>
         </div>
     </section>
@@ -394,5 +354,3 @@
 </style>
 
 
-
-<%- include('../partials/userL/footer.ejs') %>

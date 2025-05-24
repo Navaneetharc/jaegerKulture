@@ -2,10 +2,10 @@
     
 
 
-    <aside class="navbar-aside" id="offcanvas_aside">
+        <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin" class="brand-wrap">
-                <img src="/assets/imgs/theme/jaeger.png" class="logo" alt="Evara Dashboard">
+                <img src="/assets/imgs/theme/jaeger.png" class="logo" alt="Jaeger Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -13,7 +13,7 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
@@ -28,64 +28,34 @@
                         <span class="text">Products</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item active">
                     <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
-                    </a>                    
+                    </a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-store"></i>
                         <span class="text">Category</span>
                     </a>
-                    
-                </li>
-                
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
-                        <span class="text">Transactions</span>
-                    </a>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Account</span>
-                    </a>
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href=""> <i class="icon material-icons md-comment"></i>
-                        <span class="text">Reviews</span>
+                    <a class="menu-link" href="/admin/coupons"> <i class="icon material-icons md-local_offer"></i>
+                        <span class="text">Coupons</span>
                     </a>
                 </li>
-                <!-- <li class="menu-item">
-                    <a class="menu-link" href=""> <i class="icon material-icons md-stars"></i>
-                        <span class="text">Brands</span> </a>
-                </li> -->
+               
                 <li class="menu-item">
-                    <a class="menu-link" disabled href="#"> <i class="icon material-icons md-pie_chart"></i>
-                        <span class="text">Statistics</span>
+                    <a class="menu-link" href="/admin/sales"> <i class="icon material-icons md-assessment"></i>
+                        <span class="text">Sales Report</span>
                     </a>
                 </li>
+              
             </ul>
             <hr>
-            <ul class="menu-aside">
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
-                        <span class="text">Settings</span>
-                    </a>
-                    <!-- <div class="submenu">
-                        <a href="page-settings-1.html">Setting sample 1</a>
-                        <a href="page-settings-2.html">Setting sample 2</a>
-                    </div> -->
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href=""> <i class="icon material-icons md-local_offer"></i>
-                        <span class="text"> Starter page </span>
-                    </a>
-                </li>
-            </ul>
-            <br>
-            <br>
+           
         </nav>
     </aside>
+
 
     <main class="main-wrap">
         <header class="main-header navbar">
@@ -251,35 +221,39 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <% order.orderItems.forEach(item => { %>
-                                    <tr>
-                                      <td>
-                                        <a class="itemside" href="#">
-                                          <div class="left">
-                                            <img src="/Uploads/product-images/<%= item.productImage %>" width="40" height="40" class="img-xs" alt="Item">
-                                          </div>
-                                          <div class="info">
-                                            <%= item.product?.productName || "Unnamed Product" %><br>
-                                            <% if (item.variant && item.variant.size) { %>
-                                              Size: <%= (item.variant.size).toUpperCase() %><br>
-                                            <% } else { %>
-                                              Size: Not specified<br>
-                                            <% } %>
-                              
-                                            <% if (item.currentStatus === 'Return Requested') { %>
-                                              <span class="badge bg-warning text-dark">Return Requested</span>
-                                            <% } else if (item.currentStatus === 'Returned') { %>
-                                              <span class="badge bg-success">Returned & Refunded</span>
-                                            <% } %>
-                                          </div>
-                                        </a>
-                                      </td>
-                                      <td>₹<%= item.product.salePrice %> </td>
-                                      <td><%= item.quantity %></td>
-                                      <td class="text-end">₹<%= (item.product.salePrice) * item.quantity %></td>
-                                    </tr>
-                                  <% }) %>
-                                </tbody>
+  <% order.orderItems.forEach(item => { %>
+    <tr>
+      <td>
+        <a class="itemside" href="#">
+          <div class="left">
+            <img src="/Uploads/product-images/<%= item.productImage %>" width="40" height="40" class="img-xs" alt="Item">
+          </div>
+          <div class="info">
+            <%= item.product?.productName || "Unnamed Product" %><br>
+            <% if (item.variant && item.variant.size) { %>
+              Size: <%= item.variant.size.toUpperCase() %><br>
+            <% } else { %>
+              Size: Not specified<br>
+            <% } %>
+
+            <% if (item.currentStatus === 'Return Requested') { %>
+              <span class="badge bg-warning text-dark">Return Requested</span>
+            <% } else if (item.currentStatus === 'Returned') { %>
+              <span class="badge bg-success">Returned & Refunded</span>
+            <% } %>
+          </div>
+        </a>
+      </td>
+
+      <!-- Use the locked-in order price -->
+      <td>₹<%= item.price.toFixed(2) %></td>
+      <td><%= item.quantity %></td>
+        <td class="text-end">₹<%= order.totalAmount.toFixed(2) %></td>
+
+    </tr>
+  <% }) %>
+</tbody>
+
                               </table>
                               
                           </div>
@@ -346,13 +320,8 @@
               </div> <!-- card-body -->
           </div> <!-- card -->
       
-          <!-- Return Request Modal -->
+<!-- Return Request Modal -->
 <% if (order.status === 'Delivered' && order.returnRequest && order.returnRequest.status === 'Pending') { %>
-    <!-- Trigger for Return Request Modal -->
-    <button type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#returnRequestModal">
-      <i class="fa fa-undo fa-lg text-warning"></i>
-    </button>
-  
     <!-- Return Request Modal -->
     <div class="modal fade" id="returnRequestModal" tabindex="-1" aria-labelledby="returnRequestModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -375,39 +344,40 @@
                     <th>Size</th>
                     <th>Quantity</th>
                     <th>Price</th>
+                    <th>Refund Amount</th>
                   </tr>
                 </thead>
                 <tbody>
-                    <% if (refunds && refunds.length > 0) { %>
-                        <% refunds.forEach(refund => { %>
-                          <tr>
-                            <td>
-                              <div class="itemside">
-                                <div class="left">
-                                  <img src="/Uploads/product-images/<%= refund.product.productImage[0] %>"
-                                       width="40" height="40" class="img-xs" alt="Item">
-                                </div>
-                                <div class="info">
-                                  <%= refund.product.productName %>
-                                </div>
-                              </div>
-                            </td>
-                            <td><%= (refund.variantSize || 'N/A').toUpperCase() %></td>
-                            <td>
-                              <% 
-                                // find original quantity on the order
-                                const original = order.orderItems
-                                  .find(i => i.product._id.toString() === refund.product._id.toString());
-                              %>
-                              <%= original ? original.quantity : '1' %>
-                            </td>
-                            <td>₹<%= refund.product.salePrice %></td>
-                          </tr>
-                        <% }) %>
-                      <% } else { %>
-                        <tr><td colspan="4" class="text-center">No items selected for return</td></tr>
-                      <% } %>
-                      
+                  <% 
+                    // Get return items directly from order items with return status
+                    const orderReturnItems = order.orderItems.filter(item => 
+                      item.currentStatus === 'Return Requested' || 
+                      item.currentStatus === 'Returned'
+                    );
+                    
+                    if (orderReturnItems && orderReturnItems.length > 0) { 
+                  %>
+                    <% orderReturnItems.forEach(item => { %>
+                      <tr>
+                        <td>
+                          <div class="itemside">
+                            <div class="left">
+                              <img src="/Uploads/product-images/<%= item.productImage %>" width="40" height="40" class="img-xs" alt="Item">
+                            </div>
+                            <div class="info" style="padding-bottom: 5px;">
+                              <%= item.product?.productName || "Unnamed Product" %>
+                            </div>
+                          </div>
+                        </td>
+                        <td><%= (item.variant?.size || 'N/A').toUpperCase() %></td>
+                        <td><%= item.quantity %></td>
+                        <td>₹<%= item.price %></td>
+                        <td><strong>₹<%= (item.price * item.quantity).toFixed(2) %></strong></td>
+                      </tr>
+                    <% }) %>
+                  <% } else { %>
+                    <tr><td colspan="5" class="text-center">No items selected for return</td></tr>
+                  <% } %>
                 </tbody>
               </table>
             </div>
@@ -425,7 +395,7 @@
         </div>
       </div>
     </div>
-  <% } %>
+<% } %>
           
       </section> <!-- content-main -->
       

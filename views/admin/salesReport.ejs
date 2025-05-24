@@ -1,0 +1,819 @@
+
+<%- include('../partials/adminL/header.ejs') %>
+
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="/admin" class="brand-wrap">
+                <img src="/assets/imgs/theme/jaeger.png" class="logo" alt="Jaeger Dashboard">
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Customers</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Category</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/coupons"> <i class="icon material-icons md-local_offer"></i>
+                        <span class="text">Coupons</span>
+                    </a>
+                </li>
+               
+                <li class="menu-item active">
+                    <a class="menu-link" href="/admin/sales"> <i class="icon material-icons md-assessment"></i>
+                        <span class="text">Sales Report</span>
+                    </a>
+                </li>
+              
+            </ul>
+            <hr>
+           
+        </nav>
+    </aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Customer name">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications"></i>
+                            <span class="badge rounded-pill bg-warning">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-jp.png" alt="日本語">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-cn.png" alt="中国人">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Sales Report</h2>
+                    <p>Comprehensive overview of your sales</p>
+                </div>
+                
+            </div>
+
+            
+
+<form method="GET" action="/admin/sales">
+  <div class="card mb-4">
+    <header class="card-header bg-white">
+      <h4 class="mb-0">Sales Reports</h4>
+    </header>
+    <div class="card-body">
+      <div class="row">
+        <!-- Date Range dropdown -->
+        <div class="col-md-3">
+          <label class="form-label">Date Range</label>
+          <select 
+            class="form-select" 
+            name="dateRange" 
+            id="dateRangeFilter" 
+            onchange="toggleCustomDates(this.value)"
+          >
+            <option value="today"      <%= dateRange==='today'      ? 'selected':'' %>>Today</option>
+            <option value="yesterday"  <%= dateRange==='yesterday'  ? 'selected':'' %>>Yesterday</option>
+            <option value="last7days"  <%= dateRange==='last7days'  ? 'selected':'' %>>Last 7 Days</option>
+            <option value="last30days" <%= dateRange==='last30days' ? 'selected':'' %>>Last 30 Days</option>
+            <option value="thisMonth"  <%= dateRange==='thisMonth'  ? 'selected':'' %>>This Month</option>
+            <option value="lastMonth"  <%= dateRange==='lastMonth'  ? 'selected':'' %>>Last Month</option>
+            <option value="custom"     <%= dateRange==='custom'     ? 'selected':'' %>>Custom</option>
+          </select>
+        </div>
+
+        <!-- Custom date inputs (only shown when dateRange==='custom') -->
+        <% if (dateRange==='custom') { %>
+        <div class="col-md-6" id="customDateFilterContainer">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">From</label>
+              <input 
+                type="date" 
+                name="startDate" 
+                class="form-control" 
+                value="<%= startDate %>"
+              >
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">To</label>
+              <input 
+                type="date" 
+                name="endDate" 
+                class="form-control" 
+                value="<%= endDate %>"
+              >
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Apply Filters button -->
+        <div class="col-md-3 d-flex align-items-end justify-content-end">
+          <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  function toggleCustomDates(val) {
+    const c = document.getElementById('customDateFilterContainer');
+    if (c) c.style.display = (val === 'custom' ? 'block' : 'none');
+  }
+  // On page load, ensure the correct state
+  document.addEventListener('DOMContentLoaded', () => {
+    toggleCustomDates(document.getElementById('dateRangeFilter').value);
+  });
+</script>
+
+
+            <div class="row g-3">
+                <div class="col-lg-3">
+                    <div class="card card-body h-100">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="text-primary material-icons md-monetization_on"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Revenue</h6>
+                                <span id="revenue" class="text-primary fs-5 fw-bold">₹<%= dashboardData.totalRevenue %></span>
+                                <p class="text-sm mb-0 text-muted">Shipping fees not included</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card card-body h-100">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-success-light">
+                                <i class="text-success material-icons md-local_shipping"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Orders</h6>
+                                <span id="orders" class="text-success fs-5 fw-bold"><%= dashboardData.totalOrders %></span>
+                                <p class="text-sm mb-0 text-muted">Excluding orders in transit</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card card-body h-100">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-warning-light">
+                                <i class="text-warning material-icons md-local_offer"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Total Discount</h6>
+                                <span id="totalDiscount" class="text-warning fs-5 fw-bold">₹<%= dashboardData.totalDiscount %></span>
+                                <p class="text-sm mb-0 text-muted">Including coupons & promos</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card card-body h-100">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-info-light">
+                                <i class="text-info material-icons md-shopping_basket"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Monthly Earning</h6>
+                                <span id="monthlyEarning" class="text-info fs-5 fw-bold"><%= dashboardData.monthlyEarning %></span>
+                                <p class="text-sm mb-0 text-muted">Based on your local time</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+           
+                            </div>
+                            
+                        </article>
+                    </div>
+
+                    
+                </div>
+            </div>
+
+            <!-- Sales Reports Filters (wrap in a GET form) -->
+<form id="dashboardFilterForm" method="GET" action="/sales">
+  <div class="card mb-4">
+    
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle table-nowrap mb-0">
+          <thead class="table-light">
+            <tr>
+             
+              <th>Order ID</th>
+              <th>Billing Name</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Payment Status</th>
+              <th>Payment Method</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% orders.forEach(order => { %>
+            <tr>
+             
+              <td><a href="#" class="fw-bold"><%= order.orderId %></a></td>
+<td>
+  <% 
+    // If you want to show the User.name:
+    const billingName = order.userId 
+      ? order.userId.name 
+      : 'Guest';
+
+    // Or, if you prefer the Address entry name:
+    // let billingName = 'Guest';
+    // if (order.address && order.address.addressDocId) {
+    //   const details = order.address.addressDocId.details;
+    //   const entry = details.find(d => d._id.toString() === order.address.addressDetailId.toString());
+    //   billingName = entry ? entry.name : billingName;
+    // }
+  %>
+  <%= billingName %>
+</td>
+
+              <td><%= moment(order.createdAt).format('DD MMM, YYYY') %></td>
+              <td>₹<%= order.totalAmount %></td>
+              <td>
+                <span class="badge badge-pill badge-soft-<%= order.paymentStatus==='Paid' ? 'success' : (order.paymentStatus==='Refund' ? 'warning' : 'danger') %>">
+                  <%= order.paymentStatus %>
+                </span>
+              </td>
+              <td><i class="material-icons md-payment"></i> <%= order.paymentMethod %></td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Pagination -->
+    <nav class="pagination-area mt-3">
+      <ul class="pagination">
+        <% for(let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= i===currentPage ? 'active' : '' %>">
+           <a
+  class="page-link"
+  href="/admin/sales?dateRange=<%= dateRange %><% if (dateRange==='custom') { %>&startDate=<%= startDate %>&endDate=<%= endDate %><% } %>&page=<%= i %>&limit=10"
+><%= i %></a>
+
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+</form>
+
+        </section>
+
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Generate Sales Report</h6>
+    </div>
+    <div class="card-body">
+        <form id="reportForm">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="reportType" class="form-label">Report Period</label>
+                    <select class="form-select" id="reportType" name="reportType" required>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="last7days" selected>Last 7 Days</option>
+                        <option value="last30days">Last 30 Days</option>
+                        <option value="thisMonth">This Month</option>
+                        <option value="lastMonth">Last Month</option>
+                        <option value="custom">Custom Date Range</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="reportFormat" class="form-label">Report Format</label>
+                    <select class="form-select" id="reportFormat" name="reportFormat" required>
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="customDateFields" class="row mb-3 d-none">
+                <div class="col-md-6">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate">
+                </div>
+                <div class="col-md-6">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate">
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label class="form-label">Include Additional Information</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeDiscount" name="includeDiscount" checked>
+                        <label class="form-check-label" for="includeDiscount">
+                            Include Coupon &amp; Discount Data
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeSalesCount" name="includeSalesCount" checked>
+                        <label class="form-check-label" for="includeSalesCount">
+                            Include Sales Count
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeOrderAmount" name="includeOrderAmount" checked>
+                        <label class="form-check-label" for="includeOrderAmount">
+                            Include Order Amount
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">
+                    <i class="material-icons md-file_download" style="vertical-align: middle; font-size: 16px;"></i> Generate Report
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            // Main report generation script
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle report type change to toggle date fields in both forms
+    const reportTypeSelects = document.querySelectorAll('[id^="reportType"]');
+    reportTypeSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            const formId = this.closest('form').id;
+            const customDateContainer = formId === 'reportForm' ? 
+                document.getElementById('customDateFields') : 
+                document.getElementById('customDateContainer');
+                
+            if (customDateContainer) {
+                customDateContainer.style.display = this.value === 'custom' ? 'block' : 'none';
+            }
+        });
+    });
+
+    // Initialize date pickers with default values
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    
+    const formatDate = date => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
+    // Set default dates for all date inputs
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    dateInputs.forEach(input => {
+        if (input.id.includes('start') || input.id.includes('from')) {
+            input.value = formatDate(sevenDaysAgo);
+        } else if (input.id.includes('end') || input.id.includes('to')) {
+            input.value = formatDate(today);
+        }
+    });
+
+    // Handle report generation from both forms
+    const reportForms = document.querySelectorAll('#reportForm, #modalReportForm');
+    reportForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get the button that was clicked
+            const submitBtn = form.querySelector('[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+            submitBtn.disabled = true;
+            
+            // Get form data
+            const formData = new FormData(form);
+            const reportData = {
+                reportType: formData.get('reportType'),
+                reportFormat: formData.get('reportFormat'),
+                includeDiscount: formData.has('includeDiscount') ? 'true' : 'false',
+                includeSalesCount: formData.has('includeSalesCount') ? 'true' : 'false',
+                includeOrderAmount: formData.has('includeOrderAmount') ? 'true' : 'false'
+            };
+            
+            // Add date range if custom
+            if (reportData.reportType === 'custom') {
+                reportData.startDate = formData.get('startDate');
+                reportData.endDate = formData.get('endDate');
+            }
+            
+            console.log('Sending report data:', reportData);
+            
+            // Make AJAX request to generate report
+            fetch('/admin/generate-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reportData)
+            })
+            .then(response => {
+                // Reset button state regardless of outcome
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Check the content type to determine how to handle the response
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    // Handle JSON response (likely success/error message)
+                    return response.json().then(data => {
+                        if (data.success) {
+                            showToast('Report generated successfully', 'success');
+                            
+                            // Trigger download if file path is provided
+                            if (data.reportFile && data.reportFile.filePath) {
+                                const downloadLink = document.createElement('a');
+                                downloadLink.href = data.reportFile.filePath;
+                                downloadLink.download = data.reportFile.fileName || `report.${reportData.reportFormat}`;
+                                document.body.appendChild(downloadLink);
+                                downloadLink.click();
+                                document.body.removeChild(downloadLink);
+                            }
+                        } else {
+                            showToast(data.message || 'Failed to generate report', 'error');
+                        }
+                    });
+                } else {
+                    // Handle binary response (direct file download)
+                    return response.blob().then(blob => {
+                        showToast('Report generated successfully', 'success');
+                        
+                        // Create a download link for the blob
+                        const url = window.URL.createObjectURL(blob);
+                        const fileName = `report.${reportData.reportFormat}`;
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error generating report:', error);
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                showToast('An error occurred while generating the report', 'error');
+            });
+        });
+    });
+    
+    // Date range filter handling
+    document.getElementById('dateRangeFilter').addEventListener('change', function() {
+        document.getElementById('customDateFilterContainer').style.display = 
+            this.value === 'custom' ? 'block' : 'none';
+    });
+    
+    // Apply dashboard filters
+    const applyFiltersBtn = document.getElementById('applyFilters');
+    if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener('click', async function() {
+            const dateRange = document.getElementById('dateRangeFilter').value;
+            const startDate = dateRange === 'custom' ? document.getElementById('fromDate').value : '';
+            const endDate = dateRange === 'custom' ? document.getElementById('toDate').value : '';
+
+            try {
+                const response = await fetch('/admin/updateDashboard', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dateRange, startDate, endDate })
+                });
+                
+                // Process response and update dashboard
+                // (existing code remains unchanged)
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error updating dashboard', 'error');
+            }
+        });
+    }
+});
+
+// Enhanced toast notification function
+function showToast(message, type = 'info') {
+    let toastContainer = document.getElementById('toastContainer');
+    
+    // Create toast container if it doesn't exist
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.style.position = 'fixed';
+        toastContainer.style.top = '20px';
+        toastContainer.style.right = '20px';
+        toastContainer.style.zIndex = '9999';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type}`;
+    toast.role = 'alert';
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Initialize Bootstrap toast
+    try {
+        const bsToast = new bootstrap.Toast(toast, {
+            autohide: true,
+            delay: 3000
+        });
+        bsToast.show();
+        
+        // Remove toast after it's hidden
+        toast.addEventListener('hidden.bs.toast', function() {
+            this.remove();
+        });
+    } catch (error) {
+        console.error('Error showing toast:', error);
+        // Fallback if Bootstrap Toast isn't available
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+}
+        </script>
+
+        <script id="initial-data" type="application/json">
+  <%- JSON.stringify(dashboardData) %>
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const formatDate = date => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        // Set default dates
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(today.getDate() - 7);
+        document.getElementById('fromDate').value = formatDate(sevenDaysAgo);
+        document.getElementById('toDate').value = formatDate(today);
+        document.getElementById('startDate').value = formatDate(sevenDaysAgo);
+        document.getElementById('endDate').value = formatDate(today);
+
+        // Toggle custom date fields
+        document.getElementById('dateRangeFilter').addEventListener('change', function() {
+            document.getElementById('customDateFilterContainer').style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+        document.getElementById('reportType').addEventListener('change', function() {
+            document.getElementById('customDateContainer').style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        // Initialize charts with server-rendered data
+       const initialData = JSON.parse(document.getElementById('initial-data').textContent);
+        let salesChart = new Chart(document.getElementById('myChart'), {
+            type: 'line',
+            data: {
+                labels: initialData.chartData.labels,
+                datasets: [
+                    {
+                        label: 'Sales',
+                        data: initialData.chartData.salesData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        fill: false
+                    },
+                    {
+                        label: 'Orders',
+                        data: initialData.chartData.ordersData,
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        fill: false
+                    }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+        let regionChart = new Chart(document.getElementById('myChart2'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(initialData.regionSales),
+                datasets: [{
+                    data: Object.values(initialData.regionSales),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)'
+                    ]
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // Apply filters
+        document.getElementById('applyFilters').addEventListener('click', async function() {
+            const dateRange = document.getElementById('dateRangeFilter').value;
+            const startDate = dateRange === 'custom' ? document.getElementById('fromDate').value : '';
+            const endDate = dateRange === 'custom' ? document.getElementById('toDate').value : '';
+
+            try {
+                const response = await fetch('/admin/updateDashboard', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dateRange, startDate, endDate })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    // Update stats
+                    document.getElementById('revenue').textContent = data.dashboardData.totalRevenue;
+                    document.getElementById('orders').textContent = data.dashboardData.totalOrders;
+                    document.getElementById('totalDiscount').textContent = data.dashboardData.totalDiscount;
+                    document.getElementById('monthlyEarning').textContent = data.dashboardData.monthlyEarning;
+                    document.getElementById('totalSales').textContent = data.dashboardData.grossSales;
+                    document.getElementById('totalOrders').textContent = data.dashboardData.totalOrders;
+                    document.getElementById('totalDiscounts').textContent = data.dashboardData.totalDiscount;
+                    document.getElementById('grossSales').textContent = data.dashboardData.grossSales;
+                    document.getElementById('couponDiscounts').textContent = data.dashboardData.totalDiscount;
+                    document.getElementById('promoDiscounts').textContent = '₹0';
+                    document.getElementById('netSales').textContent = data.dashboardData.netSales;
+
+                    // Update charts
+                    salesChart.data.labels = data.dashboardData.chartData.labels;
+                    salesChart.data.datasets[0].data = data.dashboardData.chartData.salesData;
+                    salesChart.data.datasets[1].data = data.dashboardData.chartData.ordersData;
+                    salesChart.update();
+                    regionChart.data.labels = Object.keys(data.dashboardData.regionSales);
+                    regionChart.data.datasets[0].data = Object.values(data.dashboardData.regionSales);
+                    regionChart.update();
+
+                    // Update recent activities
+                    const activitiesList = document.getElementById('recentActivities');
+                    activitiesList.innerHTML = data.dashboardData.recentActivities.map(activity => `
+                        <li class="event-list">
+                            <div class="event-timeline-dot">
+                                <i class="material-icons md-play_circle_outline font-xxl"></i>
+                            </div>
+                            <div class="media">
+                                <div class="me-3">
+                                    <h6><span>${activity.date}</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
+                                </div>
+                                <div class="media-body">
+                                    <div><strong>${activity.amount}</strong> ${activity.description}</div>
+                                </div>
+                            </div>
+                        </li>
+                    `).join('');
+
+                    
+
+                    
+                } else {
+                    alert('Failed to update dashboard');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating dashboard');
+            }
+        });
+
+        // Generate report
+        document.getElementById('generateReportBtn').addEventListener('click', async function() {
+            const reportType = document.getElementById('reportType').value;
+            const startDate = reportType === 'custom' ? document.getElementById('startDate').value : '';
+            const endDate = reportType === 'custom' ? document.getElementById('endDate').value : '';
+            const includeDiscount = document.getElementById('includeDiscount').checked;
+            const includeSalesCount = document.getElementById('includeSalesCount').checked;
+            const includeOrderAmount = document.getElementById('includeOrderAmount').checked;
+            const reportFormat = document.getElementById('reportFormat').value;
+
+            try {
+                const response = await fetch('/admin/generateReport', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reportType, startDate, endDate, 
+                        includeDiscount: includeDiscount.toString(), 
+                        includeSalesCount: includeSalesCount.toString(), 
+                        includeOrderAmount: includeOrderAmount.toString(), 
+                        reportFormat
+                    })
+                });
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `report.${reportFormat}`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Failed to generate report');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error generating report');
+            }
+        });
+    });
+</script>

@@ -1,16 +1,32 @@
-
+const User = require('../../models/userSchema')
 const Address = require('../../models/addressSchema'); 
+const Cart = require('../../models/cartSchema')
+const Wishlist = require('../../models/wishlistSchema');
 const mongoose = require('mongoose');
 
 
 const getMyAddresses = async (req, res) => {
   try {
+    const user = await User.findById(req.session.user);
     const userId = req.user._id;
     const address = await Address.findOne({ userId });
     if (!address) {
-      return res.render('myAddresses', { addresses: [] });
+      return res.render('myAddresses', { addresses: [],user });
     }
-    res.render('myAddresses', { addresses: address.details });
+    let cart = await Cart
+                  .findOne({ userId })
+                  .populate('items.productId');
+            
+                const items = cart?.items || [];
+    
+                let wishlistCount = 0;
+    
+                if (userId) {
+                    const wishlist = await Wishlist.findOne({ userId });
+                    wishlistCount = wishlist ? wishlist.products.length : 0;
+                }  
+
+    res.render('myAddresses', { addresses: address.details ,user, items, wishlistCount});
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
@@ -20,7 +36,22 @@ const getMyAddresses = async (req, res) => {
 
   const getAddMyAddressesPage = async (req, res) => {
     try {
-      res.render("addMyAddresses");
+      const user = await User.findById(req.session.user);
+      const redirect = req.query.redirect || 'myAddresses';
+      const userId = req.user._id;
+      let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+
+            let wishlistCount = 0;
+
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }  
+      res.render("addMyAddresses",{user, items, wishlistCount, redirect});
     } catch (error) {
       res.redirect('/pageerror');
     }
@@ -28,9 +59,22 @@ const getMyAddresses = async (req, res) => {
 
   const addMyAddresses = async (req, res) => {
     try {
-      req.body = req.body.details[0]
-      const userId = req.user._id; 
-      const { addressType, name, addressLine1, addressLine2, city, state, pincode, phone, altPhone, landmark } = req.body;
+      const userId = req.user._id;
+      
+       const { details, redirect } = req.body;
+
+    const {
+      addressType,
+      name,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      pincode,
+      phone,
+      altPhone,
+      landmark
+    } = details[0];
  
       let addressDoc = await Address.findOne({ userId });
   
@@ -63,7 +107,11 @@ const getMyAddresses = async (req, res) => {
       await addressDoc.save();
   
       console.log("Address saved successfully");
-      return res.redirect("/myAddresses?success=Address added successfully");
+      if (redirect === 'checkout') {
+    return res.redirect('/checkout');
+  } else {
+    return res.redirect("/myAddresses?success=Address added successfully");
+  }
     } catch (error) {
       console.error("Error adding address:", error);
       return res.redirect("/myAddresses?error=Internal Server Error");
@@ -116,6 +164,8 @@ const getMyAddresses = async (req, res) => {
   
 
   const getEditMyAddressPage = async (req, res) => {
+
+    const user = await User.findById(req.session.user);
     const userId   = req.user._id;
     const detailId = req.params.detailId;
   
@@ -129,10 +179,26 @@ const getMyAddresses = async (req, res) => {
   
       const addressDetail = addressDoc.details.id(detailId);
       if (!addressDetail) return res.status(404).send('Address not found');
+
+      let cart = await Cart
+                    .findOne({ userId })
+                    .populate('items.productId');
+              
+                  const items = cart?.items || [];
+      
+                  let wishlistCount = 0;
+      
+                  if (userId) {
+                      const wishlist = await Wishlist.findOne({ userId });
+                      wishlistCount = wishlist ? wishlist.products.length : 0;
+                  }  
   
       return res.render('editAddresses', {
         address: addressDetail,
-        detailId
+        detailId,
+        user,
+        items,
+        wishlistCount
       });
     } catch (error) {
       console.error('Error in getEditMyAddressPage:', error);

@@ -1,28 +1,54 @@
 const mongoose = require('mongoose');
 const Wallet = require('../../models/walletSchema');
+const Cart = require('../../models/cartSchema');
+const Wishlist = require('../../models/wishlistSchema');
 const User   = require('../../models/userSchema');
 
-const getMyWalletPage = async (req, res) => {
+const getMyWalletPage = async (req, res, next) => {
   try {
-    const userIdRaw = req.user._id;
-    // console.log('wallet userId:', userIdRaw);
 
-    const userId = typeof userIdRaw === 'string'
-      ? mongoose.Types.ObjectId(userIdRaw)
-      : userIdRaw;
-
-    const balance = req.user.wallet ?? 0;
+    const user = await User.findById(req.session.user);
+    const userId = req.user._id;
 
     const transactions = await Wallet
       .find({ userId })
       .sort({ createdAt: -1 })
       .lean();
-    // console.log('Transactions:', transactions);
 
-    res.render('myWallet', { balance, transactions });
+    const agg = await Wallet.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      { $group: {
+          _id: '$userId',
+          credits: { $sum: { $cond: [ { $eq: ['$entryType','CREDIT'] }, '$amount', 0 ] } },
+          debits:  { $sum: { $cond: [ { $eq: ['$entryType','DEBIT']  }, '$amount', 0 ] } }
+      }}
+    ]);
+    const balance = (agg[0]?.credits || 0) - (agg[0]?.debits || 0);
+
+    let cart = await Cart
+                  .findOne({ userId })
+                  .populate('items.productId');
+            
+                const items = cart?.items || [];
+    
+                let wishlistCount = 0;
+    
+                if (userId) {
+                    const wishlist = await Wishlist.findOne({ userId });
+                    wishlistCount = wishlist ? wishlist.products.length : 0;
+                }  
+
+
+    res.render('myWallet', {
+      balance,
+      transactions,
+      user,
+      items,
+      wishlistCount
+    });
   } catch (error) {
     console.error('Error rendering wallet page:', error);
-    res.redirect('/pageNotFound');
+    next(error);
   }
 };
 

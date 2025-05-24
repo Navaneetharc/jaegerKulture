@@ -339,7 +339,7 @@
                                   </div>
                                   <div class="product-content-wrap">
                                     <div class="product-category">
-                                      <a href="shop-grid-right.html"><%= products[i].category.name %></a>
+                                      <a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].category.name %></a>
                                     </div>
                                     <h2><a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].productName %></a></h2>
                                     <div class="rating-result" title="90%">
@@ -351,9 +351,7 @@
                                       <span>₹<%= products[i].salePrice %></span>
                                       <span class="old-price">₹<%= products[i].regularPrice %></span>
                                     </div>
-                                    <div class="product-action-1 show">
-                                      <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                    </div>
+                                   
                                   </div>
                                 </div>
                               </div>

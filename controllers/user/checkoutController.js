@@ -1,5 +1,7 @@
 const Address = require('../../models/addressSchema'); 
 const Cart    = require('../../models/cartSchema');
+const Wishlist = require('../../models/wishlistSchema')
+const Wallet = require('../../models/walletSchema');
 const Order   = require('../../models/orderSchema');
 const { applyCoupon } = require('../../config/coupons');
 const Coupon = require('../../models/couponSchema');
@@ -8,6 +10,7 @@ const Product = require('../../models/productSchema');
 const razorpay = require('../../config/payments');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const { timeStamp } = require('console');
 
 const getCheckoutPage = async (req, res, next) => {
   try {
@@ -23,6 +26,14 @@ const getCheckoutPage = async (req, res, next) => {
       .lean();
 
     const items = cart?.items || [];
+
+
+            let wishlistCount = 0;
+
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }  
     if (!items.length) {
       return res.redirect('/cart');
     }
@@ -48,13 +59,25 @@ const getCheckoutPage = async (req, res, next) => {
       ]
     }).lean();
 
+    const agg = await Wallet.aggregate([
+      {$match:{userId: new mongoose.Types.ObjectId(userId)}},
+      {$group:{
+        _id: '$userId',
+        credits: {$sum:{$cond:[{$eq: ['$entryType','CREDIT']}, '$amount', 0]}},
+        debits: {$sum: {$cond:[{$eq:['$entryType','DEBIT']}, '$amount',0]}}
+      }}
+    ])
+    const walletBalance = (agg[0]?.credits || 0) - (agg[0]?.debits || 0);
+
     res.render('checkout', {
       user: req.user,
       addresses,
       items,
       total, 
       razorpayKey: process.env.RAZORPAY_KEY_ID,
-      coupons
+      coupons,
+      walletBalance,
+      wishlistCount
     });
   } catch (err) {
     next(err);
@@ -64,7 +87,7 @@ const getCheckoutPage = async (req, res, next) => {
 const placeOrder = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { selectedAddress, couponCode } = req.body;
+    const { selectedAddress, couponCode,paymentMethod } = req.body;
 
     const addressDoc = await Address.findOne({ userId });
     if (!addressDoc) {
@@ -108,7 +131,7 @@ const placeOrder = async (req, res, next) => {
       couponDetails = await Coupon.findOne({ code: couponCode });
     }
 
-    await Order.create({
+    const newOrder = await Order.create({
       orderId: '#JK' + Math.floor(Math.random() * 1e9).toString(),
       userId,
       orderItems,
@@ -116,8 +139,10 @@ const placeOrder = async (req, res, next) => {
         addressDocId: addressDoc._id,
         addressDetailId: addressDetail._id
       },
-      paymentMethod: 'cod',
-      paymentStatus: 'Pending',
+      paymentMethod,
+      paymentStatus: paymentMethod === 'wallet' ? 'Paid' : 'Pending',
+      paymentVerified: paymentMethod === 'wallet',
+      walletAmountUsed: paymentMethod === 'wallet' ? totalAmount : 0,
       couponCode: couponCode || null,
       couponName: couponDetails?.name || null,
       couponDiscount: discount,
@@ -127,6 +152,20 @@ const placeOrder = async (req, res, next) => {
       totalAmount,
       status: 'Pending'
     });
+
+    if(paymentMethod === 'wallet'){
+      await Wallet.create({
+        userId,
+        transactionId: new mongoose.Types.ObjectId(), 
+        payment_type: 'wallet',
+        amount: totalAmount,
+        status: 'completed',
+        entryType: 'DEBIT',
+        type: 'product_purchase',
+        orderId: newOrder._id
+
+      });
+    }
 
     for (const item of cart.items) {
       const productId = item.productId._id;
@@ -204,8 +243,6 @@ const verifyRazorpayPayment = async (req, res, next) => {
       selectedAddress,
       couponCode
     } = req.body;
-
-    
 
     const generatedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
@@ -288,8 +325,6 @@ const verifyRazorpayPayment = async (req, res, next) => {
       totalAmount,
       status:           'Order Placed'
     });
-
- 
 
     for (const item of cart.items) {
       const prod = await Product.findById(item.productId._id);
@@ -442,4 +477,5 @@ module.exports = {
     loadOrderSuccess,
     loadOrderFailurePage,
 };
+
 

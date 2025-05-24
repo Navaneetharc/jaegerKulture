@@ -1,7 +1,9 @@
 <%- include('../partials/userL/header.ejs') %>
 
 <!-- Add Material Icons font -->
+
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 
 <style>
     .breadcrumb a,
@@ -356,20 +358,22 @@
                         </form>
                     </div>
                     <div class="header-action-right">
-                        <div class="header-action-2">
-                            <div class="header-action-icon-2">
-                                <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">0</span>
-                                </a>
+<div class="header-action-2">
+                                <div class="header-action-icon-2">
+                                    <a href="/wishlist">
+                                        <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
+
+                                    </a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="/cart">
+                                        <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+                                    </a>
+
+                                </div>
                             </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -479,7 +483,17 @@
                                         </thead>
                                         <tbody>
                                             <% items.forEach(item => { %>
-                                                <tr class="cart-item-row" data-price="<%= item.price %>">
+                                                <% 
+                                                    // compute how many of this size the product has in stock
+                                                    const sizeKey      = item.variants.size; 
+                                                    const stockAvailable = item.productId.variant.size[sizeKey];
+                                                    %>
+                                                    <tr 
+                                                    class="cart-item-row" 
+                                                    data-price="<%= item.price %>" 
+                                                    data-stock="<%= stockAvailable %>"
+                                                    >
+
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <img src="/uploads/product-images/<%= item.productImage %>" alt="<%= item.name %>" class="cart-item-image" />
@@ -524,13 +538,7 @@
                                        
                                     </div>
 
-                                    <!-- <div class="cart-coupon">
-                                        <div class="cart-coupon-title">Have a Coupon?</div>
-                                        <div class="cart-coupon-form">
-                                            <input type="text" class="cart-coupon-input" placeholder="Enter coupon code" />
-                                            <button class="cart-coupon-btn">Apply</button>
-                                        </div>
-                                    </div> -->
+                                  
                                 </div>
                             <% } else { %>
                                 <!-- Empty cart -->
@@ -583,74 +591,79 @@
     </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const updateServer = async (id, qty) => {
-    try {
-      const res = await fetch(`/cart/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantity: qty })
+    const res = await fetch(`/cart/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quantity: qty })
+    });
+    const json = await res.json();
+    if (!json.success) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Stock limit',
+        text: json.message
       });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.message || 'Update failed');
-    } catch (err) {
-      console.error('Cart update error:', err);
     }
   };
 
   const updateItemTotal = id => {
-    const row   = document.querySelector(`tr[data-price] .cart-quantity-input[data-id="${id}"]`)
-                      .closest('tr');
+    const row   = document.querySelector(`.cart-quantity-input[data-id="${id}"]`).closest('tr');
     const price = parseFloat(row.dataset.price);
-    const qty   = parseInt(row.querySelector('.cart-quantity-input').value, 10);
+    const qty   = +row.querySelector('.cart-quantity-input').value;
     row.querySelector('.item-total').textContent = '₹' + (price * qty).toFixed(2);
     updateCartSummary();
   };
-
   const updateCartSummary = () => {
     let subtotal = 0;
-    document.querySelectorAll('.cart-table tbody tr').forEach(row => {
-      subtotal += parseFloat(
-        row.querySelector('.item-total')
-           .textContent.replace('₹', '')
-      );
+    document.querySelectorAll('.cart-table tbody tr').forEach(r => {
+      subtotal += +r.querySelector('.item-total').textContent.replace('₹', '');
     });
-    const shipping = 10;
-    const tax      = subtotal * 0.05;
-    const total    = subtotal + shipping + tax;
-
+    const shipping = 10, tax = subtotal * 0.05, total = subtotal + shipping + tax;
     document.querySelector('.subtotal').textContent = '₹' + subtotal.toFixed(2);
     document.querySelector('.tax').textContent      = '₹' + tax.toFixed(2);
     document.querySelector('.total').textContent    = '₹' + total.toFixed(2);
   };
 
   function handleChange(e) {
-    const btn = e.target.closest('button');
-    let input = e.target.classList.contains('cart-quantity-input')
-              ? e.target
-              : document.querySelector(`.cart-quantity-input[data-id="${btn.dataset.id}"]`);
+    const btn   = e.target.closest('button');
+    const input = btn
+      ? document.querySelector(`.cart-quantity-input[data-id="${btn.dataset.id}"]`)
+      : e.target; 
+    const row   = input.closest('tr');
+    const stock = +row.dataset.stock;
 
     if (btn) {
-      const delta = btn.classList.contains('increase-btn') ? 1 : -1;
-      let val = parseInt(input.value, 10) + delta;
+      let val = +input.value + (btn.classList.contains('increase-btn') ? 1 : -1);
       if (val < 1) val = 1;
       input.value = val;
     }
 
-    const id  = input.dataset.id;
-    const qty = parseInt(input.value, 10);
+    let qty = +input.value;
 
-    updateItemTotal(id);
+    if(qty > stock){
+        input.value = stock;
+        Swal.fire({
+            icon: 'warning',
+            title: 'Stock limit reached',
+            text: `Only ${stock} of this item available.`
+        });
+        return;
+    }
 
-    updateServer(id, qty);
+    updateItemTotal(input.dataset.id);
+    updateServer(input.dataset.id, qty);
   }
 
-  document.querySelectorAll(
-    '.decrease-btn, .increase-btn, .cart-quantity-input'
-  ).forEach(el => {
-    el.addEventListener('click',  handleChange);
-    el.addEventListener('change', handleChange);
-  });
+  document.querySelectorAll('.decrease-btn, .increase-btn, .cart-quantity-input')
+          .forEach(el => {
+            el.addEventListener('click',  handleChange);
+            el.addEventListener('change', handleChange);
+          });
 });
 </script>

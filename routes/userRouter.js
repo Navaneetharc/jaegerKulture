@@ -51,8 +51,8 @@ router.post('/login', userController.login);
 router.get('/logout', userController.logout);
 
 // Homepage & shop
-router.get('/', userAuth, userController.loadHomepage);
-router.get('/shop', userAuth, userController.loadShoppingPage);
+router.get('/',userController.loadHomepage);
+router.get('/shop',userController.loadShoppingPage);
 router.get('/filter', userAuth, userController.filterProduct);
 router.get('/filterPrice', userAuth, userController.filterByPrice);
 router.get('/search', userAuth, userController.searchProducts);

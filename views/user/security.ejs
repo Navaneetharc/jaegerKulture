@@ -246,19 +246,21 @@
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
-                            <div class="header-action-icon-2">
-                                <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">0</span>
-                                </a>
+                                <div class="header-action-icon-2">
+                                    <a href="/wishlist">
+                                        <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
+
+                                    </a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="/cart">
+                                        <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+                                    </a>
+
+                                </div>
                             </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue">0</span>
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -345,7 +347,7 @@
     <section class="mt-50 mb-50">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3">
+              <div class="col-lg-3">
                     <div class="dashboard-menu">
                         <ul class="nav flex-column" role="tablist">
                             <li class="nav-item">
@@ -359,8 +361,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/addresses">
-                                    <i class="fi-rs-location"></i> My Addresses
+                                <a class="nav-link" href="/myAddresses">
+                                    <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -374,9 +376,16 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" href="/security">
-                                    <i class="fi-rs-lock"></i> Security Settings
+                                <a class="nav-link" href="/notifications">
+                                    <i class="fi-rs-bell"></i> Notifications
                                 </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/security">
+                                    <i class="fi-rs-shield-check"></i> Security Settings
+                                </a>
+                            </li>
+                           
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">

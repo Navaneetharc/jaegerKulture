@@ -1,8 +1,7 @@
 const Wishlist    = require('../../models/wishlistSchema');
+const Cart = require('../../models/cartSchema');
 const User    = require('../../models/userSchema');
 const Product = require('../../models/productSchema');
-
-
 
 const addToWishlist = async (req, res) => {
     try {
@@ -13,7 +12,7 @@ const addToWishlist = async (req, res) => {
       if (!product) {
         return res.status(404).json({ message: 'Product not found' });
       }
-  
+
       let wishlist = await Wishlist.findOne({ userId });
       if (!wishlist) {
         wishlist = new Wishlist({ userId, products: [] });
@@ -82,6 +81,7 @@ const addToWishlist = async (req, res) => {
 
 const getWishlistPage = async (req, res) => {
     try {
+      const user = await User.findById(req.session.user);
       const userId = req.user._id;
   
       const wishlist = await Wishlist
@@ -93,8 +93,21 @@ const getWishlistPage = async (req, res) => {
             .map(item => item.productId)   
             .filter(p => p)                
         : [];
+
+        let cart = await Cart
+                      .findOne({ userId })
+                      .populate('items.productId');
+                
+                    const items = cart?.items || [];
+        
+                    let wishlistCount = 0;
+        
+                    if (userId) {
+                        const wishlist = await Wishlist.findOne({ userId });
+                        wishlistCount = wishlist ? wishlist.products.length : 0;
+                    }  
   
-      return res.render('wishlist', { products });
+      return res.render('wishlist', { products ,user, items, wishlistCount});
   
     } catch (error) {
       console.error('Error fetching wishlist page:', error);

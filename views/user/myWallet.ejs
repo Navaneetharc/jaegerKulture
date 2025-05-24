@@ -350,19 +350,21 @@
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
-                            <div class="header-action-icon-2">
-                                <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">0</span>
-                                </a>
+                                <div class="header-action-icon-2">
+                                    <a href="/wishlist">
+                                        <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
+
+                                    </a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="/cart">
+                                        <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+                                    </a>
+
+                                </div>
                             </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue">0</span>
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -463,7 +465,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/addresses">
+                                <a class="nav-link" href="/myAddresses">
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
@@ -487,11 +489,7 @@
                                     <i class="fi-rs-shield-check"></i> Security Settings
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/help">
-                                    <i class="fi-rs-help"></i> Help Center
-                                </a>
-                            </li>
+                          
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
                                     <i class="fi-rs-exit"></i> Logout
@@ -505,10 +503,7 @@
                     <div class="wallet-card">
                       <div class="wallet-label">Available Balance</div>
                       <div class="wallet-balance">₹<%= balance.toFixed(2) %></div>
-                      <div class="wallet-actions">
-                        <button class="btn btn-light" id="addMoneyBtn">Add Money</button>
-                        <button class="btn btn-outline-light" id="withdrawBtn">Withdraw</button>
-                      </div>
+                      
                     </div>
           
                    <!-- Transaction History -->
@@ -619,81 +614,179 @@
               <% } else { %>
                 <p>No transaction history available.</p>
               <% } %>
+           
             </div>
+           
           </div>
+                   <div class="pagination-area mt-30 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
   
         </div>
+       
       </div>
+   
     </div>
+   
   </section>
   
   
           </main>
-          
-<!-- Add Money Modal -->
-<div class="modal-backdrop" id="modalBackdrop"></div>
-<div class="modal" id="addMoneyModal">
-    <div class="modal-header">
-        <h4>Add Money to Wallet</h4>
-        <button class="modal-close" id="closeAddMoneyModal">&times;</button>
-    </div>
-    <div class="modal-body">
-        <div class="form-group">
-            <label for="amount">Amount (₹)</label>
-            <input type="number" id="amount" class="form-control" placeholder="Enter amount" min="100">
-        </div>
-        <div class="form-group">
-            <label>Payment Method</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" id="upi" value="upi" checked>
-                <label class="form-check-label" for="upi">UPI</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="card">
-                <label class="form-check-label" for="card">Credit/Debit Card</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentMethod" id="netbanking" value="netbanking">
-                <label class="form-check-label" for="netbanking">Net Banking</label>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-light" id="cancelAddMoney">Cancel</button>
-        <button class="btn btn-primary" id="confirmAddMoney">Add Money</button>
-    </div>
-</div>
 
-<!-- Withdraw Money Modal -->
-<div class="modal" id="withdrawModal">
-    <div class="modal-header">
-        <h4>Withdraw Money</h4>
-        <button class="modal-close" id="closeWithdrawModal">&times;</button>
-    </div>
-    <div class="modal-body">
-        <div class="form-group">
-            <label for="withdrawAmount">Amount (₹)</label>
-            <input type="number" id="withdrawAmount" class="form-control" placeholder="Enter amount" min="100" max="5250">
-            <small class="text-muted">Available balance: ₹5,250.00</small>
-        </div>
-        <div class="form-group">
-            <label for="accountNumber">Account Number</label>
-            <input type="text" id="accountNumber" class="form-control" placeholder="Enter account number">
-        </div>
-        <div class="form-group">
-            <label for="ifscCode">IFSC Code</label>
-            <input type="text" id="ifscCode" class="form-control" placeholder="Enter IFSC code">
-        </div>
-        <div class="form-group">
-            <label for="accountName">Account Holder Name</label>
-            <input type="text" id="accountName" class="form-control" placeholder="Enter account holder name">
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-light" id="cancelWithdraw">Cancel</button>
-        <button class="btn btn-primary" id="confirmWithdraw">Withdraw</button>
-    </div>
-</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Modal handling for Add Money
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const addMoneyModal = document.getElementById('addMoneyModal');
+    const addMoneyBtn = document.getElementById('addMoneyBtn');
+    const closeAddMoneyModal = document.getElementById('closeAddMoneyModal');
+    const cancelAddMoney = document.getElementById('cancelAddMoney');
+    const confirmAddMoney = document.getElementById('confirmAddMoney');
+
+    // Modal handling for Withdraw
+    const withdrawModal = document.getElementById('withdrawModal');
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const closeWithdrawModal = document.getElementById('closeWithdrawModal');
+    const cancelWithdraw = document.getElementById('cancelWithdraw');
+    const confirmWithdraw = document.getElementById('confirmWithdraw');
+
+    // Filter buttons
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const transactionCards = document.querySelectorAll('.transaction-card');
+
+    // Add Money Modal Functions
+    if (addMoneyBtn) {
+        addMoneyBtn.addEventListener('click', function() {
+            modalBackdrop.style.display = 'block';
+            addMoneyModal.style.display = 'block';
+        });
+    }
+
+    function closeAddModal() {
+        modalBackdrop.style.display = 'none';
+        addMoneyModal.style.display = 'none';
+    }
+
+    if (closeAddMoneyModal) closeAddMoneyModal.addEventListener('click', closeAddModal);
+    if (cancelAddMoney) cancelAddMoney.addEventListener('click', closeAddModal);
+    if (confirmAddMoney) {
+        confirmAddMoney.addEventListener('click', function() {
+            // Add money logic would go here
+            alert('Money added successfully!');
+            closeAddModal();
+        });
+    }
+
+    // Withdraw Modal Functions
+    if (withdrawBtn) {
+        withdrawBtn.addEventListener('click', function() {
+            modalBackdrop.style.display = 'block';
+            withdrawModal.style.display = 'block';
+        });
+    }
+
+    function closeWithdrawModalFunc() {
+        modalBackdrop.style.display = 'none';
+        withdrawModal.style.display = 'none';
+    }
+
+    if (closeWithdrawModal) closeWithdrawModal.addEventListener('click', closeWithdrawModalFunc);
+    if (cancelWithdraw) cancelWithdraw.addEventListener('click', closeWithdrawModalFunc);
+    if (confirmWithdraw) {
+        confirmWithdraw.addEventListener('click', function() {
+            // Withdraw money logic would go here
+            alert('Withdrawal request submitted successfully!');
+            closeWithdrawModalFunc();
+        });
+    }
+
+    // Transaction filtering functionality
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Get the filter category from the button text
+            const filterCategory = this.textContent.trim().toLowerCase();
+            
+            // Filter transactions based on category
+            transactionCards.forEach(card => {
+                const transactionTitle = card.querySelector('.transaction-title').textContent.trim().toLowerCase();
+                const transactionAmount = card.querySelector('.transaction-amount').textContent.trim();
+                const transactionDetails = card.querySelector('.transaction-details')?.textContent.trim().toLowerCase() || '';
+                
+                // Determine if this card should be shown based on filter
+                let shouldShow = false;
+                
+                if (filterCategory === 'all') {
+                    shouldShow = true;
+                } else if (filterCategory === 'added' && 
+                          (transactionTitle.includes('money added') || 
+                           transactionTitle.includes('add money'))) {
+                    shouldShow = true;
+                } else if (filterCategory === 'spent' && 
+                          (transactionTitle.includes('order payment') || 
+                           transactionTitle.includes('payment'))) {
+                    shouldShow = true;
+                } else if (filterCategory === 'refunded' && 
+                          (transactionTitle.includes('refund'))) {
+                    shouldShow = true;
+                } else if (filterCategory === 'referrals' && 
+                          (transactionTitle.includes('referral') || 
+                           transactionDetails.includes('referr'))) {
+                    shouldShow = true;
+                }
+                
+                // Show or hide the card
+                if (shouldShow) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show message if no transactions for selected filter
+            const visibleCards = Array.from(transactionCards).filter(card => 
+                card.style.display !== 'none'
+            );
+            
+            // Get or create the no-transactions message
+            let noTransactionsMsg = document.getElementById('no-transactions-msg');
+            if (!noTransactionsMsg) {
+                noTransactionsMsg = document.createElement('p');
+                noTransactionsMsg.id = 'no-transactions-msg';
+                noTransactionsMsg.className = 'text-center my-4';
+                transactionCards[0].parentNode.appendChild(noTransactionsMsg);
+            }
+            
+            if (visibleCards.length === 0) {
+                noTransactionsMsg.textContent = `No ${filterCategory === 'all' ? 'transaction' : filterCategory} history available.`;
+                noTransactionsMsg.style.display = 'block';
+            } else {
+                noTransactionsMsg.style.display = 'none';
+            }
+        });
+    });
+    
+    // Trigger click on "All" button to initialize the view
+    document.querySelector('.filter-btn.active').click();
+});
+</script>
 
 <%- include('../partials/userL/footer.ejs') %>
 

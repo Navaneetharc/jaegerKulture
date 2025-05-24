@@ -444,19 +444,21 @@
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
-                            <div class="header-action-icon-2">
-                                <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="/assets2/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">0</span>
-                                </a>
+                                <div class="header-action-icon-2">
+                                    <a href="/wishlist">
+                                        <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
+
+                                    </a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="/cart">
+                                        <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+                                    </a>
+
+                                </div>
                             </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="/assets2/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue">0</span>
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -558,7 +560,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/addresses">
+                                <a class="nav-link" href="/myAddresses">
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
@@ -582,11 +584,7 @@
                                     <i class="fi-rs-shield-check"></i> Security Settings
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/help">
-                                    <i class="fi-rs-help"></i> Help Center
-                                </a>
-                            </li>
+                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
                                     <i class="fi-rs-exit"></i> Logout
@@ -596,13 +594,7 @@
                     </div>
                 </div>
 
-                <!-- Add this section near the top of your orderDetails.ejs file -->
-
-<!-- add this at the top of your template -->
-
-  
-
-<!-- The rest of your orderDetails.ejs content should remain unchanged -->
+      
                 <div class="col-lg-9">
                     <% // Build array of only those items flagged for return %>
                     <% const itemsRequested = order.orderItems.filter(i => Array.isArray(i.statusHistory) && i.statusHistory.some(h => h.status === 'Return Requested')); %>
@@ -724,25 +716,46 @@
                                 </div>
                                 <% }) %>
                             </div>
-                    
-                            <div class="order-summary">
-                                <div class="order-summary-row">
-                                    <div class="order-summary-label">Subtotal</div>
-                                    <div class="order-summary-value">₹<%= subtotal.toFixed(2) %></div>
-                                </div>
-                                <div class="order-summary-row">
-                                    <div class="order-summary-label">Delivery charge</div>
-                                    <div class="order-summary-value">₹<%= deliveryCharge.toFixed(2) %></div>
-                                </div>
-                                <div class="order-summary-row">
-                                    <div class="order-summary-label">Tax (5%)</div>
-                                    <div class="order-summary-value">₹<%= tax.toFixed(2) %></div>
-                                </div>
-                                <div class="order-summary-row">
-                                    <div class="order-summary-label">Total</div>
-                                    <div class="order-summary-value">₹<%= total.toFixed(2) %></div>
-                                </div>
-                            </div>
+                    <%
+// Avoid naming conflicts by using unique names
+const computedSubtotal = order.orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+const computedDelivery  = order.deliveryCharge;
+const computedTax       = order.tax;
+const computedDiscount  = order.couponDiscount || 0;
+const computedTotal     = order.totalAmount;
+%>
+
+<div class="order-summary">
+
+  <div class="order-summary-row">
+    <div class="order-summary-label">Subtotal</div>
+    <div class="order-summary-value">₹<%= computedSubtotal.toFixed(2) %></div>
+  </div>
+
+  <div class="order-summary-row">
+    <div class="order-summary-label">Delivery charge</div>
+    <div class="order-summary-value">₹<%= computedDelivery.toFixed(2) %></div>
+  </div>
+
+  <div class="order-summary-row">
+    <div class="order-summary-label">Tax (5%)</div>
+    <div class="order-summary-value">₹<%= computedTax.toFixed(2) %></div>
+  </div>
+
+  <% if (computedDiscount > 0) { %>
+  <div class="order-summary-row">
+    <div class="order-summary-label">Discount (<%= order.couponCode %>)</div>
+    <div class="order-summary-value text-success">-₹<%= computedDiscount.toFixed(2) %></div>
+  </div>
+  <% } %>
+
+  <div class="order-summary-row">
+    <div class="order-summary-label"><strong>Total</strong></div>
+    <div class="order-summary-value"><strong>₹<%= computedTotal.toFixed(2) %></strong></div>
+  </div>
+
+</div>
+
                     
                             <!-- Add status history timeline -->
                             

@@ -67,7 +67,7 @@ const getOrderManagement = async (req, res) => {
 
 const getOrderDetails = async (req, res) => {
   try {
-    const id = req.query.id;
+    const id = req.params.id;
     const order = await Order.findById(id)
       .populate('userId')
       .populate('orderItems.product')
@@ -84,42 +84,42 @@ const getOrderDetails = async (req, res) => {
 
     const displayOrder = JSON.parse(JSON.stringify(order));
 
-    const productsWithRefunds = refunds.map(refund => refund.product._id.toString());
+    const discountPercent = order.couponDiscount
+      ? order.couponDiscount / order.totalAmount
+      : 0;
 
+    const refundItemIds = refunds.map(refund => refund.itemId?.toString());
 
     if (order.status === 'Return Requested' || refunds.length > 0) {
       displayOrder.status = 'Delivered';
 
       const itemsForReturn = order.orderItems.filter(item => {
-        const pid = item.product._id.toString();
-        const isReturned   = item.currentStatus === 'Returned';
-        const isReturnReq  = item.currentStatus === 'Return Requested';
-        const hasRefundReq = productsWithRefunds.includes(pid);
-
-        return isReturned || isReturnReq || hasRefundReq;
+        const itemId = item._id.toString();
+        return item.currentStatus === 'Returned' || 
+               item.currentStatus === 'Return Requested' ||
+               refundItemIds.includes(itemId);
       });
-
 
       if (itemsForReturn.length > 0) {
         displayOrder.returnRequest = {
           status: 'Pending',
           reason: order.cancelReason || 'Return requested',
-          items: itemsForReturn.map(item => ({
-            product: item.product,
-            quantity: item.quantity,
-            variant: item.variant,
-            productImage: item.productImage,
-            status: item.currentStatus === 'Returned' 
-              ? 'Returned & Refunded' 
-              : 'Return Requested'
-          })),
+          items: itemsForReturn.map(item => {
+            const lineTotal = item.price * item.quantity;
+            const refundAmt = lineTotal * (1 - discountPercent);
+            return {
+              _id: item._id,
+              product: item.product,
+              quantity: item.quantity,
+              variant: item.variant,
+              productImage: item.productImage,
+              status: item.currentStatus === 'Returned' ? 'Returned & Refunded' : 'Return Requested',
+              price: item.price,
+              refundAmount: +refundAmt.toFixed(2)
+            };
+          }),
           _id: order._id
         };
-
-
-        if (displayOrder.returnRequest.items.length === 0) {
-          console.log('No items in return request after mapping!');
-        }
       } else {
         displayOrder.returnRequest = { status: null, items: [], _id: order._id };
         console.log('No items found for return!');
@@ -129,8 +129,8 @@ const getOrderDetails = async (req, res) => {
       console.log('No return requests found for this order');
     }
 
+    console.log('Return items count:', displayOrder.returnRequest.items.length);
     
-
     res.render('adminOrderDetails', { order: displayOrder, refunds });
   } catch (error) {
     console.error(error);
@@ -196,7 +196,7 @@ const updateOrderStatus = async (req, res) => {
       });
 
       await order.save();
-      res.redirect(`/admin/orderDetails?id=${orderId}`);
+      res.redirect(`/admin/orderDetails/${orderId}`);
   } catch (error) {
       console.error('Error updating order status:', error);
       res.redirect('/admin/pageerror');
@@ -222,6 +222,9 @@ const approveReturns = async (req, res) => {
 
     const returnedItemIds = refunds.map(r => r.itemId.toString());
 
+    const discountPercent = order.couponDiscount
+      ? order.couponDiscount / order.totalAmount
+      : 0;
     let refundAmount = 0;
 
     for (const item of order.orderItems) {
@@ -235,8 +238,10 @@ const approveReturns = async (req, res) => {
         timestamp: new Date()
       });
 
-      const itemRefund = (item.price || 0) * (item.quantity || 1);
-      refundAmount += itemRefund;
+      const itemTotal = item.price * item.quantity;
+
+     const netRefund = itemTotal * (1 - discountPercent);
+      refundAmount += netRefund;
 
       const sizeKey = item.variant?.size;
       if (sizeKey) {
@@ -250,7 +255,8 @@ const approveReturns = async (req, res) => {
     const returnedCount = order.orderItems.filter(i => i.currentStatus === 'Returned').length;
 
     if (returnedCount === totalItems) {
-      order.status = 'Returned';
+      refundAmount = order.totalAmount;
+      order.status  = 'Returned';
     } else if (returnedCount > 0) {
       order.status = 'Delivered';
     }
@@ -262,6 +268,7 @@ const approveReturns = async (req, res) => {
       if (user) {
         const oldBalance = user.wallet || 0;
         user.wallet = oldBalance + refundAmount;
+
         if (user.walletHistory) {
           user.walletHistory.push({
             type: 'credit',
@@ -270,6 +277,7 @@ const approveReturns = async (req, res) => {
             date: new Date()
           });
         }
+
         await user.save();
 
         const addressToUse =
@@ -301,12 +309,14 @@ const approveReturns = async (req, res) => {
       { status: 'Approved' }
     );
 
-    res.redirect(`/admin/orderDetails?id=${orderId}`);
+    res.redirect(`/admin/orderDetails/${orderId}`);
   } catch (error) {
     console.error('Error approving returns:', error);
     res.redirect('/admin/pageerror');
   }
 };
+
+
 
 const rejectReturns = async (req, res) => {
   try {
@@ -347,7 +357,7 @@ const rejectReturns = async (req, res) => {
       { status: 'Rejected' }
     );
 
-    res.redirect(`/admin/orderDetails?id=${orderId}`);
+    res.redirect(`/admin/orderDetails/${orderId}`);
   } catch (error) {
     console.error('Error rejecting returns:', error);
     res.redirect('/admin/pageerror');

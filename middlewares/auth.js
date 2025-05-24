@@ -9,10 +9,8 @@ const userAuth = (req,res,next)=>{
                 req.user = data;
                 next();
             }else{
-                req.session.destroy(err => {
-                    if(err) console.log("Error destroying session:", err);
-                    res.redirect("/login");
-                });
+               delete req.session.user;
+               req.session.save(() => res.redirect("/login"));
             }
         })
         .catch(error=>{
@@ -31,10 +29,8 @@ const adminAuth = (req,res,next)=>{
             if(admin){
                 next();
             } else {
-                req.session.destroy(err => {
-                    if(err) console.log("Error destroying session:", err);
-                    res.redirect("/admin/login");
-                });
+               delete req.session.admin;
+               req.session.save(() => redirect("/admin/login"));
             }
         })
         .catch(error => {

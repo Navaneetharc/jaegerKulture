@@ -38,6 +38,21 @@ const loadHomepage = async (req, res) => {
         
             const items = cart?.items || [];
 
+               let wishlistItems = [];
+    if (req.session.user) {
+        try {
+            const wishlist = await Wishlist.findOne({ userId: req.session.user });
+            if (wishlist) {
+                wishlistItems = wishlist.products.map(item => item.productId.toString());
+            }
+        } catch (wishlistError) {
+            console.error('Error fetching wishlist:', wishlistError);
+        }
+    }
+
+  
+            
+
             let wishlistCount = 0;
 
             if (userId) {
@@ -61,9 +76,9 @@ const loadHomepage = async (req, res) => {
 
         if(userId){
             const userData = await User.findById(userId);
-            return res.render('home',{user: userData, products: productData,items,wishlistCount});
+            return res.render('home',{user: userData, products: productData,items,wishlistCount,wishlistItems});
         }else{
-            return res.render("home",{products: productData,items,wishlistCount});
+            return res.render("home",{products: productData,items,wishlistCount,wishlistItems});
         }
 
     } catch (error) {
@@ -328,15 +343,14 @@ const login = async(req,res)=>{
 
 const logout = async (req,res)=>{
     try {
-        
-        req.session.destroy((err)=>{
+        delete req.session.user;
+        req.session.save(err => {
             if(err){
-                console.log("Session destruction error",err.message);
+                console.log("Session save error on user logout",err);
                 return res.redirect("/pageNotFound");
             }
-            return res.redirect('/login')
-        })
-
+            res.redirect('/login');
+        });
     } catch (error) {
 
         console.log("Logout error",error);

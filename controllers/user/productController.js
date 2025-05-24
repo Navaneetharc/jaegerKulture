@@ -4,6 +4,7 @@ const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const User = require("../../models/userSchema");
 const Cart    = require('../../models/cartSchema');
+const Wishlist = require('../../models/wishlistSchema');
 
 const productDetails = async (req, res) => {
     try {
@@ -38,6 +39,14 @@ const productDetails = async (req, res) => {
               .populate('items.productId');
         
             const items = cart?.items || [];
+
+            
+                        let wishlistCount = 0;
+            
+                        if (userId) {
+                            const wishlist = await Wishlist.findOne({ userId });
+                            wishlistCount = wishlist ? wishlist.products.length : 0;
+                        }  
         
             
 
@@ -45,6 +54,7 @@ const productDetails = async (req, res) => {
             user: userData || null,
             product,
             items,
+            wishlistCount,
             category: product.category,
             products: relatedProducts
         });

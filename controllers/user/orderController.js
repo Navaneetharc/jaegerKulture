@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Cart = require('../../models/cartSchema');
+const Wishlist = require('../../models/wishlistSchema');
 const Order = require('../../models/orderSchema');
 const User = require('../../models/userSchema');
 const Refund = require('../../models/refundSchema');
@@ -7,6 +9,7 @@ const Wallet   = require('../../models/walletSchema');
 const getMyOrdersPage = async (req, res) => {
   try {
     const user = await User.findById(req.session.user);
+    const userId = req.user._id;
 
     const page = parseInt(req.query.page) || 1;
     const limit = 5; 
@@ -22,11 +25,26 @@ const getMyOrdersPage = async (req, res) => {
       .populate('orderItems.product')
       .populate('address.addressDocId');
 
+      let cart = await Cart
+                    .findOne({ userId })
+                    .populate('items.productId');
+              
+                  const items = cart?.items || [];
+      
+                  let wishlistCount = 0;
+      
+                  if (userId) {
+                      const wishlist = await Wishlist.findOne({ userId });
+                      wishlistCount = wishlist ? wishlist.products.length : 0;
+                  }  
+
     res.render("myOrders", {
       orders,
       user,
       currentPage: page,
-      totalPages
+      totalPages,
+      items,
+      wishlistCount
     });
   } catch (error) {
     console.error("Error in getMyOrdersPage:", error);
@@ -38,6 +56,7 @@ const getMyOrdersPage = async (req, res) => {
 const getOrderDetails = async (req, res) => {
     try {
         const user = await User.findById(req.session.user);
+        const userId = req.user._id;
         const id = req.params.id;
 
         const order = await Order.findById(id)
@@ -52,7 +71,20 @@ const getOrderDetails = async (req, res) => {
 
         order.statusHistory = Array.isArray(order.statusHistory) ? order.statusHistory : [];
 
-        res.render("orderDetails", { order, user });
+        let cart = await Cart
+                      .findOne({ userId })
+                      .populate('items.productId');
+                
+                    const items = cart?.items || [];
+        
+                    let wishlistCount = 0;
+        
+                    if (userId) {
+                        const wishlist = await Wishlist.findOne({ userId });
+                        wishlistCount = wishlist ? wishlist.products.length : 0;
+                    }  
+
+        res.render("orderDetails", { order, user , items, wishlistCount});
     } catch (error) {
         console.error("Error in getOrderDetails:", error);
         res.redirect('/admin/pageerror');

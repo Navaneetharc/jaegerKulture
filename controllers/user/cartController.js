@@ -85,7 +85,14 @@ const getCartPage = async (req, res) => {
 
     const items = cart?.items || [];
 
-    return res.render('myCart', { items, user: req.user });
+            let wishlistCount = 0;
+
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }  
+
+    return res.render('myCart', { items, user: req.user, wishlistCount });
   } catch (err) {
     console.error(err);
     return res.status(500).send('Server error');
@@ -150,24 +157,29 @@ const updateCart = async (req, res) => {
 const updateCartItem = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { itemId } = req.params;
-    let { quantity } = req.body;
-    quantity = parseInt(quantity, 10);
+    const {itemId}= req.params;
+    let qty = parseInt(req.body.quantity, 10);
 
     const cart = await Cart.findOne({ userId });
-    if (!cart) {
-      return res.status(404).json({ success: false, message: 'Cart not found.' });
-    }
+    if(!cart) return res.status(404).json({success:false, message: 'Cart not found'});
 
     const item = cart.items.id(itemId);
-    if (!item) {
-      return res.status(404).json({ success: false, message: 'Item not found.' });
+    if(!item) return res.status(404).json({success: false, message: 'Item not found'});
+
+    const product = await Product.findById(item.productId);
+    const sizeKey = item.variants.size.toLowerCase();
+    const stockAvailable = product.variant.size[sizeKey] || 0;
+
+    if(qty > stockAvailable){
+      return res.status(400).json({
+        success: false,
+        message: `Only ${stockAvailable} items available for size ${sizeKey.toUpperCase()}.`
+      });
     }
 
-    item.quantity = quantity > 0 ? quantity : 1;
+    item.quantity = qty > 0 ? qty : 1;
     await cart.save();
-
-    return res.json({ success: true, quantity: item.quantity });
+    return res.json({success: true, quantity: item.quantity});
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, message: 'Server error' });

@@ -600,19 +600,21 @@ coupon
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
-                            <div class="header-action-icon-2">
-                                <a href="/wishlist">
-                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">0</span>
-                                </a>
+                                <div class="header-action-icon-2">
+                                    <a href="/wishlist">
+                                        <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
+
+                                    </a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="/cart">
+                                        <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+                                    </a>
+
+                                </div>
                             </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue">3</span>
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -700,6 +702,11 @@ coupon
     <section class="mt-50 mb-50">
     <div class="container">
         <form class="form" id="checkoutForm" method="POST" action="/checkout">
+          <input
+              type="hidden"
+              id="walletBalanceField"
+              value="<%= walletBalance %>"
+            />
             <div class="row">
               <div class="col-lg-8">
                 <!-- Shipping Address Section -->
@@ -734,7 +741,7 @@ coupon
                       </label>
                       <% }) %>
                       <div class="add-address-btn">
-                        <a href="/addAddresses"><i class="fi-rs-plus"></i> Add New Address</a>
+                        <a href="/addAddresses?redirect=checkout"><i class="fi-rs-plus"></i> Add New Address</a>
                       </div>
                     </div>
                   </div>
@@ -801,6 +808,28 @@ coupon
                                         <input type="radio" name="payment">
                                     </div>
                                 </div>
+
+                                  <!-- Wallet -->
+                                <div class="payment-method">
+                                  <div class="payment-method-icon">
+                                    <i class="fi-rs-wallet" style="font-size:24px; color:#3BB77E;"></i>
+                                  </div>
+                                  <div class="payment-method-details">
+                                    <div class="payment-method-name">Wallet</div>
+                                    <div class="payment-method-description">
+                                      ₹<%= walletBalance.toFixed(2) %> available
+                                    </div>
+                                  </div>
+                                  <div class="payment-method-radio">
+                                    <input
+                                      type="radio"
+                                      name="paymentMethod"
+                                      value="wallet"
+                                      required
+                                    />
+                                  </div>
+                                </div>
+
                                 
                                 <!-- Razorpay -->
                                 <div class="payment-method">
@@ -920,12 +949,21 @@ coupon
               </div>
             </div>
           
-            <input 
-            type="hidden" 
-            id="totalAmount" 
-            name="totalAmount" 
-            value="<%= total.toFixed(2) %>" 
-            />
+<input 
+    type="hidden" 
+    id="hiddenCouponCode" 
+    name="couponCode" 
+    value="" 
+  />
+
+  <!-- after your hidden couponCode input, but before </form> -->
+<input 
+  type="hidden" 
+  id="totalAmount" 
+  name="totalAmount" 
+  value="<%= totalAmount %>" 
+/>
+
 
 
           </form>
@@ -1088,6 +1126,8 @@ applyButton.onclick = function(e) {
       const subtotal = parseFloat(subtotalText.replace('₹', ''));
       console.log("Subtotal value:", subtotal);
       
+      document.getElementById('hiddenCouponCode').value = code;
+
       // Calculate discount
       let discountValue = foundCoupon.type === 'percent' 
           ? subtotal * (foundCoupon.discount / 100)
@@ -1125,6 +1165,8 @@ document.getElementById('removeCoupon').addEventListener('click', function() {
   // Remove the discount row
   discountRow.remove();
   
+  document.getElementById('hiddenCouponCode').value = '';
+
   // Reset total to original
   const newTotal = subtotal + shipping + tax;
   totalElement.textContent = `₹${newTotal.toFixed(2)}`;
@@ -1196,14 +1238,63 @@ document.getElementById('removeCoupon').addEventListener('click', function() {
 </script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+  
    document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+
     const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const totalAmt = parseFloat(document.getElementById('totalAmount').value);
+
+    const walletBalance = parseFloat(
+        document.getElementById('walletBalanceField').value
+      ) || 0;
+
+     // ── 1 WALLET PAYMENT ──
+    if (method === 'wallet') {
+  if (totalAmt > walletBalance) {
+    return Swal.fire({
+      icon: 'error',
+      text: 'Insufficient balance in wallet, try other payment option',
+      timer: 2000,
+      showConfirmButton: false
+    });
+  } else {
+    // SUCCESS alert and delay submission
+    Swal.fire({
+      icon: 'success',
+      text: `₹${totalAmt.toFixed(2)} deducted from your wallet`,
+      timer: 2000,
+      showConfirmButton: false,
+      didClose: () => {
+        e.target.method = 'POST';
+        e.target.action = '/checkout';
+        e.target.submit();
+      }
+    });
+    return;
+  }
+}
+
+
+    if (method === 'cod') {
+      if (totalAmt > 1000) {
+        return Swal.fire({
+          icon: 'error',
+          text: 'COD is not available for orders above ₹1000 dear!',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+      e.target.method = 'POST';
+      e.target.action = '/checkout';
+      return e.target.submit();
+    }
+
     const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked').value;
-    const couponCode = document.getElementById('couponCode').value.trim();
+    const couponCode = document.getElementById('hiddenCouponCode').value.trim();
+
 
     if (method === 'razorpay') {
-      // 1. Create Razorpay order
       const newTotal = document.getElementById('totalAmount').value;
       const res1 = await fetch('/checkout/create-order', {
         method: 'POST',
@@ -1215,7 +1306,6 @@ document.getElementById('removeCoupon').addEventListener('click', function() {
       });
       const { order_id, amount } = await res1.json();
 
-      // 2. Open Razorpay
       const options = {
         key: '<%= razorpayKey %>',
         amount,
@@ -1224,7 +1314,6 @@ document.getElementById('removeCoupon').addEventListener('click', function() {
         description: 'Order Payment',
         order_id,
         handler: async function(response) {
-          // 3. Verify payment and place order - now with couponCode
           const res2 = await fetch('/checkout/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1233,7 +1322,7 @@ document.getElementById('removeCoupon').addEventListener('click', function() {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               selectedAddress,
-              couponCode           // ← this is the missing bit
+              couponCode           
             })
           });
           const data = await res2.json();
@@ -1287,7 +1376,6 @@ cards.forEach(card => {
     });
 
 
-    // default
 
 document.querySelectorAll('.set-default').forEach(link => {
   link.addEventListener('click', function(e) {
@@ -1309,9 +1397,20 @@ document.addEventListener("DOMContentLoaded",()=>{
     const form = document.querySelector('form');
 
     form.addEventListener('submit', async function (e) {
-        e.preventDefault(); 
+        e.preventDefault();
+        const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+        const totalAmt = parseFloat(document.getElementById('totalAmount').value);
+        if (method === 'cod' && totalAmt > 1000) {
+          Swal.fire({
+            icon: 'error',
+            text: 'COD is not available for orders above ₹1000 dear!',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          return;
+        }
 
-    try {
+     try {
             const res = await fetch('/checkout', {
                 method: 'POST',
                 body: new FormData(form)

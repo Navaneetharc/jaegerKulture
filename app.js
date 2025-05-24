@@ -13,30 +13,53 @@ db()
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-
 app.use(methodOverride('_method')); 
-
-
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 manikkur
-    }
-}))
-
-
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use((req,res,next)=>{
     res.set('cache-control','no-store')
     next();
-})
+});
+
+
+const MemoryStore = session.MemoryStore;
+const userStore  = new MemoryStore();
+const adminStore = new MemoryStore();
+
+
+
+const adminSession = session({
+        name:'admin_sid',
+        store: adminStore,
+        secret: process.env.ADMIN_SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            path: '/admin',
+            secure: process.env.NODE_ENV == 'production',
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
+        },
+    });
+
+
+app.use("/admin",adminSession,adminRouter);
+
+
+const userSession = session({
+    name: 'user_sid',
+    store: userStore,
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 manikkur
+    }
+});
+
+app.use('/', userSession, passport.initialize(), passport.session(), userRouter);
 
 
 
@@ -47,16 +70,8 @@ app.use('/uploads', express.static('public/uploads'));
 
 
 
-
-
-app.use("/",userRouter);
-app.use("/admin",adminRouter);
-
-
-
-
 const port = process.env.PORT || 4000;
 
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
 
-module.exports = app
+module.exports = app 
