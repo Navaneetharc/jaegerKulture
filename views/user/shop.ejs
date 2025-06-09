@@ -173,7 +173,7 @@
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= user.name %></a>
                                     <div class="dropdown-content">
-                                        <a href="/userProfile">Profile</a>
+                                        <a href="/profileInfo">Profile</a>
                                         <a href="/logout">Logout</a>
                                     </div>
                                 </div>
@@ -236,7 +236,7 @@
                                     
                                 </li>
                                 <li>
-                                    <a href="page-about.html">About</a>
+                                    <a href=#>About</a>
                                 </li>
                                 <li><a class="active" href="/shop">Shop</a>
                                    
@@ -249,7 +249,7 @@
                                 
                         
                                 <li>
-                                    <a href="page-contact.html">Contact</a>
+                                    <a href="#">Contact</a>
                                 </li>
                             </ul>
                         </nav>
@@ -342,11 +342,7 @@
                                       <a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].category.name %></a>
                                     </div>
                                     <h2><a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].productName %></a></h2>
-                                    <div class="rating-result" title="90%">
-                                      <span>
-                                        <span>90%</span>
-                                      </span>
-                                    </div>
+                                    
                                     <div class="product-price">
                                       <span>₹<%= products[i].salePrice %></span>
                                       <span class="old-price">₹<%= products[i].regularPrice %></span>

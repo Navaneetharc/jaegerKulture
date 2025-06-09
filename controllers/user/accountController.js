@@ -380,7 +380,20 @@ const updatePassword = async (req, res) => {
     user.password = newPasswordHash;
     await user.save();
 
-    return res.render('security', { message: "Password updated successfully.", user });
+    let cart = await Cart
+              .findOne({ userId })
+              .populate('items.productId');
+        
+            const items = cart?.items || [];
+
+            let wishlistCount = 0;
+
+            if (userId) {
+                const wishlist = await Wishlist.findOne({ userId });
+                wishlistCount = wishlist ? wishlist.products.length : 0;
+            }  
+
+    return res.render('security', { message: "Password updated successfully.", user ,items,wishlistCount});
   } catch (error) {
     console.error("Error in updating password:", error);
     res.status(500).render('security', { message: "Server error occurred: " + error.message });

@@ -259,7 +259,6 @@
                     <div class="header-info">
                         <ul>
                             <li><i class="fi-ss-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-ss-marker"></i><a href="/contact">Our location</a></li>
                         </ul>
                     </div>
                 </div>
@@ -305,9 +304,7 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        <form action="/search" method="get">
-                            <input type="text" placeholder="Search for items..." name="query">
-                        </form>
+                        
                     </div>
                     <div class="header-action-right">
                        <div class="header-action-2">
@@ -342,13 +339,13 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="/about">About</a></li>
+                                <li><a href="#">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="/offers">Deals</a>
+                                <li class="position-static"><a href="#">Deals</a>
                                     <ul class="mega-menu">
                                     </ul>
                                 </li>
-                                <li><a href="/contact">Contact</a></li>
+                                <li><a href="#">Contact</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -431,26 +428,20 @@
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wishlist">
-                                    <i class="fi-rs-heart"></i> Wishlist
-                                </a>
-                            </li>
+                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/wallet">
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
+                           
+                            <% if(!user.googleId){%>
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
                                     <i class="fi-rs-shield-check"></i> Security Settings
                                 </a>
                             </li>
+                            <%}%>
                           
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
@@ -609,20 +600,12 @@
 
 <%- include('../partials/userL/footer.ejs') %>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form');
+    const form = document.getElementById('addressForm');
 
-    const validationStates = {
-        name: { valid: true, message: '' },
-        phone: { valid: true, message: '' },
-        altPhone: { valid: true, message: '' },
-        addressLine1: { valid: true, message: '' },
-        city: { valid: true, message: '' },
-        state: { valid: true, message: '' },
-        pincode: { valid: true, message: '' }
-    };
+    const requiredFields = ['name', 'phone', 'addressLine1', 'city', 'state', 'pincode'];
 
     const validators = {
         name: value => value.length >= 3,
@@ -631,117 +614,70 @@ document.addEventListener('DOMContentLoaded', function () {
         pincode: value => /^\d{6}$/.test(value)
     };
 
-    function updateValidationState(field, isValid, message) {
-        const element = document.getElementById(field);
-        if (!element) return;
+    function validateField(fieldId) {
+        const input = document.getElementById(fieldId);
+        const value = input.value.trim();
+        let isValid = true;
+        let message = '';
 
-        const errorElement = element.nextElementSibling;
-        if (!errorElement || !errorElement.classList.contains('invalid-feedback')) {
-            if (!isValid && message) {
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'invalid-feedback';
-                errorDiv.textContent = message;
-                element.parentElement.appendChild(errorDiv);
-            }
-            return;
+        if (validators[fieldId] && !validators[fieldId](value)) {
+            isValid = false;
+            if (fieldId === 'name') message = 'Name must be at least 3 characters long';
+            if (fieldId === 'phone' || fieldId === 'altPhone') message = 'Phone number must be 10 digits starting with 6, 7, 8, or 9';
+            if (fieldId === 'pincode') message = 'Pincode must be exactly 6 digits';
         }
 
-        errorElement.textContent = message;
-        element.classList.toggle('is-invalid', !isValid);
-        validationStates[field].valid = isValid;
-        validationStates[field].message = message;
+        input.classList.toggle('is-invalid', !isValid);
+        let feedback = input.nextElementSibling;
+        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+            feedback = document.createElement('div');
+            feedback.className = 'invalid-feedback';
+            input.parentElement.appendChild(feedback);
+        }
+        feedback.textContent = isValid ? '' : message;
+        return isValid;
     }
 
-    ['name', 'phone', 'altPhone', 'addressLine1', 'city', 'state', 'pincode'].forEach(field => {
-        const element = document.getElementById(field);
-        if (!element) return;
-
-        element.addEventListener('input', function () {
-            const validator = validators[field];
-            let isValid = true;
-            let message = '';
-
-            if (validator && !validator(this.value)) {
-                isValid = false;
-                switch (field) {
-                    case 'name':
-                        message = 'Name must be at least 3 characters long';
-                        break;
-                    case 'phone':
-                    case 'altPhone':
-                        message = 'Please enter a valid 10-digit phone number starting with 6, 7, 8, or 9';
-                        break;
-                    case 'pincode':
-                        message = 'Please enter a valid 6-digit postal code';
-                        break;
-                }
-            }
-
-            updateValidationState(field, isValid, message);
-        });
+    requiredFields.concat(['altPhone']).forEach(id => {
+        const input = document.getElementById(id);
+        input.addEventListener('input', () => validateField(id));
     });
 
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault(); 
-
-        let isValidForm = true;
-
-        ['name', 'phone', 'addressLine1', 'city', 'state', 'pincode'].forEach(field => {
-            const element = document.getElementById(field);
-            const validator = validators[field];
-
-            if (!validator || !validator(element.value)) {
-                isValidForm = false;
-                updateValidationState(
-                    field,
-                    false,
-                    field === 'name' ?
-                        'Name must be at least 3 characters long' :
-                        field === 'phone' || field === 'altPhone' ?
-                            'Please enter a valid 10-digit phone number starting with 6, 7, 8, or 9' :
-                            field === 'pincode' ?
-                                'Please enter a valid 6-digit postal code' :
-                                ''
-                );
-            }
+    form.addEventListener('submit', function (e) {
+        let allValid = true;
+        requiredFields.concat(['altPhone']).forEach(id => {
+            const valid = validateField(id);
+            if (!valid) allValid = false;
         });
 
-        const addressTypeChecked = document.querySelector('input[name="details[0][addressType]"]:checked');
-        if (!addressTypeChecked) {
-            isValidForm = false;
-            updateValidationState('addressType', false, 'Please select an address type');
-        }
-
-        if (!isValidForm) {
-            document.querySelector('.card-body').scrollIntoView({ behavior: 'smooth' });
-            return;
-        }
-
-        try {
-            const res = await fetch('/addAddresses', {
-                method: 'POST',
-                body: new FormData(form)
-            });
-
-            const data = await res.json();
-
+        if (!allValid) {
+            e.preventDefault();
             Swal.fire({
-                icon: res.ok ? "success" : "error",
-                text: data.message || data.error || (res.ok ? "Address added successfully!" : "Failed to add address"),
-                timer: 1500,
-                showConfirmButton: false
-            });
-
-        } catch (err) {
-            Swal.fire({
-                icon: "error",
-                text: "An error occurred while submitting the form.",
-                timer: 1500,
-                showConfirmButton: false
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please fix the errors before submitting.',
+                confirmButtonColor: '#3BB77E'
             });
         }
     });
+
+    // success/error alert from backend redirect
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('success')) {
+        Swal.fire({
+            icon: 'success',
+            text: params.get('success'),
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+    if (params.has('error')) {
+        Swal.fire({
+            icon: 'error',
+            text: params.get('error'),
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
 });
-
-
-</script> 
+</script>

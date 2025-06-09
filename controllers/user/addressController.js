@@ -9,22 +9,24 @@ const getMyAddresses = async (req, res) => {
   try {
     const user = await User.findById(req.session.user);
     const userId = req.user._id;
-    const address = await Address.findOne({ userId });
-    if (!address) {
-      return res.render('myAddresses', { addresses: [],user });
-    }
+    
     let cart = await Cart
                   .findOne({ userId })
                   .populate('items.productId');
             
                 const items = cart?.items || [];
     
-                let wishlistCount = 0;
+    let wishlistCount = 0;
     
                 if (userId) {
                     const wishlist = await Wishlist.findOne({ userId });
                     wishlistCount = wishlist ? wishlist.products.length : 0;
                 }  
+
+    const address = await Address.findOne({ userId });
+    if (!address) {
+      return res.render('myAddresses', { addresses: [],user,items,wishlistCount });
+    }
 
     res.render('myAddresses', { addresses: address.details ,user, items, wishlistCount});
   } catch (err) {
@@ -84,6 +86,14 @@ const getMyAddresses = async (req, res) => {
           details:[]
         });
       }
+
+      if (!name || name.length < 3 ||
+    !/^[6789]\d{9}$/.test(phone) ||
+    (altPhone && !/^[6789]\d{9}$/.test(altPhone)) ||
+    !/^\d{6}$/.test(pincode)) {
+  return res.redirect("/myAddresses?error=Invalid input provided");
+}
+
 
       const newIndex = addressDoc.details.length;
       const isDefault = addressDoc.details.length === 0;

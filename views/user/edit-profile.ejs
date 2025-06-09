@@ -194,26 +194,20 @@
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wishlist">
-                                    <i class="fi-rs-heart"></i> Wishlist
-                                </a>
-                            </li>
+                           
                             <li class="nav-item">
                                 <a class="nav-link" href="/wallet">
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
+                            
+                           <% if(!user.googleId){%>
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
                                     <i class="fi-rs-shield-check"></i> Security Settings
                                 </a>
                             </li>
+                            <%}%>
                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">

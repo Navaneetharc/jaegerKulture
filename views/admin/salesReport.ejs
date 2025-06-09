@@ -57,55 +57,16 @@
     <main class="main-wrap">
         <header class="main-header navbar">
             <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                        <button class="btn btn-light" type="button"> <i class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products">
-                        <option value="New orders">
-                        <option value="Apple iphone">
-                        <option value="Customer name">
-                    </datalist>
-                </form>
+                
             </div>
             <div class="col-nav">
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon" href="#">
-                            <i class="material-icons md-notifications"></i>
-                            <span class="badge rounded-pill bg-warning">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
                     </li>
-                    <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="/assets/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
-                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-jp.png" alt="日本語">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-cn.png" alt="中国人">中国人</a>
-                        </div>
-                    </li>
-                    <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
-                        </div>
-                    </li>
+                   
                 </ul>
             </div>
         </header>
@@ -419,9 +380,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <script>
-            // Main report generation script
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle report type change to toggle date fields in both forms
     const reportTypeSelects = document.querySelectorAll('[id^="reportType"]');
     reportTypeSelects.forEach(select => {
         select.addEventListener('change', function() {
@@ -436,7 +395,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Initialize date pickers with default values
     const today = new Date();
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(today.getDate() - 7);
@@ -448,7 +406,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${year}-${month}-${day}`;
     };
     
-    // Set default dates for all date inputs
     const dateInputs = document.querySelectorAll('input[type="date"]');
     dateInputs.forEach(input => {
         if (input.id.includes('start') || input.id.includes('from')) {
@@ -458,21 +415,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle report generation from both forms
     const reportForms = document.querySelectorAll('#reportForm, #modalReportForm');
     reportForms.forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Get the button that was clicked
             const submitBtn = form.querySelector('[type="submit"]');
             const originalBtnText = submitBtn.innerHTML;
             
-            // Show loading state
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
             submitBtn.disabled = true;
             
-            // Get form data
             const formData = new FormData(form);
             const reportData = {
                 reportType: formData.get('reportType'),
@@ -482,7 +435,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 includeOrderAmount: formData.has('includeOrderAmount') ? 'true' : 'false'
             };
             
-            // Add date range if custom
             if (reportData.reportType === 'custom') {
                 reportData.startDate = formData.get('startDate');
                 reportData.endDate = formData.get('endDate');
@@ -490,7 +442,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log('Sending report data:', reportData);
             
-            // Make AJAX request to generate report
             fetch('/admin/generate-report', {
                 method: 'POST',
                 headers: {
@@ -499,7 +450,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(reportData)
             })
             .then(response => {
-                // Reset button state regardless of outcome
                 submitBtn.innerHTML = originalBtnText;
                 submitBtn.disabled = false;
                 
@@ -507,16 +457,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
-                // Check the content type to determine how to handle the response
                 const contentType = response.headers.get('content-type');
                 
                 if (contentType && contentType.includes('application/json')) {
-                    // Handle JSON response (likely success/error message)
                     return response.json().then(data => {
                         if (data.success) {
                             showToast('Report generated successfully', 'success');
                             
-                            // Trigger download if file path is provided
                             if (data.reportFile && data.reportFile.filePath) {
                                 const downloadLink = document.createElement('a');
                                 downloadLink.href = data.reportFile.filePath;
@@ -530,11 +477,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
                 } else {
-                    // Handle binary response (direct file download)
                     return response.blob().then(blob => {
                         showToast('Report generated successfully', 'success');
                         
-                        // Create a download link for the blob
                         const url = window.URL.createObjectURL(blob);
                         const fileName = `report.${reportData.reportFormat}`;
                         const a = document.createElement('a');
@@ -556,13 +501,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Date range filter handling
     document.getElementById('dateRangeFilter').addEventListener('change', function() {
         document.getElementById('customDateFilterContainer').style.display = 
             this.value === 'custom' ? 'block' : 'none';
     });
     
-    // Apply dashboard filters
     const applyFiltersBtn = document.getElementById('applyFilters');
     if (applyFiltersBtn) {
         applyFiltersBtn.addEventListener('click', async function() {
@@ -577,8 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify({ dateRange, startDate, endDate })
                 });
                 
-                // Process response and update dashboard
-                // (existing code remains unchanged)
+                
             } catch (error) {
                 console.error('Error:', error);
                 showToast('Error updating dashboard', 'error');
@@ -587,11 +529,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Enhanced toast notification function
 function showToast(message, type = 'info') {
     let toastContainer = document.getElementById('toastContainer');
     
-    // Create toast container if it doesn't exist
     if (!toastContainer) {
         toastContainer = document.createElement('div');
         toastContainer.id = 'toastContainer';
@@ -602,7 +542,6 @@ function showToast(message, type = 'info') {
         document.body.appendChild(toastContainer);
     }
     
-    // Create toast element
     const toast = document.createElement('div');
     toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type}`;
     toast.role = 'alert';
@@ -620,7 +559,6 @@ function showToast(message, type = 'info') {
     
     toastContainer.appendChild(toast);
     
-    // Initialize Bootstrap toast
     try {
         const bsToast = new bootstrap.Toast(toast, {
             autohide: true,
@@ -628,13 +566,11 @@ function showToast(message, type = 'info') {
         });
         bsToast.show();
         
-        // Remove toast after it's hidden
         toast.addEventListener('hidden.bs.toast', function() {
             this.remove();
         });
     } catch (error) {
         console.error('Error showing toast:', error);
-        // Fallback if Bootstrap Toast isn't available
         setTimeout(() => {
             toast.remove();
         }, 3000);
@@ -655,7 +591,6 @@ function showToast(message, type = 'info') {
             return `${year}-${month}-${day}`;
         };
 
-        // Set default dates
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(today.getDate() - 7);
         document.getElementById('fromDate').value = formatDate(sevenDaysAgo);
@@ -663,7 +598,6 @@ function showToast(message, type = 'info') {
         document.getElementById('startDate').value = formatDate(sevenDaysAgo);
         document.getElementById('endDate').value = formatDate(today);
 
-        // Toggle custom date fields
         document.getElementById('dateRangeFilter').addEventListener('change', function() {
             document.getElementById('customDateFilterContainer').style.display = this.value === 'custom' ? 'block' : 'none';
         });
@@ -738,7 +672,6 @@ function showToast(message, type = 'info') {
                     document.getElementById('promoDiscounts').textContent = '₹0';
                     document.getElementById('netSales').textContent = data.dashboardData.netSales;
 
-                    // Update charts
                     salesChart.data.labels = data.dashboardData.chartData.labels;
                     salesChart.data.datasets[0].data = data.dashboardData.chartData.salesData;
                     salesChart.data.datasets[1].data = data.dashboardData.chartData.ordersData;
@@ -747,7 +680,6 @@ function showToast(message, type = 'info') {
                     regionChart.data.datasets[0].data = Object.values(data.dashboardData.regionSales);
                     regionChart.update();
 
-                    // Update recent activities
                     const activitiesList = document.getElementById('recentActivities');
                     activitiesList.innerHTML = data.dashboardData.recentActivities.map(activity => `
                         <li class="event-list">

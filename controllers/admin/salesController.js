@@ -77,6 +77,8 @@ const processOrdersData = (orders) => {
     .filter(o => moment(o.createdAt).isAfter(moment().startOf('month')))
     .reduce((sum, o) => sum + o.totalAmount, 0);
 
+    totalRevenue = parseFloat(totalRevenue.toFixed(1));
+totalDiscount = parseFloat(totalDiscount.toFixed(1));
 
   return {
     totalRevenue,

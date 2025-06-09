@@ -8,7 +8,7 @@ const downloadInvoice = async (req, res) => {
     const order = await Order.findById(orderId)
       .populate('userId', 'name')
       .populate('orderItems.product', 'productName')
-      .populate('address.addressDocId');   s
+      .populate('address.addressDocId');   
 
     if (!order) {
       return res.status(404).send('Order not found');

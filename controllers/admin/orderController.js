@@ -15,6 +15,7 @@ const getOrderManagement = async (req, res) => {
     const limit   = 10;
     const skip    = (page - 1) * limit;
     const search  = req.query.search?.trim();
+    const statusFilter = req.query.status?.trim();
 
     let query = {};
 
@@ -36,6 +37,24 @@ const getOrderManagement = async (req, res) => {
       };
     }
 
+    if(statusFilter){
+      if(search){
+        query = {
+          $and: [
+            {
+              $or: [
+                { orderId: {$regex: search, $options: 'i'}},
+                {userId: {$in: userIds}}
+              ]
+            },
+            {status: statusFilter}
+          ]
+        };
+      }else{
+        query.status = statusFilter;
+      }
+    }
+
     const totalOrders = await Order.countDocuments(query);
     const totalPages  = Math.ceil(totalOrders / limit);
 
@@ -54,7 +73,8 @@ const getOrderManagement = async (req, res) => {
       currentPage: page,
       totalPages,
       baseUrl,
-      search
+      search,
+      statusFilter
     });
 
   } catch (error) {

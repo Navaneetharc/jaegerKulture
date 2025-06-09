@@ -548,7 +548,6 @@ coupon
                     <div class="header-info">
                         <ul>
                             <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
                         </ul>
                     </div>
                 </div>
@@ -594,9 +593,7 @@ coupon
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        <form action="/search" method="get">
-                            <input type="text" placeholder="Search for items..." name="query">
-                        </form>
+                       
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
@@ -631,13 +628,13 @@ coupon
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="/about">About</a></li>
+                                <li><a href="#">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="/offers">Deals</a>
+                                <li class="position-static"><a href="#">Deals</a>
                                     <ul class="mega-menu">
                                     </ul>
                                 </li>
-                                <li><a href="/contact">Contact</a></li>
+                                <li><a href="#">Contact</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -782,32 +779,9 @@ coupon
                         <div class="card-body">
                             <div class="payment-methods">
                                 <!-- Credit Card -->
-                                <div class="payment-method">
-                                    <div class="payment-method-icon">
-                                        <i class="fi-rs-credit-card" style="font-size: 24px; color: #3BB77E;"></i>
-                                    </div>
-                                    <div class="payment-method-details">
-                                        <div class="payment-method-name">Credit/Debit Card</div>
-                                        <div class="payment-method-description">Pay securely with your credit or debit card</div>
-                                    </div>
-                                    <div class="payment-method-radio">
-                                        <input type="radio" name="payment" >
-                                    </div>
-                                </div>
                                 
-                                <!-- UPI -->
-                                <div class="payment-method">
-                                    <div class="payment-method-icon">
-                                        <img src="https://1.bp.blogspot.com/-mn0etM0nf_c/X943Bn_y0kI/AAAAAAAAOkM/E2RhIJW0TbgzABXbKruLqpzpCfIuyN5JQCLcBGAsYHQ/s808/Picture1.png" alt="UPI">
-                                    </div>
-                                    <div class="payment-method-details">
-                                        <div class="payment-method-name">UPI</div>
-                                        <div class="payment-method-description">Pay using UPI apps like Google Pay, PhonePe, etc.</div>
-                                    </div>
-                                    <div class="payment-method-radio">
-                                        <input type="radio" name="payment">
-                                    </div>
-                                </div>
+                                
+                                
 
                                   <!-- Wallet -->
                                 <div class="payment-method">
@@ -850,19 +824,7 @@ coupon
                                     </div>
                                   </div>
                                 
-                                <!-- PayPal -->
-                                <div class="payment-method">
-                                    <div class="payment-method-icon">
-                                        <img src="https://static.vecteezy.com/system/resources/previews/020/190/502/original/paypal-logo-paypal-logo-free-free-vector.jpg" alt="PayPal">
-                                    </div>
-                                    <div class="payment-method-details">
-                                        <div class="payment-method-name">PayPal</div>
-                                        <div class="payment-method-description">Pay securely with PayPal</div>
-                                    </div>
-                                    <div class="payment-method-radio">
-                                        <input type="radio" name="payment">
-                                    </div>
-                                </div>
+                              
                                 
                                 <!-- Cash on Delivery -->
                                 <div class="payment-method selected">
@@ -1331,6 +1293,10 @@ document.getElementById('removeCoupon').addEventListener('click', function() {
         }
       };
       const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        console.error('Payment failed:', response.error);
+        window.location.href = '/order-failure';
+      });
       rzp.open();
 
     } else {
@@ -1392,55 +1358,55 @@ document.querySelectorAll('.set-default').forEach(link => {
 
 
 
-document.addEventListener("DOMContentLoaded",()=>{
+// document.addEventListener("DOMContentLoaded",()=>{
 
-    const form = document.querySelector('form');
+//     const form = document.querySelector('form');
 
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const method = document.querySelector('input[name="paymentMethod"]:checked').value;
-        const totalAmt = parseFloat(document.getElementById('totalAmount').value);
-        if (method === 'cod' && totalAmt > 1000) {
-          Swal.fire({
-            icon: 'error',
-            text: 'COD is not available for orders above ₹1000 dear!',
-            timer: 2000,
-            showConfirmButton: false
-          });
-          return;
-        }
+//     form.addEventListener('submit', async function (e) {
+//         e.preventDefault();
+//         const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+//         const totalAmt = parseFloat(document.getElementById('totalAmount').value);
+//         if (method === 'cod' && totalAmt > 1000) {
+//           Swal.fire({
+//             icon: 'error',
+//             text: 'COD is not available for orders above ₹1000 dear!',
+//             timer: 2000,
+//             showConfirmButton: false
+//           });
+//           return;
+//         }
 
-     try {
-            const res = await fetch('/checkout', {
-                method: 'POST',
-                body: new FormData(form)
-            });
+//      try {
+//             const res = await fetch('/checkout', {
+//                 method: 'POST',
+//                 body: new FormData(form)
+//             });
 
-            const data = await res.json();
+//             const data = await res.json();
 
-            Swal.fire({
-                icon: res.ok ? "success" : "error",
-                text: data.message || data.error || (res.ok ? "Order placed successfully!" : "Failed to place order"),
-                timer: 1500,
-                showConfirmButton: false
-            });
+//             Swal.fire({
+//                 icon: res.ok ? "success" : "error",
+//                 text: data.message || data.error || (res.ok ? "Order placed successfully!" : "Failed to place order"),
+//                 timer: 1500,
+//                 showConfirmButton: false
+//             });
 
-            if (res.ok) {
-                setTimeout(() => {
-                    window.location.href = "/order-success"; 
-                }, 1500); 
-            }
+//             if (res.ok) {
+//                 setTimeout(() => {
+//                     window.location.href = "/order-success"; 
+//                 }, 1500); 
+//             }
 
-        } catch (err) {
-            Swal.fire({
-                icon: "error",
-                text: "An error occurred while placing the order.",
-                timer: 1500,
-                showConfirmButton: false
-            });
-        }
-    });    
-})
+//         } catch (err) {
+//             Swal.fire({
+//                 icon: "error",
+//                 text: "An error occurred while placing the order.",
+//                 timer: 1500,
+//                 showConfirmButton: false
+//             });
+//         }
+//     });    
+// })
   </script>
   
 

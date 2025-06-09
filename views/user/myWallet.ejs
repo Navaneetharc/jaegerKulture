@@ -344,9 +344,7 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        <form action="/search" method="get">
-                            <input type="text" placeholder="Search for items..." name="query">
-                        </form>
+                       
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
@@ -381,13 +379,13 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="/about">About</a></li>
+                                <li><a href="#">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="/offers">Deals</a>
+                                <li class="position-static"><a href="#">Deals</a>
                                     <ul class="mega-menu">
                                     </ul>
                                 </li>
-                                <li><a href="/contact">Contact</a></li>
+                                <li><a href="#">Contact</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -415,10 +413,10 @@
                     <nav>
                         <ul class="mobile-menu font-heading">
                             <li><a class="active" href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
+                            <li><a href="#">About</a></li>
                             <li><a href="/shop">Shop</a></li>
-                            <li><a href="/offers">Deals</a></li>
-                            <li><a href="/contact">Contact</a></li>
+                            <li><a href="#">Deals</a></li>
+                            <li><a href="#">Contact</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -469,26 +467,19 @@
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wishlist">
-                                    <i class="fi-rs-heart"></i> Wishlist
-                                </a>
-                            </li>
+                            
                             <li class="nav-item">
                                 <a class="nav-link active" href="/wallet">
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
+                            <% if(!user.googleId){%>
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
                                     <i class="fi-rs-shield-check"></i> Security Settings
                                 </a>
                             </li>
+                            <%}%>
                           
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
@@ -513,13 +504,13 @@
             </div>
             <div class="card-body">
               <!-- Transaction Filters -->
-              <div class="transaction-filter mb-3">
-                <button class="filter-btn active">All</button>
-                <button class="filter-btn">Added</button>
-                <button class="filter-btn">Spent</button>
-                <button class="filter-btn">Refunded</button>
-                 <button class="filter-btn">Referrals</button>
-              </div>
+             <div class="transaction-filter mb-3">
+    <button class="filter-btn <%= currentFilter === 'all' ? 'active' : '' %>" data-filter="all">All</button>
+
+    <button class="filter-btn <%= currentFilter === 'spent' ? 'active' : '' %>" data-filter="spent">Spent</button>
+    <button class="filter-btn <%= currentFilter === 'refunded' ? 'active' : '' %>" data-filter="refunded">Refunded</button>
+    <button class="filter-btn <%= currentFilter === 'referrals' ? 'active' : '' %>" data-filter="referrals">Referrals</button>
+</div>
   
               <% if (transactions && transactions.length > 0) { %>
                 <% transactions.forEach(txn => {
@@ -601,11 +592,7 @@
         <% } %>
       </div>
       <% if (txn.orderId) { %>
-        <div class="text-end mt-2">
-          <a href="/orderDetails?id=<%= txn.orderId %>" class="btn btn-sm btn-outline-primary">
-            View Order
-          </a>
-        </div>
+        
       <% } %>
     </div>
   </div>
@@ -618,18 +605,51 @@
             </div>
            
           </div>
-                   <div class="pagination-area mt-30 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
+                   <% if (showPagination) { %>
+  <div class="pagination-area mt-30 mb-50">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-start">
+        <% if (hasPrevPage) { %>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= prevPage %>&filter=<%= currentFilter %>">
+              <i class="material-icons md-chevron_left"></i>
+            </a>
+          </li>
+        <% } %>
+        
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <% if (i === currentPage) { %>
+            <li class="page-item active">
+              <a class="page-link" href="?page=<%= i %>&filter=<%= currentFilter %>"><%= i.toString().padStart(2, '0') %></a>
+            </li>
+          <% } else if (i <= 3 || i > totalPages - 3 || Math.abs(i - currentPage) <= 1) { %>
+            <li class="page-item">
+              <a class="page-link" href="?page=<%= i %>&filter=<%= currentFilter %>"><%= i.toString().padStart(2, '0') %></a>
+            </li>
+          <% } else if (i === 4 && currentPage > 6) { %>
+            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+          <% } else if (i === totalPages - 3 && currentPage < totalPages - 5) { %>
+            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+          <% } %>
+        <% } %>
+        
+        <% if (hasNextPage) { %>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= nextPage %>&filter=<%= currentFilter %>">
+              <i class="material-icons md-chevron_right"></i>
+            </a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+<% } %>
+
+<% if (totalTransactions === 0) { %>
+  <div class="text-center my-4">
+    <p>No <%= currentFilter === 'all' ? 'transaction' : currentFilter %> history available.</p>
+  </div>
+<% } %>
   
         </div>
        
@@ -644,223 +664,81 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Modal handling for Add Money
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const addMoneyModal = document.getElementById('addMoneyModal');
-    const addMoneyBtn = document.getElementById('addMoneyBtn');
-    const closeAddMoneyModal = document.getElementById('closeAddMoneyModal');
-    const cancelAddMoney = document.getElementById('cancelAddMoney');
-    const confirmAddMoney = document.getElementById('confirmAddMoney');
+  document.addEventListener('DOMContentLoaded', function() {
+    // --- Modal handling for Add Money ---
+    const modalBackdrop        = document.getElementById('modalBackdrop');
+    const addMoneyModal        = document.getElementById('addMoneyModal');
+    const addMoneyBtn          = document.getElementById('addMoneyBtn');
+    const closeAddMoneyModal   = document.getElementById('closeAddMoneyModal');
+    const cancelAddMoney       = document.getElementById('cancelAddMoney');
+    const confirmAddMoney      = document.getElementById('confirmAddMoney');
 
-    // Modal handling for Withdraw
-    const withdrawModal = document.getElementById('withdrawModal');
-    const withdrawBtn = document.getElementById('withdrawBtn');
-    const closeWithdrawModal = document.getElementById('closeWithdrawModal');
-    const cancelWithdraw = document.getElementById('cancelWithdraw');
-    const confirmWithdraw = document.getElementById('confirmWithdraw');
-
-    // Filter buttons
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const transactionCards = document.querySelectorAll('.transaction-card');
-
-    // Add Money Modal Functions
     if (addMoneyBtn) {
-        addMoneyBtn.addEventListener('click', function() {
-            modalBackdrop.style.display = 'block';
-            addMoneyModal.style.display = 'block';
-        });
+      addMoneyBtn.addEventListener('click', function() {
+        modalBackdrop.style.display = 'block';
+        addMoneyModal.style.display  = 'block';
+      });
     }
 
     function closeAddModal() {
-        modalBackdrop.style.display = 'none';
-        addMoneyModal.style.display = 'none';
+      modalBackdrop.style.display = 'none';
+      addMoneyModal.style.display  = 'none';
     }
 
-    if (closeAddMoneyModal) closeAddMoneyModal.addEventListener('click', closeAddModal);
-    if (cancelAddMoney) cancelAddMoney.addEventListener('click', closeAddModal);
+    if (closeAddMoneyModal)   closeAddMoneyModal.addEventListener('click', closeAddModal);
+    if (cancelAddMoney)       cancelAddMoney.addEventListener('click', closeAddModal);
     if (confirmAddMoney) {
-        confirmAddMoney.addEventListener('click', function() {
-            // Add money logic would go here
-            alert('Money added successfully!');
-            closeAddModal();
-        });
+      confirmAddMoney.addEventListener('click', function() {
+        alert('Money added successfully!');
+        closeAddModal();
+      });
     }
 
-    // Withdraw Modal Functions
+    // --- Modal handling for Withdraw ---
+    const withdrawModal        = document.getElementById('withdrawModal');
+    const withdrawBtn          = document.getElementById('withdrawBtn');
+    const closeWithdrawModal   = document.getElementById('closeWithdrawModal');
+    const cancelWithdraw       = document.getElementById('cancelWithdraw');
+    const confirmWithdraw      = document.getElementById('confirmWithdraw');
+
     if (withdrawBtn) {
-        withdrawBtn.addEventListener('click', function() {
-            modalBackdrop.style.display = 'block';
-            withdrawModal.style.display = 'block';
-        });
+      withdrawBtn.addEventListener('click', function() {
+        modalBackdrop.style.display = 'block';
+        withdrawModal.style.display = 'block';
+      });
     }
 
     function closeWithdrawModalFunc() {
-        modalBackdrop.style.display = 'none';
-        withdrawModal.style.display = 'none';
+      modalBackdrop.style.display = 'none';
+      withdrawModal.style.display = 'none';
     }
 
-    if (closeWithdrawModal) closeWithdrawModal.addEventListener('click', closeWithdrawModalFunc);
-    if (cancelWithdraw) cancelWithdraw.addEventListener('click', closeWithdrawModalFunc);
+    if (closeWithdrawModal)  closeWithdrawModal.addEventListener('click', closeWithdrawModalFunc);
+    if (cancelWithdraw)      cancelWithdraw.addEventListener('click', closeWithdrawModalFunc);
     if (confirmWithdraw) {
-        confirmWithdraw.addEventListener('click', function() {
-            // Withdraw money logic would go here
-            alert('Withdrawal request submitted successfully!');
-            closeWithdrawModalFunc();
-        });
+      confirmWithdraw.addEventListener('click', function() {
+        alert('Withdrawal request submitted successfully!');
+        closeWithdrawModalFunc();
+      });
     }
 
-    // Transaction filtering functionality
+    // --- Filter button handling (server‐side) ---
+    const filterButtons = document.querySelectorAll('.filter-btn');
     filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            filterButtons.forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Add active class to clicked button
-            this.classList.add('active');
-            
-            // Get the filter category from the button text
-            const filterCategory = this.textContent.trim().toLowerCase();
-            
-            // Filter transactions based on category
-            transactionCards.forEach(card => {
-                const transactionTitle = card.querySelector('.transaction-title').textContent.trim().toLowerCase();
-                const transactionAmount = card.querySelector('.transaction-amount').textContent.trim();
-                const transactionDetails = card.querySelector('.transaction-details')?.textContent.trim().toLowerCase() || '';
-                
-                // Determine if this card should be shown based on filter
-                let shouldShow = false;
-                
-                if (filterCategory === 'all') {
-                    shouldShow = true;
-                } else if (filterCategory === 'added' && 
-                          (transactionTitle.includes('money added') || 
-                           transactionTitle.includes('add money'))) {
-                    shouldShow = true;
-                } else if (filterCategory === 'spent' && 
-                          (transactionTitle.includes('order payment') || 
-                           transactionTitle.includes('payment'))) {
-                    shouldShow = true;
-                } else if (filterCategory === 'refunded' && 
-                          (transactionTitle.includes('refund'))) {
-                    shouldShow = true;
-                } else if (filterCategory === 'referrals' && 
-                          (transactionTitle.includes('referral') || 
-                           transactionDetails.includes('referr'))) {
-                    shouldShow = true;
-                }
-                
-                // Show or hide the card
-                if (shouldShow) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            
-            // Show message if no transactions for selected filter
-            const visibleCards = Array.from(transactionCards).filter(card => 
-                card.style.display !== 'none'
-            );
-            
-            // Get or create the no-transactions message
-            let noTransactionsMsg = document.getElementById('no-transactions-msg');
-            if (!noTransactionsMsg) {
-                noTransactionsMsg = document.createElement('p');
-                noTransactionsMsg.id = 'no-transactions-msg';
-                noTransactionsMsg.className = 'text-center my-4';
-                transactionCards[0].parentNode.appendChild(noTransactionsMsg);
-            }
-            
-            if (visibleCards.length === 0) {
-                noTransactionsMsg.textContent = `No ${filterCategory === 'all' ? 'transaction' : filterCategory} history available.`;
-                noTransactionsMsg.style.display = 'block';
-            } else {
-                noTransactionsMsg.style.display = 'none';
-            }
-        });
+      button.addEventListener('click', function() {
+        const selectedFilter = this.getAttribute('data-filter');
+        const url = new URL(window.location);
+        url.searchParams.set('filter', selectedFilter);
+        url.searchParams.set('page', '1'); // reset to page 1 whenever filter changes
+        window.location.href = url.toString();
+      });
     });
-    
-    // Trigger click on "All" button to initialize the view
-    document.querySelector('.filter-btn.active').click();
-});
+
+    // If you want “All” to auto‐click on initial load, uncomment the next line:
+    // document.querySelector('.filter-btn.active')?.click();
+  });
 </script>
+
 
 <%- include('../partials/userL/footer.ejs') %>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Modal handling for Add Money
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const addMoneyModal = document.getElementById('addMoneyModal');
-    const addMoneyBtn = document.getElementById('addMoneyBtn');
-    const closeAddMoneyModal = document.getElementById('closeAddMoneyModal');
-    const cancelAddMoney = document.getElementById('cancelAddMoney');
-    const confirmAddMoney = document.getElementById('confirmAddMoney');
-
-    // Modal handling for Withdraw
-    const withdrawModal = document.getElementById('withdrawModal');
-    const withdrawBtn = document.getElementById('withdrawBtn');
-    const closeWithdrawModal = document.getElementById('closeWithdrawModal');
-    const cancelWithdraw = document.getElementById('cancelWithdraw');
-    const confirmWithdraw = document.getElementById('confirmWithdraw');
-
-    // Filter buttons
-    const filterButtons = document.querySelectorAll('.filter-btn');
-
-    // Add Money Modal Functions
-    addMoneyBtn.addEventListener('click', function() {
-        modalBackdrop.style.display = 'block';
-        addMoneyModal.style.display = 'block';
-    });
-
-    function closeAddModal() {
-        modalBackdrop.style.display = 'none';
-        addMoneyModal.style.display = 'none';
-    }
-
-    closeAddMoneyModal.addEventListener('click', closeAddModal);
-    cancelAddMoney.addEventListener('click', closeAddModal);
-    confirmAddMoney.addEventListener('click', function() {
-        // Add money logic would go here
-        alert('Money added successfully!');
-        closeAddModal();
-    });
-
-    // Withdraw Modal Functions
-    withdrawBtn.addEventListener('click', function() {
-        modalBackdrop.style.display = 'block';
-        withdrawModal.style.display = 'block';
-    });
-
-    function closeWithdrawModalFunc() {
-        modalBackdrop.style.display = 'none';
-        withdrawModal.style.display = 'none';
-    }
-
-    closeWithdrawModal.addEventListener('click', closeWithdrawModalFunc);
-    cancelWithdraw.addEventListener('click', closeWithdrawModalFunc);
-    confirmWithdraw.addEventListener('click', function() {
-        // Withdraw money logic would go here
-        alert('Withdrawal request submitted successfully!');
-        closeWithdrawModalFunc();
-    });
-
-    // Filter button handling
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            filterButtons.forEach(btn => {
-                btn.classList.remove('active');
-            });
-            // Add active class to clicked button
-            this.classList.add('active');
-            
-            // Filter logic would go here in a real implementation
-            // For this static version, we're just toggling the active state
-        });
-    });
-});
-</script>

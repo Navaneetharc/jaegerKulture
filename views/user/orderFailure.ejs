@@ -1,117 +1,52 @@
 <%- include('../partials/userL/header.ejs') %>
 
 <style>
-    .order-success-container {
+    .order-failure-container {
         text-align: center;
         padding: 3rem 0;
     }
     
-    .success-icon {
-        color: #3BB77E;
+    .failure-icon {
+        color: #e53935;
         font-size: 5rem;
         margin-bottom: 1.5rem;
     }
     
-    .order-number {
-        background-color: #f8f9fa;
+    .error-message {
+        background-color: #ffebee;
         display: inline-block;
         padding: 0.5rem 1rem;
         border-radius: 4px;
         font-weight: 600;
         margin: 1rem 0;
+        color: #c62828;
+        border-left: 4px solid #e53935;
     }
     
-    .order-details-card {
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-    }
-    
-    .order-summary {
+    .error-details {
+        margin: 1.5rem 0;
+        padding: 1rem;
         background-color: #f8f9fa;
         border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
     }
     
-    .order-summary-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.75rem;
+    .error-details h5 {
+        margin-bottom: 1rem;
+        color: #333;
     }
     
-    .order-summary-row:last-child {
-        margin-bottom: 0;
-        padding-top: 0.75rem;
-        border-top: 1px solid #dee2e6;
-        font-weight: 600;
-        font-size: 1.1rem;
+    .error-details ul {
+        text-align: left;
+        margin: 0;
+        padding-left: 1.5rem;
     }
     
-    .order-summary-title {
-        font-weight: 600;
-        font-size: 1.1rem;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid #dee2e6;
-    }
-    
-    .order-product {
-        display: flex;
-        align-items: center;
-        padding: 1rem;
-        border-bottom: 1px solid #dee2e6;
-    }
-    
-    .order-product:last-child {
-        border-bottom: none;
-    }
-    
-    .order-product-image {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 4px;
-        margin-right: 1rem;
-    }
-    
-    .order-product-details {
-        flex-grow: 1;
-    }
-    
-    .order-product-name {
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-    
-    .order-product-price {
-        color: #3BB77E;
-        font-weight: 600;
-    }
-    
-    .order-product-quantity {
-        margin: 0 1.5rem;
-        font-weight: 500;
-    }
-    
-    .order-product-total {
-        font-weight: 600;
-        min-width: 80px;
-        text-align: right;
-    }
-    
-    .delivery-address {
-        padding: 1rem;
-    }
-    
-    .delivery-address-title {
-        font-weight: 600;
+    .error-details li {
         margin-bottom: 0.5rem;
-    }
-    
-    .delivery-address-details {
-        color: #6c757d;
-        line-height: 1.5;
+        color: #666;
     }
     
     .action-buttons {
@@ -126,6 +61,8 @@
         text-decoration: none;
         margin: 0 0.5rem;
         transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
     }
     
     .primary-btn {
@@ -135,6 +72,16 @@
     
     .primary-btn:hover {
         background-color: #2f9b6a;
+        color: white;
+    }
+    
+    .retry-btn {
+        background-color: #ff6b35;
+        color: white;
+    }
+    
+    .retry-btn:hover {
+        background-color: #e55a2b;
         color: white;
     }
     
@@ -148,13 +95,6 @@
         background-color: #e9ecef;
     }
     
-    .estimated-delivery {
-        margin: 1.5rem 0;
-        padding: 1rem;
-        background-color: #f8f9fa;
-        border-radius: 8px;
-    }
-    
     @media (max-width: 767.98px) {
         .action-buttons {
             display: flex;
@@ -164,24 +104,8 @@
         .action-btn {
             margin: 0.5rem 0;
         }
-        
-        .order-product {
-            flex-wrap: wrap;
-        }
-        
-        .order-product-quantity {
-            margin: 0.5rem 0;
-            width: 100%;
-        }
-        
-        .order-product-total {
-            width: 100%;
-            text-align: left;
-            margin-top: 0.5rem;
-        }
     }
 </style>
-
 
 <main class="main">
     <div class="page-header breadcrumb-wrap">
@@ -199,158 +123,37 @@
         <div class="container">
             <div class="order-failure-container">
                 <div class="failure-icon">
-                    <i class="fi-rs-x-circle"></i>
+                    <i class="fi-rs-cross-circle"></i>
                 </div>
                 <h2>Order Processing Failed</h2>
                 <p>We're sorry, but there was an issue processing your order.</p>
                 <div class="error-message">
+                    Payment could not be processed
                 </div>
                 
                 <div class="error-details">
-                    <h5>What Happened?</h5>
-                    <p>Your payment could not be processed due to one of the following reasons:</p>
+                    <h5>What happened?</h5>
                     <ul>
                         <li>Payment authorization failed</li>
-                        <li>Insufficient funds</li>
-                        <li>Technical issue with the payment gateway</li>
-                        <li>Item(s) in your cart are no longer available</li>
+                        <li>Insufficient funds or card declined</li>
+                        <li>Technical issue with payment gateway</li>
+                        <li>Network connection problem</li>
                     </ul>
                 </div>
                 
-        
+                <div class="action-buttons">
+                    <button onclick="retryPayment()" class="action-btn retry-btn">Retry Payment</button>
+                    <a href="/cart" class="action-btn secondary-btn">Back to Cart</a>
+                    <a href="/shop" class="action-btn secondary-btn">Continue Shopping</a>
+                </div>
             </div>
         </div>
     </section>
 </main>
 
-<style>
-/* Order Failure Specific Styles */
-.order-failure-container {
-    text-align: center;
-    padding: 30px 20px;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.failure-icon {
-    font-size: 60px;
-    color: #e53935;
-    margin-bottom: 20px;
-}
-
-.failure-icon i {
-    background-color: rgba(229, 57, 53, 0.1);
-    border-radius: 50%;
-    padding: 15px;
-}
-
-.error-message {
-    background-color: #ffebee;
-    color: #c62828;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 20px auto;
-    max-width: 600px;
-    font-weight: 500;
-    font-size: 16px;
-    border-left: 4px solid #e53935;
-}
-
-.error-details {
-    margin: 30px auto;
-    max-width: 600px;
-    text-align: left;
-}
-
-.error-details ul {
-    text-align: left;
-    padding-left: 20px;
-    margin-top: 10px;
-}
-
-.error-details li {
-    margin-bottom: 8px;
-    color: #555;
-}
-
-.what-next {
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: left;
-    margin-top: 30px;
-    margin-bottom: 30px;
-}
-
-.what-next h4 {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.what-next ol {
-    padding-left: 20px;
-}
-
-.what-next li {
-    margin-bottom: 10px;
-    color: #555;
-}
-
-.action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 30px;
-}
-
-.action-btn {
-    padding: 12px 25px;
-    border-radius: 4px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.primary-btn {
-    background-color: #3BB77E;
-    color: #fff;
-}
-
-.primary-btn:hover {
-    background-color: #2a9d6e;
-}
-
-.secondary-btn {
-    background-color: #f1f1f1;
-    color: #333;
-}
-
-.secondary-btn:hover {
-    background-color: #e0e0e0;
-}
-
-.outline-btn {
-    border: 1px solid #3BB77E;
-    color: #3BB77E;
-    background-color: transparent;
-}
-
-.outline-btn:hover {
-    background-color: #f0f8f4;
-}
-
-/* Make responsive on mobile */
-@media (max-width: 767px) {
-    .action-buttons {
-        flex-direction: column;
+<script>
+    function retryPayment() {
+        // Redirect back to checkout page
+        window.location.href = '/checkout';
     }
-    
-    .action-btn {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-}
-</style>
-
-
+</script>

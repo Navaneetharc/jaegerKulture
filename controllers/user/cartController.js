@@ -75,6 +75,7 @@ const addToCart = async (req, res) => {
 };
 
 
+
 const getCartPage = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -83,14 +84,33 @@ const getCartPage = async (req, res) => {
       .findOne({ userId })
       .populate('items.productId');
 
-    const items = cart?.items || [];
+   if(!cart){
+    const wishlist = await Wishlist.findOne({userId});
+    const wishlistCount = wishlist ? wishlist.products.length : 0;
+    return res.render('myCart',{
+      items: [],
+      user: req.user,
+      wishlistCount
+    });
+   }
 
-            let wishlistCount = 0;
+   const beforeCount = cart.items.length;
+   cart.items = cart.items.filter(items => {
+    if(!items.productId) return false;
 
-            if (userId) {
-                const wishlist = await Wishlist.findOne({ userId });
-                wishlistCount = wishlist ? wishlist.products.length : 0;
-            }  
+    if(items.productId.isBlocked) return false;
+
+    return true;
+   })
+
+   if(cart.items.length != beforeCount){
+    await cart.save();
+   }
+
+   const items = cart.items;
+
+   const wishlistDoc = await Wishlist.findOne({userId});
+   const wishlistCount = wishlistDoc ? wishlistDoc.products.length : 0;
 
     return res.render('myCart', { items, user: req.user, wishlistCount });
   } catch (err) {

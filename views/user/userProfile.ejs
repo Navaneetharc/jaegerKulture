@@ -260,9 +260,7 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        <form action="/search" method="get">
-                            <input type="text" placeholder="Search for items..." name="query">
-                        </form>
+                        
                     </div>
                     <div class="header-action-right">
 <div class="header-action-2">
@@ -297,13 +295,13 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="/about">About</a></li>
+                                <li><a href="#">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="/offers">Deals</a>
+                                <li class="position-static"><a href="#">Deals</a>
                                     <ul class="mega-menu">
                                     </ul>
                                 </li>
-                                <li><a href="/contact">Contact</a></li>
+                                <li><a href="#">Contact</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -331,10 +329,10 @@
                     <nav>
                         <ul class="mobile-menu font-heading">
                             <li><a class="active" href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
+                            <li><a href="#">About</a></li>
                             <li><a href="/shop">Shop</a></li>
-                            <li><a href="/offers">Deals</a></li>
-                            <li><a href="/contact">Contact</a></li>
+                            <li><a href="#">Deals</a></li>
+                            <li><a href="#">Contact</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -358,9 +356,8 @@
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="/admin/products" rel="nofollow">Product</a>
-                <span class="separator">&gt;</span>
-                <span>Add Product</span>
+                <a href="/" rel="nofollow">Home</a>
+                <span class="separator">user profile</span>
             </div>
         </div>
     </div>
@@ -386,26 +383,19 @@
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wishlist">
-                                    <i class="fi-rs-heart"></i> Wishlist
-                                </a>
-                            </li>
+                          
                             <li class="nav-item">
                                 <a class="nav-link" href="/wallet">
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
+                       <% if(!user.googleId){%>
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
                                     <i class="fi-rs-shield-check"></i> Security Settings
                                 </a>
                             </li>
+                            <%}%>
                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">

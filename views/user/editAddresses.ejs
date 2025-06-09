@@ -226,6 +226,21 @@
     .address-type-selector .form-check-input:checked ~ .form-check-label {
         color: #333;
     }
+
+    .invalid-feedback {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' ... %3E");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375rem + 0.1875rem) center;
+    background-size: 1rem 1rem;
+}
+
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -252,9 +267,9 @@
                                     <i class="fi-ss-world"></i> English <i class="fi-ss-angle-small-down"></i>
                                 </a>
                                 <ul class="language-dropdown">
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                 </ul>
                             </li>
                             <% if (typeof user !== 'undefined' && user) { %>
@@ -278,26 +293,24 @@
         <div class="container">
             <div class="header-wrap">
                 <div class="logo logo-width-1">
-                   <img src="assets/imgs/theme/jaeger.png" alt="logo">
+                   <img src="/assets/imgs/theme/jaeger.png" alt="logo">
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        <form action="/search" method="get">
-                            <input type="text" placeholder="Search for items..." name="query">
-                        </form>
+                        
                     </div>
                     <div class="header-action-right">
                        <div class="header-action-2">
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
-                                        <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                        <img class="svgInject" alt="Evara" src="/assets2/imgs/theme/icons/icon-heart.svg">
                                         <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
 
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/cart">
-                                        <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                        <img alt="Evara" src="/assets2/imgs/theme/icons/icon-cart.svg">
                                         <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
                                     </a>
 
@@ -312,20 +325,20 @@
         <div class="container">
             <div class="header-wrap header-space-between position-relative">
                 <div class="logo logo-width-1 d-block d-lg-none">
-                    <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
+                    <a href="/"><img src="/assets/imgs/theme/jaeger.png" alt="logo"></a>
                 </div>
                 <div class="header-nav d-none d-lg-flex">
                     <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="/about">About</a></li>
+                                <li><a href="#">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="/offers">Deals</a>
+                                <li class="position-static"><a href="#">Deals</a>
                                     <ul class="mega-menu">
                                     </ul>
                                 </li>
-                                <li><a href="/contact">Contact</a></li>
+                                <li><a href="#">Contact</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -353,10 +366,10 @@
                     <nav>
                         <ul class="mobile-menu font-heading">
                             <li><a class="active" href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
+                            <li><a href="#">About</a></li>
                             <li><a href="/shop">Shop</a></li>
-                            <li><a href="/offers">Deals</a></li>
-                            <li><a href="/contact">Contact</a></li>
+                            <li><a href="#">Deals</a></li>
+                            <li><a href="#">Contact</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -408,26 +421,19 @@
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/wishlist">
-                                    <i class="fi-rs-heart"></i> Wishlist
-                                </a>
-                            </li>
+                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/wallet">
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/notifications">
-                                    <i class="fi-rs-bell"></i> Notifications
-                                </a>
-                            </li>
+                            <% if(!user.googleId){%>
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
                                     <i class="fi-rs-shield-check"></i> Security Settings
                                 </a>
                             </li>
+                            <%}%>
                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
@@ -637,13 +643,82 @@
 
 <%- include('../partials/userL/footer.ejs') %>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        // Add any custom validation logic here
-        // If validation fails, you can prevent form submission with e.preventDefault()
+    const requiredFields = ['name', 'phone', 'addressLine1', 'city', 'state', 'pincode'];
+
+    const validators = {
+        name: value => value.trim().length >= 3,
+        phone: value => /^[6789]\d{9}$/.test(value.trim()),
+        altPhone: value => !value || /^[6789]\d{9}$/.test(value.trim()),
+        pincode: value => /^\d{6}$/.test(value.trim())
+    };
+
+    function validateField(fieldId) {
+        const input = document.getElementById(fieldId);
+        const value = input.value;
+        let isValid = true;
+        let message = '';
+
+        if (validators[fieldId] && !validators[fieldId](value)) {
+            isValid = false;
+            if (fieldId === 'name') message = 'Name must be at least 3 characters';
+            if (fieldId === 'phone' || fieldId === 'altPhone') message = 'Enter valid 10-digit phone starting with 6, 7, 8, or 9';
+            if (fieldId === 'pincode') message = 'Postal code must be exactly 6 digits';
+        }
+
+        input.classList.toggle('is-invalid', !isValid);
+        let feedback = input.nextElementSibling;
+        if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+            feedback = document.createElement('div');
+            feedback.className = 'invalid-feedback';
+            input.parentElement.appendChild(feedback);
+        }
+        feedback.textContent = isValid ? '' : message;
+        return isValid;
+    }
+
+    requiredFields.concat(['altPhone']).forEach(id => {
+        const input = document.getElementById(id);
+        input.addEventListener('input', () => validateField(id));
     });
+
+    form.addEventListener('submit', function (e) {
+        let allValid = true;
+        requiredFields.concat(['altPhone']).forEach(id => {
+            const valid = validateField(id);
+            if (!valid) allValid = false;
+        });
+
+        if (!allValid) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please fix the errors before submitting.',
+                confirmButtonColor: '#3BB77E'
+            });
+        }
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('success')) {
+        Swal.fire({
+            icon: 'success',
+            text: params.get('success'),
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+    if (params.has('error')) {
+        Swal.fire({
+            icon: 'error',
+            text: params.get('error'),
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
 });
-</script> 
+</script>

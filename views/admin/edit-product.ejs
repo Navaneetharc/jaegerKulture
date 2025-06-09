@@ -71,55 +71,16 @@
     <main class="main-wrap">
         <header class="main-header navbar">
             <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products">
-                        <option value="New orders">
-                        <option value="Apple iphone">
-                        <option value="Ahmed Hassan">
-                    </datalist> 
-                </form>
+               
             </div>
             <div class="col-nav">
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon" href="#">
-                            <i class="material-icons md-notifications animation-shake"></i>
-                            <span class="badge rounded-pill">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
                     </li>
-                    <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="/assets/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
-                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="/assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
-                        </div>
-                    </li>
-                    <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
-                        </div>
-                    </li>
+                    
                 </ul>
             </div>
         </header>
@@ -390,9 +351,11 @@
             if (img) {
                 img.src = '';
                 img.setAttribute('data-removed', 'true');
+                img.style.display = 'none';
             }
             
-            // Enable inputs by removing has-image class
+            previewContainer.style.display = 'none';
+            
             inputUpload.classList.remove('has-image');
             
             const removedImagesInput = document.getElementById('removedImages');
@@ -417,7 +380,6 @@
         const longDescription = document.querySelector('textarea[name="longDescription"]').value.trim();
         const specifications = document.querySelector('textarea[name="specifications"]').value.trim();
         const regularPrice = document.querySelector('input[name="regularPrice"]').value;
-        // const salePrice = document.querySelector('input[name="salePrice"]').value;
         const productOffer = document.querySelector('input[name="productOffer"]').value.trim();
         const category = document.querySelector('select[name="category"]').value;
         const sizeS = document.querySelector('input[name="variant[size][s]"]').value.trim();
@@ -428,59 +390,46 @@
 
         const errors = [];
 
-        // Product name validation
         if (!productName) {
             errors.push('Product name is required');
         } else if (productName.length < 3) {
             errors.push('Product name must be at least 3 characters long');
         }
 
-        // Description validation
         if (!description) {
             errors.push('Short description is required');
         } else if (description.length < 10) {
             errors.push('Short description must be at least 10 characters long');
         }
 
-        // Long description validation
         if (!longDescription) {
             errors.push('Full description is required');
         } else if (longDescription.length < 20) {
             errors.push('Full description must be at least 20 characters long');
         }
 
-        // Specifications validation
         if (!specifications) {
             errors.push('Specifications are required');
         } else if (specifications.length < 10) {
             errors.push('Specifications must be at least 10 characters long');
         }
 
-        // Price validation
         if (!regularPrice) {
             errors.push('Regular price is required');
         } else if (isNaN(regularPrice) || parseFloat(regularPrice) <= 0) {
             errors.push('Regular price must be a positive number');
         }
 
-        // if (!salePrice) {
-        //     errors.push('Sale price is required');
-        // } else if (isNaN(salePrice) || parseFloat(salePrice) <= 0) {
-        //     errors.push('Sale price must be a positive number');
-        // } else if (parseFloat(salePrice) >= parseFloat(regularPrice)) {
-        //     errors.push('Sale price must be less than regular price');
-        // }
+        if (!productOffer) {
+            errors.push('Product offer is required');
+        } else if (isNaN(productOffer) || parseFloat(productOffer) < 0 || parseFloat(productOffer) > 100) {
+            errors.push('Product offer must be a number between 0 and 100');
+        }
 
-        if(!productOffer){
-        errors.push('Product offer is required');
-    }
-
-        // Category validation
         if (!category) {
             errors.push('Category is required');
         }
 
-        // Size validation
         const sizes = [sizeS, sizeM, sizeL, sizeX, sizeXL];
         const sizeLabels = ['S', 'M', 'L', 'X', 'XL'];
         let totalStock = 0;
@@ -503,7 +452,6 @@
             errors.push('At least one size must have stock quantity');
         }
 
-        // Image validation
         const removedImagesInput = document.getElementById('removedImages');
         let removedImages = [];
         try {
@@ -512,49 +460,54 @@
             removedImages = [];
         }
 
-        // Count visible images
-        let visibleImages = 0;
+        let validImageSlots = 0;
+        let emptySlots = 0;
         const imageContainers = document.querySelectorAll('.image-preview-container');
-        imageContainers.forEach(container => {
-            if (container.style.display !== 'none') {
-                visibleImages++;
+        
+        imageContainers.forEach((container, index) => {
+            const img = container.querySelector('img');
+            const fileInput = document.getElementById(`input${index}`);
+            
+            const hasExistingImage = img && img.src && img.src !== '' && 
+                                   !img.hasAttribute('data-removed') && 
+                                   container.style.display !== 'none';
+            
+            const hasNewFile = fileInput && fileInput.files && fileInput.files.length > 0;
+            
+            if (hasExistingImage || hasNewFile) {
+                validImageSlots++;
+                
+                if (hasNewFile) {
+                    const file = fileInput.files[0];
+                    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+
+                    if (!validTypes.includes(file.type)) {
+                        errors.push('Only JPG, JPEG, and PNG images are allowed');
+                    }
+                    if (file.size > maxSize) {
+                        errors.push('Image size must be less than 5MB');
+                    }
+                }
+            } else {
+                emptySlots++;
             }
         });
 
-        // Count new images being uploaded
-        let newImages = 0;
-        const fileInputs = document.querySelectorAll('input[type="file"]');
-        fileInputs.forEach(input => {
-            if (input.files.length > 0) {
-                newImages++;
-                const file = input.files[0];
-                const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-                const maxSize = 5 * 1024 * 1024; // 5MB
-
-                if (!validTypes.includes(file.type)) {
-                    errors.push('Only JPG, JPEG, and PNG images are allowed');
-                }
-                if (file.size > maxSize) {
-                    errors.push('Image size must be less than 5MB');
-                }
+        if (validImageSlots < 3) {
+            if (emptySlots > 0) {
+                errors.push('You have removed images but not uploaded replacements. Please upload new images or keep existing ones.');
+            } else {
+                errors.push('Exactly 3 product images are required');
             }
-        });
-
-       
-        if (visibleImages + newImages < 1) {
-            errors.push('At least one product image is required');
         }
 
         if (errors.length > 0) {
-            const errorContainer = document.querySelector('.alert-danger');
-            if (errorContainer) {
-                errorContainer.style.display = 'block';
-                const errorList = errorContainer.querySelector('ul');
-                errorList.innerHTML = '';
-                errors.forEach(error => {
-                    const li = document.createElement('li');
-                    li.textContent = error;
-                    errorList.appendChild(li);
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: errors.map(e => `&bull;&nbsp;${e}`).join('<br>')
                 });
             } else {
                 alert(errors.join('\n'));
@@ -578,6 +531,7 @@
             image.src = e.target.result;
 
             image.removeAttribute('data-removed');
+            image.style.display = 'block';
             
             const removedImagesInput = document.getElementById('removedImages');
             let removedImages = [];
@@ -616,7 +570,6 @@
         reader.readAsDataURL(file);
     }
 
-    // Update the save button functionality
     document.querySelectorAll('[id^="saveButton"]').forEach(button => {
         button.addEventListener('click', function() {
             const index = this.id.replace('saveButton', '');
@@ -641,13 +594,11 @@
                 newImage.width = 150;
                 newImage.setAttribute('data-original', preview.querySelector('img').getAttribute('data-original'));
                 
-                // Clear the preview container and add the new image
                 preview.innerHTML = '';
                 preview.appendChild(newImage);
                 preview.style.display = 'inline-block';
                 preview.style.position = 'relative';
                 
-                // Add the delete button back
                 const deleteButton = document.createElement('button');
                 deleteButton.type = 'button';
                 deleteButton.onclick = function() { removeImage(index, newImage.getAttribute('data-original')); };
@@ -655,7 +606,6 @@
                 deleteButton.innerHTML = '×';
                 preview.appendChild(deleteButton);
                 
-                // Disable inputs by adding has-image class
                 inputUpload.classList.add('has-image');
                 
                 canvas.toBlob(blob => {
@@ -668,9 +618,7 @@
         });
     });
 
-    // Initialize the upload sections on page load
     document.addEventListener('DOMContentLoaded', function() {
-        // Add has-image class to sections with existing images
         document.querySelectorAll('.input-upload').forEach(section => {
             const preview = section.querySelector('.image-preview-container');
             if (preview && preview.querySelector('img') && preview.querySelector('img').src) {

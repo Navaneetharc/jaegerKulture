@@ -57,50 +57,16 @@
     <main class="main-wrap">
         <header class="main-header navbar">
             <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
-                    </div>
-                    
-                </form>
+                
             </div>
             <div class="col-nav">
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon" href="#">
-                            <i class="material-icons md-notifications animation-shake"></i>
-                            <span class="badge rounded-pill">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
                     </li>
-                    <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
-                        </div>
-                    </li>
-                    <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="assets/imgs/people/avatar2.jpg" alt="User"></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
-                        </div>
-                    </li>
+                    
                 </ul>
             </div>
         </header>
@@ -108,16 +74,14 @@
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Order List </h2>
-                    <p>Lorem ipsum dolor sit amet.</p>
+                    <p></p>
                 </div>
-                <div>
-                    <input type="text" placeholder="Search order ID" class="form-control bg-white">
-                </div>
+               
             </div>
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row gx-3">
-                        <form method="GET" action="<%= baseUrl %>" class="d-flex col-lg-4 col-md-6 me-auto">
+                        <form method="GET" action="<%= baseUrl %>" class="d-flex col-lg-6 col-md-8 me-auto">
                             <input
                               type="text"
                               name="search"
@@ -125,7 +89,20 @@
                               class="form-control me-2"
                               value="<%= typeof search !== 'undefined' ? search : '' %>"
                             />
-                            
+                            <select name="status" class="form-select me-2" style="width: auto;">
+                                <option value="">All Status</option>
+                                <option value="Pending" <%= typeof statusFilter !== 'undefined' && statusFilter === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="Order Placed" <%= typeof statusFilter !== 'undefined' && statusFilter === 'Order Placed' ? 'selected' : '' %>>Order Placed</option>
+                                <option value="Order Confirmed" <%= typeof statusFilter !== 'undefined' && statusFilter === 'Order Confirmed' ? 'selected' : '' %>>Order Confirmed</option>
+                                <option value="Order Shipped" <%= typeof statusFilter !== 'undefined' && statusFilter === 'Order Shipped' ? 'selected' : '' %>>Order Shipped</option>
+                                <option value="Delivered" <%= typeof statusFilter !== 'undefined' && statusFilter === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                <option value="Cancelled" <%= typeof statusFilter !== 'undefined' && statusFilter === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                <option value="Returned" <%= typeof statusFilter !== 'undefined' && statusFilter === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                <option value="Payment Failed" <%= typeof statusFilter !== 'undefined' && statusFilter === 'Payment Failed' ? 'selected' : '' %>>Payment Failed</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="material-icons md-search"></i>
+                            </button>
                           </form>
                           
                         
@@ -193,7 +170,7 @@
               
                     <% if (currentPage > 1) { %>
                       <li class="page-item">
-                        <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage - 1 %>">
+                        <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage - 1 %><%= typeof search !== 'undefined' && search ? '&search=' + encodeURIComponent(search) : '' %><%= typeof statusFilter !== 'undefined' && statusFilter ? '&status=' + encodeURIComponent(statusFilter) : '' %>">
                           <i class="fi-rs-angle-double-small-left"></i>
                         </a>
                       </li>
@@ -201,13 +178,13 @@
               
                     <% for (let i = 1; i <= totalPages; i++) { %>
                       <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                        <a class="page-link" href="<%= baseUrl %>?page=<%= i %>"><%= i %></a>
+                        <a class="page-link" href="<%= baseUrl %>?page=<%= i %><%= typeof search !== 'undefined' && search ? '&search=' + encodeURIComponent(search) : '' %><%= typeof statusFilter !== 'undefined' && statusFilter ? '&status=' + encodeURIComponent(statusFilter) : '' %>"><%= i %></a>
                       </li>
                     <% } %>
               
                     <% if (currentPage < totalPages) { %>
                       <li class="page-item">
-                        <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage + 1 %>">
+                        <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage + 1 %><%= typeof search !== 'undefined' && search ? '&search=' + encodeURIComponent(search) : '' %><%= typeof statusFilter !== 'undefined' && statusFilter ? '&status=' + encodeURIComponent(statusFilter) : '' %>">
                           <i class="fi-rs-angle-double-small-right"></i>
                         </a>
                       </li>
