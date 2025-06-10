@@ -2,7 +2,6 @@ const Wishlist    = require('../../models/wishlistSchema');
 const Cart = require('../../models/cartSchema');
 const User    = require('../../models/userSchema');
 const Product = require('../../models/productSchema');
-// const { default: products } = require('razorpay/dist/types/products');
 
 const addToWishlist = async (req, res) => {
     try {

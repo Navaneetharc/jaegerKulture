@@ -134,7 +134,6 @@
         </div>
         <% } %>
 
-        <!-- Apply Filters button -->
         <div class="col-md-3 d-flex align-items-end justify-content-end">
           <button type="submit" class="btn btn-primary">Apply Filters</button>
         </div>
@@ -148,7 +147,6 @@
     const c = document.getElementById('customDateFilterContainer');
     if (c) c.style.display = (val === 'custom' ? 'block' : 'none');
   }
-  // On page load, ensure the correct state
   document.addEventListener('DOMContentLoaded', () => {
     toggleCustomDates(document.getElementById('dateRangeFilter').value);
   });
