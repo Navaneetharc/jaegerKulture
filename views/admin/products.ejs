@@ -130,7 +130,7 @@
                                     <tr>
                                         <td><%= data[i].productName %></td>
                                         <td><%= data[i].category.name %></td>
-                                        <td><%= data[i].salePrice %></td>
+                                        <td>₹<%= data[i].salePrice %></td>
                                         <!-- <td><%= data[i].productName %></td> -->
                                         
                                         <td><%= new Date(data[i].createdAt).toISOString().split('T')[0] %></td>
