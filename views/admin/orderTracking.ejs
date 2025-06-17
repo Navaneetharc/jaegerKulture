@@ -327,3 +327,34 @@
             setInterval(updateDateTime, 1000); // updates every 1 second
             updateDateTime(); // call once immediately on load
         </script>
+
+               <script>
+  $(document).ready(function () {
+    // Sidebar toggle
+    $('.btn-aside-minimize, .btn-mobile').on('click', function () {
+      $('#offcanvas_aside').toggleClass('show');
+      $('body').toggleClass('sidebar-open');
+    });
+
+    // Close sidebar if click outside
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('#offcanvas_aside, .btn-aside-minimize, .btn-mobile').length) {
+        if ($('#offcanvas_aside').hasClass('show')) {
+          $('#offcanvas_aside').removeClass('show');
+          $('body').removeClass('sidebar-open');
+        }
+      }
+    });
+  });
+</script>
+
+
+        <!-- Vendor Scripts -->
+<script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/vendors/select2.min.js"></script>
+<script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+
+<!-- Main JS -->
+<script src="/assets/js/main.js" type="text/javascript"></script>

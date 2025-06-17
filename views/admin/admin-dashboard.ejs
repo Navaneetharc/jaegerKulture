@@ -1,5 +1,227 @@
 <%- include('../partials/adminL/header.ejs') %>
+<style>
+    .wrapper {
+        display: flex;
+        width: 100%;
+        align-items: stretch;
+        overflow-x: hidden;
+    }
 
+    .main-wrap {
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .chart-container {
+        position: relative;
+        margin: auto;
+    }
+
+    .top-products-container {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .card {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        margin-bottom: 1rem;
+    }
+
+    .card:hover {
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    }
+
+    .navbar-aside {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        overflow-y: auto;
+        z-index: 1030;
+        background: #fff;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .progress {
+        overflow: hidden;
+    }
+
+    canvas {
+        max-width: 100%;
+    }
+
+    .global-filter-btn.active {
+        background-color: #5a6268;
+        color: white;
+    }
+
+    /* Mobile and Tablet Responsive Styles */
+    @media (max-width: 991px) {
+        .navbar-aside {
+            transform: translateX(-100%) !important;
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #fff;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1030;
+        }
+
+        .navbar-aside.show {
+            transform: translateX(0) !important;
+        }
+
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        .main-wrap {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .main-header.navbar .col-nav #mobile-menu-toggle {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 1050 !important;
+        }
+
+        .main-header.navbar .col-nav {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .main-header.navbar {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .col-search {
+            flex-grow: 1;
+        }
+
+        .content-main {
+            padding: 1rem;
+        }
+
+        .row {
+            flex-direction: column;
+        }
+
+        .col-lg-3, .col-xl-8, .col-xl-4, .col-lg-12 {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .chart-container {
+            height: 250px !important;
+            min-height: 250px !important;
+        }
+
+        .top-products-container {
+            max-height: 200px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            width: 100%;
+            min-width: 600px;
+        }
+
+        .btn-group {
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .content-header p {
+            font-size: 0.9rem;
+        }
+
+        .icontext .icon {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .icontext .text h6 {
+            font-size: 1rem;
+        }
+
+        .icontext .text span {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .navbar-aside {
+            width: 200px;
+        }
+
+        .content-main {
+            padding: 0.5rem;
+        }
+
+        .chart-container {
+            height: 200px !important;
+            min-height: 200px !important;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+        }
+
+        .btn-group .btn {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .input-group input.form-control {
+            font-size: 0.9rem;
+        }
+
+        .dropdown-menu {
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            font-size: 0.8rem;
+        }
+
+        .top-products-container .font-xs {
+            font-size: 0.8rem;
+        }
+    }
+   @media (max-width: 991px) {
+  #offcanvas_aside {
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease-in-out !important;
+  }
+
+  #offcanvas_aside.show {
+    transform: translateX(0%) !important;
+  }
+
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
+</style>
 <div class="wrapper">
     <!-- Sidebar -->
     <aside class="navbar-aside" id="offcanvas_aside">
@@ -43,22 +265,19 @@
                         <span class="text">Coupons</span>
                     </a>
                 </li>
-               
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/sales"> <i class="icon material-icons md-assessment"></i>
                         <span class="text">Sales Report</span>
                     </a>
                 </li>
-              
             </ul>
             <hr>
-           
         </nav>
     </aside>
 
     <!-- Main Content -->
     <main class="main-wrap">
-        <header class="main-header navbar">
+        <header class="main-header navbar" style="display: flex !important; visibility: visible !important;">
             <div class="col-search">
                 <form class="searchform">
                     <div class="input-group">
@@ -73,11 +292,10 @@
                     </datalist>
                 </form>
             </div>
-            <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+            <div class="col-nav" style="display: flex !important; visibility: visible !important;">
+                <!-- Debug: Mobile menu button -->
+                <button id="mobile-menu-toggle" class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside" style="display: block !important; visibility: visible !important; opacity: 1 !important;"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
-                    
-                    
                     <li class="nav-item">
                         <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
                     </li>
@@ -93,7 +311,6 @@
                     <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/assets/imgs/people/avatar2.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            
                             <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
                         </div>
                     </li>
@@ -167,20 +384,6 @@
                         </article>
                     </div>
                 </div>
-                <!-- <div class="col-lg-3">
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1 card-title">Monthly Earning</h6> 
-                                <span class="monthly-earning-value">₹<%= monthlyEarning.toFixed(2) %></span>
-                                <span class="text-sm">
-                                    Based on your local time
-                                </span>
-                            </div>
-                        </article>
-                    </div>
-                </div> -->
             </div>
                             
             <!-- Charts Row -->
@@ -220,7 +423,7 @@
                                         <div class="product-progress-item">
                                             <span class="text-muted font-xs"><%= product.productName %></span>
                                             <div class="progress mb-3">
-                                                <div class="progress-bar" role="progressbar" style="width: '<%- product.percentage %>%"><%- product.percentage %>%</div>
+                                                <div class="progress-bar" role="progressbar" style="width: <%= product.percentage %>%"><%= product.percentage %>%</div>
                                             </div>
                                         </div>
                                     <% }); %>
@@ -247,28 +450,22 @@
 
 <script>
 $(document).ready(function() {
+    // Parse the chart data from EJS
     var weeklyChartData = JSON.parse('<%- JSON.stringify(weeklyChartData) %>');
     var monthlyChartData = JSON.parse('<%- JSON.stringify(monthlyChartData) %>');
     var yearlyChartData = JSON.parse('<%- JSON.stringify(yearlyChartData) %>');
     
-    var weeklyCategoryData = {
+    var categoryData = {
         labels: JSON.parse('<%- JSON.stringify(categoryChartData.labels) %>'),
         data: JSON.parse('<%- JSON.stringify(categoryChartData.data) %>')
     };
     
-    var monthlyCategoryData = {
-        labels: JSON.parse('<%- JSON.stringify(categoryChartData.labels) %>'),
-        data: JSON.parse('<%- JSON.stringify(categoryChartData.data) %>')
-    };
+    var topProductsData = JSON.parse('<%- JSON.stringify(topProducts) %>');
     
-    var yearlyCategoryData = {
-        labels: JSON.parse('<%- JSON.stringify(categoryChartData.labels) %>'),
-        data: JSON.parse('<%- JSON.stringify(categoryChartData.data) %>')
-    };
-    
-    var weeklyTopProducts = JSON.parse('<%- JSON.stringify(topProducts) %>');
-    var monthlyTopProducts = JSON.parse('<%- JSON.stringify(topProducts) %>');
-    var yearlyTopProducts = JSON.parse('<%- JSON.stringify(topProducts) %>');
+    // Parse period-specific stats
+    var weeklyStats = JSON.parse('<%- JSON.stringify(weeklyStats) %>');
+    var monthlyStats = JSON.parse('<%- JSON.stringify(monthlyStats) %>');
+    var yearlyStats = JSON.parse('<%- JSON.stringify(yearlyStats) %>');
     
     let salesChart = null;
     let categoryChart = null;
@@ -277,24 +474,18 @@ $(document).ready(function() {
         weekly: {
             labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             data: weeklyChartData,
-            categoryLabels: weeklyCategoryData.labels,
-            categoryData: weeklyCategoryData.data,
-            topProducts: weeklyTopProducts,
-            revenue: '<%= totalRevenue.toFixed(2) %>',
-            orders: '<%= totalOrders %>',
-            products: '<%= totalProducts %>',
-            monthlyEarning: '<%= monthlyEarning.toFixed(2) %>'
+            categoryLabels: categoryData.labels,
+            categoryData: categoryData.data,
+            topProducts: topProductsData,
+            stats: weeklyStats
         },
         monthly: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             data: monthlyChartData,
-            categoryLabels: monthlyCategoryData.labels,
-            categoryData: monthlyCategoryData.data,
-            topProducts: monthlyTopProducts,
-            revenue: '<%= totalRevenue.toFixed(2) %>',
-            orders: '<%= totalOrders %>',
-            products: '<%= totalProducts %>',
-            monthlyEarning: '<%= monthlyEarning.toFixed(2) %>'
+            categoryLabels: categoryData.labels,
+            categoryData: categoryData.data,
+            topProducts: topProductsData,
+            stats: monthlyStats
         },
         yearly: {
             labels: [
@@ -306,40 +497,49 @@ $(document).ready(function() {
                 '<%= new Date().getFullYear() %>'
             ],
             data: yearlyChartData,
-            categoryLabels: yearlyCategoryData.labels,
-            categoryData: yearlyCategoryData.data,
-            topProducts: yearlyTopProducts,
-            revenue: '<%= totalRevenue.toFixed(2) %>',
-            orders: '<%= totalOrders %>',
-            products: '<%= totalProducts %>',
-            monthlyEarning: '<%= monthlyEarning.toFixed(2) %>'
+            categoryLabels: categoryData.labels,
+            categoryData: categoryData.data,
+            topProducts: topProductsData,
+            stats: yearlyStats
         }
     };
 
     function updateAllCharts(filter) {
+        console.log('Updating charts for filter:', filter);
+        console.log('Chart data for filter:', chartData[filter]);
+        
         updateSalesChart(filter);
-        
         updateCategoryChart(filter);
-        
         updateTopProducts(filter);
-        
         updateStatsCards(filter);
     }
     
     function updateSalesChart(filter) {
-        const ctx = document.getElementById('myChart').getContext('2d');
+        const ctx = document.getElementById('myChart');
+        if (!ctx) {
+            console.error('Sales chart canvas not found');
+            return;
+        }
+        
+        const context = ctx.getContext('2d');
         
         if (salesChart) {
             salesChart.destroy();
         }
         
-        salesChart = new Chart(ctx, {
+        const currentData = chartData[filter];
+        if (!currentData || !currentData.data) {
+            console.error('No data available for filter:', filter);
+            return;
+        }
+        
+        salesChart = new Chart(context, {
             type: 'line',
             data: {
-                labels: chartData[filter].labels,
+                labels: currentData.labels,
                 datasets: [{
                     label: 'Sales',
-                    data: chartData[filter].data,
+                    data: currentData.data,
                     fill: true,
                     backgroundColor: 'rgba(44, 120, 220, 0.2)',
                     borderColor: 'rgba(44, 120, 220)',
@@ -360,7 +560,12 @@ $(document).ready(function() {
                 },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value.toLocaleString();
+                            }
+                        }
                     }
                 },
                 animation: {
@@ -377,53 +582,72 @@ $(document).ready(function() {
     }
     
     function updateCategoryChart(filter) {
-        const ctx2 = document.getElementById('myChart2').getContext('2d');
+        const ctx2 = document.getElementById('myChart2');
+        if (!ctx2) {
+            console.error('Category chart canvas not found');
+            return;
+        }
+        
+        const context2 = ctx2.getContext('2d');
         
         if (categoryChart) {
             categoryChart.destroy();
         }
         
-        if (chartData[filter].categoryLabels && chartData[filter].categoryLabels.length > 0) {
-            categoryChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: chartData[filter].categoryLabels,
-                    datasets: [{
-                        data: chartData[filter].categoryData,
-                        backgroundColor: [
-                            '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff',
-                            '#ff9f40', '#c9cbcf', '#66ff99', '#ff66cc', '#666699'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                boxWidth: 12,
-                                font: {
-                                    size: 11
-                                }
+        const currentData = chartData[filter];
+        if (!currentData || !currentData.categoryLabels || currentData.categoryLabels.length === 0) {
+            console.warn('No category data available for filter:', filter);
+            // Show empty state
+            context2.clearRect(0, 0, ctx2.width, ctx2.height);
+            context2.fillStyle = '#666';
+            context2.font = '14px Arial';
+            context2.textAlign = 'center';
+            context2.fillText('No category data available', ctx2.width / 2, ctx2.height / 2);
+            return;
+        }
+        
+        categoryChart = new Chart(context2, {
+            type: 'doughnut',
+            data: {
+                labels: currentData.categoryLabels,
+                datasets: [{
+                    data: currentData.categoryData,
+                    backgroundColor: [
+                        '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff',
+                        '#ff9f40', '#c9cbcf', '#66ff99', '#ff66cc', '#666699'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 12,
+                            font: {
+                                size: 11
                             }
                         }
-                    },
-                    animation: {
-                        duration: 500
-                    },
-                    cutout: '70%'
-                }
-            });
-        } else {
-            console.error('Category chart data not available for ' + filter);
-        }
+                    }
+                },
+                animation: {
+                    duration: 500
+                },
+                cutout: '70%'
+            }
+        });
     }
     
     function updateTopProducts(filter) {
         const container = document.getElementById('topProductsContainer');
+        if (!container) {
+            console.error('Top products container not found');
+            return;
+        }
+        
         const products = chartData[filter].topProducts;
         
         if (products && products.length > 0) {
@@ -445,112 +669,149 @@ $(document).ready(function() {
     }
     
     function updateStatsCards(filter) {
-        document.querySelector('.revenue-value').innerHTML = '₹' + chartData[filter].revenue;
-        document.querySelector('.orders-value').innerHTML = chartData[filter].orders;
-        document.querySelector('.products-value').innerHTML = chartData[filter].products;
-        document.querySelector('.monthly-earning-value').innerHTML = '₹' + chartData[filter].monthlyEarning;
+        const stats = chartData[filter].stats;
+        
+        // Update revenue
+        const revenueElement = document.querySelector('.revenue-value');
+        if (revenueElement) {
+            revenueElement.innerHTML = '₹' + stats.revenue.toFixed(2);
+        }
+        
+        // Update orders
+        const ordersElement = document.querySelector('.orders-value');
+        if (ordersElement) {
+            ordersElement.innerHTML = stats.orders;
+        }
+        
+        // Update products (this typically doesn't change by period, but we update it anyway)
+        const productsElement = document.querySelector('.products-value');
+        if (productsElement) {
+            productsElement.innerHTML = stats.products;
+        }
+        
+        // Update the description text to reflect the current period
+        const periodText = {
+            weekly: 'This Week',
+            monthly: 'This Month', 
+            yearly: 'This Year'
+        };
+        
+        // Update revenue description
+        const revenueDesc = revenueElement?.nextElementSibling;
+        if (revenueDesc) {
+            revenueDesc.innerHTML = `${periodText[filter]} - Shipping fees not included`;
+        }
+        
+        // Update orders description
+        const ordersDesc = ordersElement?.nextElementSibling;
+        if (ordersDesc) {
+            ordersDesc.innerHTML = `${periodText[filter]} - Excluding orders in transit`;
+        }
+        
+        console.log(`Updated stats for ${filter}:`, stats);
     }
     
+    // Initialize with weekly data
     updateAllCharts('weekly');
     
+    // Filter button click handlers
     $('.global-filter-btn').on('click', function() {
         const filter = $(this).data('filter');
+        console.log('Filter clicked:', filter);
+        
         $('.global-filter-btn').removeClass('active');
         $(this).addClass('active');
+        
         updateAllCharts(filter);
     });
     
+    // Chart initialization on window load
     $(window).on('load', function() {
         setTimeout(function() {
             if (typeof Chart !== 'undefined') {
-                const salesChartCanvas = document.getElementById('myChart');
-                const categoryChartCanvas = document.getElementById('myChart2');
-                
-                if (salesChartCanvas) {
-                    salesChartCanvas.style.display = 'none';
-                    salesChartCanvas.offsetHeight; // Force a reflow
-                    salesChartCanvas.style.display = 'block';
-                }
-                
-                if (categoryChartCanvas) {
-                    categoryChartCanvas.style.display = 'none';
-                    categoryChartCanvas.offsetHeight; 
-                    categoryChartCanvas.style.display = 'block';
-                }
+                console.log('Chart.js loaded, reinitializing charts');
+                updateAllCharts('weekly');
+            } else {
+                console.error('Chart.js not loaded');
             }
-            
-            $(window).off('resize.dashboard');
         }, 500);
     });
-});
-</script>
 
-<style>
+    // Sidebar toggle functionality
+    $('.btn-aside-minimize, #mobile-menu-toggle').on('click', function(e) {
+        e.preventDefault();
+        console.log('Toggle clicked, window width:', window.innerWidth);
+        console.log('Mobile button exists:', $('#mobile-menu-toggle').length > 0);
+        console.log('Mobile button visible:', $('#mobile-menu-toggle').is(':visible'));
+        console.log('Mobile button styles:', $('#mobile-menu-toggle').css(['display', 'visibility', 'opacity']));
+        console.log('Col-nav styles:', $('.col-nav').css(['display', 'visibility', 'opacity']));
+        console.log('Main-header styles:', $('.main-header').css(['display', 'visibility', 'opacity']));
+        $('#offcanvas_aside').toggleClass('show');
+        $('body').toggleClass('sidebar-open');
+        console.log('Sidebar classes:', $('#offcanvas_aside').attr('class'));
+    });
 
-    .wrapper {
-        display: flex;
-        width: 100%;
-        align-items: stretch;
-        overflow-x: hidden;
-    }
-    
-    .main-wrap {
-        width: 100%;
-        min-height: 100vh;
-        overflow-x: hidden;
-    }
-    
-    .chart-container {
-        position: relative;
-        margin: auto;
-    }
-    
-    .top-products-container {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    .card {
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-        margin-bottom: 1rem;
-    }
-    
-    .card:hover {
-        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-    }
-    
-    .navbar-aside {
-        width: 250px;
-        height: 100vh;
-        position: fixed;
-        overflow-y: auto;
-        z-index: 1030;
-    }
-    
-    @media (max-width: 992px) {
-        .navbar-aside {
-            width: 100%;
-            height: auto;
-            position: relative;
+    // Close sidebar when clicking outside on mobile
+    $(document).on('click', function(e) {
+        if (window.innerWidth <= 991 && 
+            !$(e.target).closest('#offcanvas_aside, .btn-aside-minimize, #mobile-menu-toggle').length && 
+            $('#offcanvas_aside').hasClass('show')) {
+            console.log('Clicked outside sidebar, closing');
+            $('#offcanvas_aside').removeClass('show');
+            $('body').removeClass('sidebar-open');
         }
+    });
+
+    // Force mobile button visibility
+    $(window).on('load resize', function() {
+        if (window.innerWidth <= 991) {
+            console.log('Mobile view detected');
+            console.log('Mobile button exists:', $('#mobile-menu-toggle').length > 0);
+            console.log('Mobile button visible:', $('#mobile-menu-toggle').is(':visible'));
+            $('#mobile-menu-toggle').css({
+                'display': 'block !important',
+                'visibility': 'visible !important',
+                'opacity': '1 !important'
+            });
+            $('.col-nav').css({
+                'display': 'flex !important',
+                'visibility': 'visible !important',
+                'opacity': '1 !important'
+            });
+            $('.main-header').css({
+                'display': 'flex !important',
+                'visibility': 'visible !important',
+                'opacity': '1 !important'
+            });
+        }
+    });
+});
+
+// Additional debugging
+console.log('Dashboard script loaded');
+console.log('Chart.js available:', typeof Chart !== 'undefined');
+
+document.addEventListener('DOMContentLoaded', function () {
+  const toggleBtn = document.querySelector('#mobile-menu-toggle');
+  const sidebar = document.querySelector('#offcanvas_aside');
+
+  toggleBtn?.addEventListener('click', function (e) {
+    e.preventDefault();
+    console.log('Clicked toggle');
+    sidebar.classList.toggle('show');
+    document.body.classList.toggle('sidebar-open');
+  });
+
+  // Optional: click outside to close
+  document.addEventListener('click', function (e) {
+    if (window.innerWidth <= 991 &&
+      !e.target.closest('#offcanvas_aside') &&
+      !e.target.closest('#mobile-menu-toggle')) {
+      sidebar.classList.remove('show');
+      document.body.classList.remove('sidebar-open');
     }
-    html, body {
-        overflow-x: hidden;
-        max-width: 100vw;
-    }
-    
-    .progress {
-        overflow: hidden;
-    }
-    
-    canvas {
-        max-width: 100%;
-    }
-    
-    .global-filter-btn.active {
-        background-color: #5a6268;
-        color: white;
-    }
-</style>
+  });
+});
+
+</script>
 

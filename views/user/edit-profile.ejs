@@ -120,6 +120,31 @@
         color: #3BB77E;
     }
     
+    /* Responsive Dashboard Menu - Hide on small screens */
+    @media (max-width: 991.98px) {
+        .dashboard-menu-sidebar {
+            display: none !important;
+        }
+    }
+    
+    /* Show dashboard menu on large screens */
+    @media (min-width: 992px) {
+        .dashboard-menu-sidebar {
+            display: block !important;
+        }
+    }
+    
+    /* Ensure main content takes full width on small screens */
+    @media (max-width: 991.98px) {
+        .col-lg-9.main-content {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        .col-lg-3.sidebar-col {
+            display: none;
+        }
+    }
+    
     /* OTP Input styles */
     .otp-input-container {
         display: flex;
@@ -176,8 +201,9 @@
     <section class="mt-50 mb-50">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3">
-                    <div class="dashboard-menu">
+                <!-- Desktop Sidebar Menu - Hidden on small screens -->
+                <div class="col-lg-3 sidebar-col">
+                    <div class="dashboard-menu dashboard-menu-sidebar">
                         <ul class="nav flex-column" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" href="/profileinfo">
@@ -217,7 +243,9 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-9">
+                
+                <!-- Main Content - Full width on small screens -->
+                <div class="col-lg-9 main-content">
                     <div class="card">
                         <div class="card-header">
                             <h3 class="mb-0">Edit Personal Information</h3>

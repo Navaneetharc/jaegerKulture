@@ -5,6 +5,7 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
 const csv = require('fast-csv'); 
+const Product = require('../../models/productSchema');
 
 const getDateRange = (filterType) => {
   const now = moment();
@@ -500,10 +501,10 @@ const generateReport = async (req, res) => {
 };
 
 
-
 module.exports = {
     loadSalesReport,
     updateSales,
     generateReport,
 };
+
 

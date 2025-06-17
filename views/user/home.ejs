@@ -1,405 +1,560 @@
 <%- include('../partials/userL/header.ejs') %>
 
-   
+<style>
+    .dropdown{
+        position:relative;
+        display:inline-block;
+    }
+    .dropdown-content{
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1000;
+        right: 0;
+        border-radius: 5px;
+        border: 1px solid #e0e0e0;
+    }
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+    }
+    .dropdown-content a:hover{
+        background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content{
+        display:block;
+    }
+    .header{
+        position: relative;
+        z-index: 500;
+    }
 
-    <style>
-        .dropdown{
-            position:relative;
-            display:inline-block;
-        }
-        .dropdown-content{
-            display: none;
-            position: absolute;
-            background-color: white;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgb(0,0,0,0,2);
-            z-index: 1000;
-            right: 0;
-        }
-        .dropdown-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
+    .hot {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .out-of-stock {
+        background-color: #dc3545;
+        color: white;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: block;
+    }
+
+    /* Mobile user dropdown styles */
+    .mobile-user-dropdown {
+        display: none;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        z-index: 1001;
+    }
+
+    .mobile-user-dropdown .dropdown {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 8px 12px;
+        border-radius: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+    }
+
+    .mobile-user-dropdown .sign-in-link {
+        color: #3BB77E;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .mobile-user-dropdown .dropdown-content {
+        top: 100%;
+        margin-top: 5px;
+        min-width: 140px;
+    }
+
+    /* Mobile Bottom Navigation */
+    .mobile-bottom-nav {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        border-top: 1px solid #e0e0e0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        padding: 8px 0;
+    }
+
+    .mobile-nav-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #666;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        min-width: 60px;
+    }
+
+    .mobile-nav-item:hover,
+    .mobile-nav-item.active {
+        color: #3BB77E;
+        background-color: rgba(59, 183, 126, 0.1);
+    }
+
+    .mobile-nav-icon {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+    .mobile-nav-text {
+        font-size: 11px;
+        font-weight: 500;
+    }
+
+    .mobile-nav-badge {
+        position: absolute;
+        top: 2px;
+        right: 8px;
+        background-color: #3BB77E;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 991px) {
+        .mobile-bottom-nav {
             display: block;
-            width: 100%;
         }
-        .dropdown-content a:hover{
-            background-color: #f1f1f1;
-        }
-        .dropdown:hover .dropdown-content{
-            display:block;
-        }
-        .header{
-            position: relative;
-            z-index: 500;
-        }
-
-        .hot {
-  background-color: #28a745; /* Green */
-  color: white;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-/* For the "Out of Stock" Badge */
-.out-of-stock {
-  background-color: #dc3545; /* Red */
-  color: white;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: block;
-}
-
-    </style>
-    <header class="header-area header-style-1 header-height-2">
-        <div class="header-top header-top-ptb-1 d-none d-lg-block">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-xl-3 col-lg-4">
-                        <div class="header-info">
-                            <ul>
-                                <li><i class="fi-rs-smartphone"></i> <a href="#">(+91) - 9999 - 6789</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-xl-6 col-lg-4">
-                        <div class="text-center">
-                       
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-4">
-                        
-                        <div class="header-info header-info-right">
-                            <ul>
-                                <li>
-                                    <a class="language-dropdown-active" href="#"> 
-                                        <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
-                                    </a>
-                                    <ul class="language-dropdown">
-                                        <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                        <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                        <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                    </ul>
-                                </li>
-                        
-                                <% if (typeof user !== 'undefined' && user) { %>
-                                    <div class="dropdown">
-                                        <a href="#" class="sign-in-link"><%= user.name %></a>
-                                        <div class="dropdown-content">
-                                            <a href="/profileinfo">Profile</a>
-                                            <a href="/logout">Logout</a>
-                                        </div>
-                                    </div>
-                                <% } else { %>
-                                    <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
-                                <% } %>
-                            </ul>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
-            <div class="container">
-                <div class="header-wrap">
-                    <div class="logo logo-width-1">
-                       <img src="assets/imgs/theme/jaeger.png" alt="logo">
-                    </div>
-                    <div class="header-right">
-                        <div class="search-style-2">
-                            <form action="/search" method="get" onsubmit="return handleSearch(this)">
-                                <input type="text" placeholder="Search for items..." name="query" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
-                            </form>
-                        </div>
-                        <div class="header-action-right">
-                            <div class="header-action-2">
-                                <div class="header-action-icon-2">
-                                    <a href="/wishlist">
-                                        <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
-
-                                    </a>
-                                </div>
-                                <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="/cart">
-                                        <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
-                                    </a>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="header-bottom header-bottom-bg-color sticky-bar">
-            <div class="container">
-                <div class="header-wrap header-space-between position-relative">
-                    <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
-                    </div>
-                    <div class="header-nav d-none d-lg-flex">
         
-                        <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
-                            <nav>
-                                <ul>
-                                    <li><a class="active" href="/">Home</a>
-                                        
-                                    </li>
-                                    <li>
-                                        <a href="#">About</a>
-                                    </li>
-                                    <li><a href="/shop">Shop</a>
-                                       
-                                    </li>
-                                    <li class="position-static"><a href="#">Deals</a>
-                                        <ul class="mega-menu">
-                                            
-                                        </ul>
-                                    </li>
-                                    
-                            
-                                    <li>
-                                        <a href="#">Contact</a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                    <div class="hotline d-none d-lg-block">
-                        <p><i class="fi-rs-headset"></i><span>Hotline</span> 911 </p>
-                    </div>   
-                </div>
-            </div>
-        </div>
-    </header>
+        .mobile-user-dropdown {
+            display: block;
+        }
+        
+        main {
+            padding-bottom: 80px;
+        }
+        
+        .dropdown-content {
+            top: 100%;
+            margin-top: 5px;
+        }
+        
+        .dropdown.mobile-active .dropdown-content {
+            display: block;
+        }
+        
+        .header-action-2 {
+            display: none;
+        }
+
+        /* Hide desktop user dropdown on mobile */
+        .header-top {
+            display: none !important;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .mobile-user-dropdown {
+            display: none;
+        }
+    }
+
+    /* FontAwesome Icons */
+    .mobile-nav-icon i {
+        font-style: normal;
+        font-size: 20px;
+    }
     
-    <main class="main">       
-        <section class="home-slider position-relative pt-50">
-            <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
-                <div class="single-hero-slider single-animation-wrap">
-                    <div class="container">
-                        <div class="row align-items-center slider-animated-1">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="hero-slider-content-2">
-                                    <h4 class="animated">Trade-in offer</h4>
-                                    <h2 class="animated fw-900">Supper value deals</h2>
-                                    <h1 class="animated fw-900 text-brand">For all new users</h1>
-                                    <p class="animated">Save more with coupons & up to 40% off</p>
-                                    <a class="animated btn btn-brush btn-brush-3" href="/shop"> Shop Now </a>
-                                </div>
-                            </div>
-                            <div class="col-lg-7 col-md-6">
-                                <div class="single-slider-img single-slider-img-1">
-                                    <img class="animated slider-1-1" src="assets2/imgs/slider/samurai.jpeg" alt="">
-                                </div>
-                            </div>
-                        </div>
+    .mobile-nav-icon .icon-home::before { content: "⌂"; }
+    .mobile-nav-icon .icon-shop::before { content: "⛃"; }
+    .mobile-nav-icon .icon-heart::before { content: "♡"; }
+    .mobile-nav-icon .icon-cart::before { content: "🛒"; }
+</style>
+
+<header class="header-area header-style-1 header-height-2">
+    <div class="header-top header-top-ptb-1 d-none d-md-block">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info">
+                        <!-- Phone info can go here -->
                     </div>
                 </div>
-            
-                <div class="single-hero-slider single-animation-wrap">
-                    <div class="container">
-                        <div class="row align-items-center slider-animated-1">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="hero-slider-content-2">
-                                    <h4 class="animated">Exciting offers on T-Shirts</h4>
-                                    <h2 class="animated fw-900">Big Deals From</h2>
-                                    <h1 class="animated fw-900 text-8">Manufacturer</h1>
-                                    <p class="animated">Hoodies & Sweatshirts, Regular fits etc</p>
-                                    <a class="animated btn btn-brush btn-brush-1" href="/shop"> Shop Now </a>
-                                </div>
-                            </div>
-                            <div class="col-lg-7 col-md-6">
-                                <div class="single-slider-img single-slider-img-1">
-                                    <img class="animated slider-1-3" src="assets2/imgs/slider/samuG.jpeg" alt="">
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-xl-6 col-lg-4">
+                    <div class="text-center">
+                        <!-- Center content -->
                     </div>
                 </div>
-            </div>
-            <div class="slider-arrow hero-slider-1-arrow"></div>
-        </section>
-        <section class="featured section-padding position-relative">            
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets2/imgs/theme/icons/feature-1.png" alt="">
-                            <h4 class="bg-1">Free Shipping</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets2/imgs/theme/icons/feature-2.png" alt="">
-                            <h4 class="bg-3">Online Order</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets2/imgs/theme/icons/feature-3.png" alt="">
-                            <h4 class="bg-2">Save Money</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets2/imgs/theme/icons/feature-4.png" alt="">
-                            <h4 class="bg-4">Promotions</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets2/imgs/theme/icons/feature-5.png" alt="">
-                            <h4 class="bg-5">Happy Sell</h4>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                        <div class="banner-features wow fadeIn animated hover-up">
-                            <img src="assets2/imgs/theme/icons/feature-6.png" alt="">
-                            <h4 class="bg-6">24/7 Support</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="product-tabs section-padding position-relative wow fadeIn animated">
-            <div class="bg-square"></div>
-            <div class="container">
-                <div class="tab-header">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab" data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one" aria-selected="true">Featured</button>
-                        </li>
-                        
-    
-                    </ul>
-                    <a href="/shop" class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
-                </div>
-                <!--End nav-tabs-->
-                <div class="tab-content wow fadeIn animated" id="myTabContent">
-                    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
-                        <div class="row product-grid-4">
-                           
-                            
-                            <% if (products && products.length > 0) { %>
-                                <% for(let i = 0; i < products.length; i++) { %>
-                                    
-                                    <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                        <div class="product-cart-wrap mb-30">
-                                            <div class="product-img-action-wrap">
-                                                <div class="product-img product-img-zoom">
-                                                    <a href="/productDetails?id=<%= products[i]._id %>">
-                                                        <img class="default-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
-                                                    </a>
-                                                </div>
-                                                <div class="product-action-1">
-                                      <a aria-label="Add To Wishlist" 
-                                         class="action-btn hover-up add-to-wishlist" 
-                                         href="#" 
-                                         data-product-id="<%= products[i]._id %>">
-                                        <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
-                                           <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
-                                             style="fill: red;"
-                                           <% } %>
-                                        ></i>
-                                      </a>
+                <div class="col-xl-3 col-lg-4">
+                    <div class="header-info header-info-right">
+                        <ul>
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <div class="dropdown" onclick="toggleMobileDropdown(this)">
+                                    <a href="#" class="sign-in-link"><%= user.name %></a>
+                                    <div class="dropdown-content">
+                                        <a href="/profileinfo">Profile</a>
+                                        <a href="/logout">Logout</a>
                                     </div>
-                                               
-                                                 <% const allSizesOutOfStock = products[i].variant.size.s === 0 && 
-                                                                 products[i].variant.size.m === 0 && 
-                                                                 products[i].variant.size.l === 0 && 
-                                                                 products[i].variant.size.x === 0 && 
-                                                                 products[i].variant.size.xl === 0; %>
-                          
-                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                      <% if (allSizesOutOfStock) { %>
-                                        <!-- Display the 'Out of Stock' badge -->
-                                        <span class="out-of-stock">Out of Stock</span>
-                                      <% } else { %>
-                                        <!-- Display the 'Hot' badge -->
-                                        <span class="hot">Hot</span>
-                                      <% } %>
-                                    </div>
-                                            </div>
-                                            <div class="product-content-wrap">
-                                                <div class="product-category">
-                                                    <a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].category.name %></a>
-                                                </div>
-                                                <h2>
-                                                    <a href="/productDetails?id=<%= products[i]._id %>">
-                                                        <%= products[i].productName %>
-                                                    </a>
-                                                </h2>
-                                                
-                                                <div class="product-price">
-                                                    <span>₹<%= products[i].salePrice %></span>
-                                                    <span class="old-price">₹<%= products[i].regularPrice %></span>
-                                                </div>
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% } %>
+                                </div>
+                            <% } else { %>
+                                <li><i class="fi-rs-user"></i><a href="/signup">Log in/Sign Up</a></li>
                             <% } %>
-                        </div>
-                    </div>
-                </div>
-                
-                <!--End tab-content-->
-            </div>
-        </section>
-        <section class="banner-2 section-padding pb-0">
-            <div class="container">
-                <div class="banner-img banner-big wow fadeIn animated f-none">
-                    <img src="assets2/imgs/banner/LUFFY.jpg" alt="">
-                    <div class="banner-text d-md-block d-none">
-                        <h4 class="mb-15 mt-40 text-brand">Anime-Inspired Apparel</h4>
-                        <h1 class="fw-600 mb-20">Explore jaegerKulture! <br>Anime fashion for True fans.</h1>
-                        <a href="/shop" class="btn">See shop<i class="fi-rs-arrow-right"></i></a>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        
-        <section class="section-padding">
-            <div class="container">
-                <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span> Animes</h3>
-                <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
-                    <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-3-arrows"></div>
-                    <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets2/imgs/banner/aot-logo.png" alt="">
+    <div class="mobile-user-dropdown">
+        <% if (typeof user !== 'undefined' && user) { %>
+            <div class="dropdown" onclick="toggleMobileDropdown(this)">
+                <a href="#" class="sign-in-link"><%= user.name %></a>
+                <div class="dropdown-content">
+                    <a href="/profileinfo">Profile</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            </div>
+        <% } else { %>
+            <a href="/signup" class="sign-in-link">
+                <i class="fi-rs-user"></i> Sign In
+            </a>
+        <% } %>
+    </div>
+
+    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+        <div class="container">
+            <div class="header-wrap">
+                <div class="logo logo-width-1">
+                   <img src="assets/imgs/theme/jaeger.png" alt="logo">
+                </div>
+                <div class="header-right">
+                    <div class="search-style-2">
+                        <form action="/search" method="get" onsubmit="return handleSearch(this)">
+                            <input type="text" placeholder="Search for items..." name="query" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                        </form>
+                    </div>
+                    <div class="header-action-right">
+                        <div class="header-action-2">
+                            <div class="header-action-icon-2">
+                                <a href="/wishlist">
+                                    <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
+                                    <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
+                                </a>
+                            </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="/cart">
+                                    <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
+                                    <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+                                </a>
+                            </div>
                         </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets2/imgs/banner/ds-logo.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets2/imgs/banner/hxh-logo.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets2/imgs/banner/onepiece.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets2/imgs/banner/bleach-logo.png" alt="">
-                        </div>
-                        <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets2/imgs/banner/db-logo.png" alt="">
-                        </div>
-                        <!-- <div class="brand-logo">
-                            <img class="img-grey-hover" src="assets2/imgs/banner/brand-3.png" alt="">
-                        </div> -->
                     </div>
                 </div>
             </div>
-        </section>
-              
-    </main>
+        </div>
+    </div>
+
+    <div class="header-bottom header-bottom-bg-color sticky-bar">
+        <div class="container">
+            <div class="header-wrap header-space-between position-relative">
+                <div class="logo logo-width-1 d-block d-lg-none">
+                    <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
+                </div>
+                <div class="header-nav d-none d-lg-flex">
+                    <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
+                        <nav>
+                            <ul>
+                                <li><a class="active" href="/">Home</a></li>
+                                <li><a href="/shop">Shop</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="hotline d-none d-lg-block">
+                    <!-- Hotline content -->
+                </div>   
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Rest of your content remains the same -->
+<!-- Mobile Bottom Navigation -->
+<div class="mobile-bottom-nav">
+    <div class="mobile-nav-container">
+        <a href="/" class="mobile-nav-item">
+            <div class="mobile-nav-icon">
+                <i class="icon-home"></i>
+            </div>
+            <span class="mobile-nav-text">Home</span>
+        </a>
+        
+        <a href="/shop" class="mobile-nav-item">
+            <div class="mobile-nav-icon">
+                <i class="icon-shop"></i>
+            </div>
+            <span class="mobile-nav-text">Shop</span>
+        </a>
+        
+        <a href="/wishlist" class="mobile-nav-item">
+            <div class="mobile-nav-icon">
+                <i class="icon-heart"></i>
+            </div>
+            <span class="mobile-nav-text">Wishlist</span>
+            <% if (wishlistCount > 0) { %>
+                <div class="mobile-nav-badge"><%= wishlistCount %></div>
+            <% } %>
+        </a>
+        
+        <a href="/cart" class="mobile-nav-item">
+            <div class="mobile-nav-icon">
+                <i class="icon-cart"></i>
+            </div>
+            <span class="mobile-nav-text">Cart</span>
+            <% if (items.length > 0) { %>
+                <div class="mobile-nav-badge"><%= items.length %></div>
+            <% } %>
+        </a>
+    </div>
+</div>
+
+<main class="main">       
+    <section class="home-slider position-relative pt-50">
+        <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
+            <div class="single-hero-slider single-animation-wrap">
+                <div class="container">
+                    <div class="row align-items-center slider-animated-1">
+                        <div class="col-lg-5 col-md-6">
+                            <div class="hero-slider-content-2">
+                                <h4 class="animated">Trade-in offer</h4>
+                                <h2 class="animated fw-900">Supper value deals</h2>
+                                <h1 class="animated fw-900 text-brand">For all new users</h1>
+                                <p class="animated">Save more with coupons & up to 40% off</p>
+                                <a class="animated btn btn-brush btn-brush-3" href="/shop"> Shop Now </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-6">
+                            <div class="single-slider-img single-slider-img-1">
+                                <img class="animated slider-1-1" src="assets2/imgs/slider/samurai.jpeg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="single-hero-slider single-animation-wrap">
+                <div class="container">
+                    <div class="row align-items-center slider-animated-1">
+                        <div class="col-lg-5 col-md-6">
+                            <div class="hero-slider-content-2">
+                                <h4 class="animated">Exciting offers on T-Shirts</h4>
+                                <h2 class="animated fw-900">Big Deals From</h2>
+                                <h1 class="animated fw-900 text-8">Manufacturer</h1>
+                                <p class="animated">Hoodies & Sweatshirts, Regular fits etc</p>
+                                <a class="animated btn btn-brush btn-brush-1" href="/shop"> Shop Now </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-6">
+                            <div class="single-slider-img single-slider-img-1">
+                                <img class="animated slider-1-3" src="assets2/imgs/slider/samuG.jpeg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slider-arrow hero-slider-1-arrow"></div>
+    </section>
+    
+    <!-- Rest of your sections remain unchanged -->
+    <section class="featured section-padding position-relative">            
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
+                    <div class="banner-features wow fadeIn animated hover-up">
+                        <img src="assets2/imgs/theme/icons/feature-1.png" alt="">
+                        <h4 class="bg-1">Free Shipping</h4>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
+                    <div class="banner-features wow fadeIn animated hover-up">
+                        <img src="assets2/imgs/theme/icons/feature-2.png" alt="">
+                        <h4 class="bg-3">Online Order</h4>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
+                    <div class="banner-features wow fadeIn animated hover-up">
+                        <img src="assets2/imgs/theme/icons/feature-3.png" alt="">
+                        <h4 class="bg-2">Save Money</h4>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
+                    <div class="banner-features wow fadeIn animated hover-up">
+                        <img src="assets2/imgs/theme/icons/feature-4.png" alt="">
+                        <h4 class="bg-4">Promotions</h4>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
+                    <div class="banner-features wow fadeIn animated hover-up">
+                        <img src="assets2/imgs/theme/icons/feature-5.png" alt="">
+                        <h4 class="bg-5">Happy Sell</h4>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
+                    <div class="banner-features wow fadeIn animated hover-up">
+                        <img src="assets2/imgs/theme/icons/feature-6.png" alt="">
+                        <h4 class="bg-6">24/7 Support</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="product-tabs section-padding position-relative wow fadeIn animated">
+        <div class="bg-square"></div>
+        <div class="container">
+            <div class="tab-header">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab" data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one" aria-selected="true">Featured</button>
+                    </li>
+                </ul>
+                <a href="/shop" class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
+            </div>
+            <div class="tab-content wow fadeIn animated" id="myTabContent">
+                <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                    <div class="row product-grid-4">
+                        <% if (products && products.length > 0) { %>
+                            <% for(let i = 0; i < products.length; i++) { %>
+                                <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                    <div class="product-cart-wrap mb-30">
+                                        <div class="product-img-action-wrap">
+                                            <div class="product-img product-img-zoom">
+                                                <a href="/productDetails?id=<%= products[i]._id %>">
+                                                    <img class="default-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                                </a>
+                                            </div>
+                                            <div class="product-action-1">
+                                  <a aria-label="Add To Wishlist" 
+                                     class="action-btn hover-up add-to-wishlist" 
+                                     href="#" 
+                                     data-product-id="<%= products[i]._id %>">
+                                    <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
+                                       <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
+                                         style="fill: red;"
+                                       <% } %>
+                                    ></i>
+                                  </a>
+                                            </div>
+                                             <% const allSizesOutOfStock = products[i].variant.size.s === 0 && 
+                                                             products[i].variant.size.m === 0 && 
+                                                             products[i].variant.size.l === 0 && 
+                                                             products[i].variant.size.x === 0 && 
+                                                             products[i].variant.size.xl === 0; %>
+                  
+                                <div class="product-badges product-badges-position product-badges-mrg">
+                                  <% if (allSizesOutOfStock) { %>
+                                    <span class="out-of-stock">Out of Stock</span>
+                                  <% } else { %>
+                                    <span class="hot">Hot</span>
+                                  <% } %>
+                                </div>
+                                        </div>
+                                        <div class="product-content-wrap">
+                                            <div class="product-category">
+                                                <a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].category.name %></a>
+                                            </div>
+                                            <h2>
+                                                <a href="/productDetails?id=<%= products[i]._id %>">
+                                                    <%= products[i].productName %>
+                                                </a>
+                                            </h2>
+                                            <div class="product-price">
+                                                <span>₹<%= products[i].salePrice %></span>
+                                                <span class="old-price">₹<%= products[i].regularPrice %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="banner-2 section-padding pb-0">
+        <div class="container">
+            <div class="banner-img banner-big wow fadeIn animated f-none">
+                <img src="assets2/imgs/banner/LUFFY.jpg" alt="">
+                <div class="banner-text d-md-block d-none">
+                    <h4 class="mb-15 mt-40 text-brand">Anime-Inspired Apparel</h4>
+                    <h1 class="fw-600 mb-20">Explore jaegerKulture! <br>Anime fashion for True fans.</h1>
+                    <a href="/shop" class="btn">See shop<i class="fi-rs-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span> Animes</h3>
+            <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
+                <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-3-arrows"></div>
+                <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
+                    <div class="brand-logo">
+                        <img class="img-grey-hover" src="assets2/imgs/banner/aot-logo.png" alt="">
+                    </div>
+                    <div class="brand-logo">
+                        <img class="img-grey-hover" src="assets2/imgs/banner/ds-logo.png" alt="">
+                    </div>
+                    <div class="brand-logo">
+                        <img class="img-grey-hover" src="assets2/imgs/banner/hxh-logo.png" alt="">
+                    </div>
+                    <div class="brand-logo">
+                        <img class="img-grey-hover" src="assets2/imgs/banner/onepiece.png" alt="">
+                    </div>
+                    <div class="brand-logo">
+                        <img class="img-grey-hover" src="assets2/imgs/banner/bleach-logo.png" alt="">
+                    </div>
+                    <div class="brand-logo">
+                        <img class="img-grey-hover" src="assets2/imgs/banner/db-logo.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -433,11 +588,11 @@
           });
         }
 
-        // Toggle icon color
         icon.classList.toggle('text-danger', !isInWishlist);
         icon.style.fill = !isInWishlist ? 'red' : '';
 
-        // Success alert
+        updateWishlistCount(result.totalCount);
+
         Swal.fire({
           icon: 'success',
           title: isInWishlist ? 'Removed from Wishlist!' : 'Added to Wishlist!',
@@ -458,20 +613,70 @@
       }
     });
   });
+
+  function updateWishlistCount(count){
+    const wishlistCountElement = document.querySelector('.header-action-icon-2 a[href="/wishlist"] .pro-count');
+    if(wishlistCountElement){
+        const productText = count !== 1 ? 'products' : 'product';
+        wishlistCountElement.textContent = `${count} ${productText}`;
+    }
+    
+    const mobileBadge = document.querySelector('.mobile-nav-item[href="/wishlist"] .mobile-nav-badge');
+    if(mobileBadge){
+        if(count > 0){
+            mobileBadge.textContent = count;
+            mobileBadge.style.display = 'flex';
+        } else {
+            mobileBadge.style.display = 'none';
+        }
+    }
+  }
+
+  function toggleMobileDropdown(element) {
+    if (window.innerWidth <= 991) {
+      element.classList.toggle('mobile-active');
+      
+      document.querySelectorAll('.dropdown').forEach(dropdown => {
+        if (dropdown !== element) {
+          dropdown.classList.remove('mobile-active');
+        }
+      });
+    }
+  }
+
+  document.addEventListener('click', function(event) {
+    if (window.innerWidth <= 991) {
+      const dropdowns = document.querySelectorAll('.dropdown');
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(event.target)) {
+          dropdown.classList.remove('mobile-active');
+        }
+      });
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    
+    mobileNavItems.forEach(item => {
+      const href = item.getAttribute('href');
+      if (href === currentPath || (currentPath === '/' && href === '/')) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  });
+
+  function handleSearch(form) {
+    const searchInput = form.querySelector('input[name="query"]');
+    if (!searchInput.value.trim()) {
+        window.location.href = '/';
+        return false;
+    }
+    return true;
+  }
 </script>
 
-
-    <script>
-        function handleSearch(form) {
-            const searchInput = form.querySelector('input[name="query"]');
-            if (!searchInput.value.trim()) {
-                
-                window.location.href = '/';
-                return false;
-            }
-            return true;
-        }
-    </script>
-
-
-    <%- include('../partials/userL/footer.ejs') %>
+<%- include('../partials/userL/footer.ejs') %>

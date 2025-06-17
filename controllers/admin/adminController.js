@@ -43,9 +43,85 @@ const login = async (req, res) => {
     }
 };
 
+const getDateRanges = () => {
+    const now = new Date();
+    
+    // Weekly range (current week - Monday to Sunday)
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
+    endOfWeek.setHours(23, 59, 59, 999);
+    
+    // Monthly range (current month)
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
+    
+    // Yearly range (current year)
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const endOfYear = new Date(now.getFullYear(), 11, 31);
+    endOfYear.setHours(23, 59, 59, 999);
+    
+    return {
+        weekly: { start: startOfWeek, end: endOfWeek },
+        monthly: { start: startOfMonth, end: endOfMonth },
+        yearly: { start: startOfYear, end: endOfYear }
+    };
+};
+
+// Helper function to calculate stats for a specific time period
+const calculatePeriodStats = async (startDate, endDate) => {
+    try {
+        // Revenue for the period
+        const revenueData = await Order.aggregate([
+            { 
+                $match: { 
+                    status: { $in: ['Order Placed', 'Order Confirmed', 'Order Shipped', 'Delivered'] },
+                    createdAt: { $gte: startDate, $lte: endDate }
+                }
+            },
+            { $group: { _id: null, totalRevenue: { $sum: "$totalAmount" } } }
+        ]);
+        const revenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
+        
+        // Orders for the period
+        const orders = await Order.countDocuments({
+            createdAt: { $gte: startDate, $lte: endDate }
+        });
+        
+        // Products and categories (these don't change by time period, but we can get current totals)
+        const products = await Product.countDocuments();
+        const categories = await Category.countDocuments();
+        
+        return {
+            revenue: revenue,
+            orders: orders,
+            products: products,
+            categories: categories
+        };
+    } catch (error) {
+        console.error('Error calculating period stats:', error);
+        return {
+            revenue: 0,
+            orders: 0,
+            products: 0,
+            categories: 0
+        };
+    }
+};
+
 const loadDashboard = async (req, res) => {
     if (req.session.admin) {
         try {
+            const dateRanges = getDateRanges();
+            
+            const weeklyStats = await calculatePeriodStats(dateRanges.weekly.start, dateRanges.weekly.end);
+            const monthlyStats = await calculatePeriodStats(dateRanges.monthly.start, dateRanges.monthly.end);
+            const yearlyStats = await calculatePeriodStats(dateRanges.yearly.start, dateRanges.yearly.end);
+            
             const revenueData = await Order.aggregate([
                 { $match: { status: { $in: ['Order Placed', 'Order Confirmed', 'Order Shipped', 'Delivered'] } } },
                 { $group: { _id: null, totalRevenue: { $sum: "$totalAmount" } } }
@@ -53,9 +129,7 @@ const loadDashboard = async (req, res) => {
             const totalRevenue = revenueData.length > 0 ? revenueData[0].totalRevenue : 0;
             
             const totalOrders = await Order.countDocuments();
-            
             const totalProducts = await Product.countDocuments();
-            
             const totalCategories = await Category.countDocuments();
             
             const currentMonth = new Date().getMonth() + 1;
@@ -232,7 +306,10 @@ const loadDashboard = async (req, res) => {
                 monthlyChartData,
                 yearlyChartData,
                 categoryChartData,
-                topProducts
+                topProducts,
+                weeklyStats,
+                monthlyStats,
+                yearlyStats
             });
             
         } catch (error) {

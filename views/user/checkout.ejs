@@ -547,7 +547,7 @@ coupon
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
                         <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+                            <!-- <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li> -->
                         </ul>
                     </div>
                 </div>
@@ -558,7 +558,7 @@ coupon
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-                            <li>
+                            <!-- <li>
                                 <a class="language-dropdown-active" href="#"> 
                                     <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
                                 </a>
@@ -567,7 +567,7 @@ coupon
                                     <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
                                     <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <% if (typeof user !== 'undefined' && user) { %>
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= user.name %></a>
@@ -628,19 +628,19 @@ coupon
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="#">About</a></li>
+                                <!-- <li><a href="#">About</a></li> -->
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="#">Deals</a>
+                                <!-- <li class="position-static"><a href="#">Deals</a> -->
                                     <ul class="mega-menu">
                                     </ul>
                                 </li>
-                                <li><a href="#">Contact</a></li>
+                                <!-- <li><a href="#">Contact</a></li> -->
                             </ul>
                         </nav>
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                    <!-- <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p> -->
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">
@@ -662,10 +662,10 @@ coupon
                     <nav>
                         <ul class="mobile-menu font-heading">
                             <li><a class="active" href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
+                            <!-- <li><a href="/about">About</a></li> -->
                             <li><a href="/shop">Shop</a></li>
-                            <li><a href="/offers">Deals</a></li>
-                            <li><a href="/contact">Contact</a></li>
+                            <!-- <li><a href="/offers">Deals</a></li> -->
+                            <!-- <li><a href="/contact">Contact</a></li> -->
                         </ul>
                     </nav>
                 </div>
@@ -674,7 +674,7 @@ coupon
                     <ul class="mobile-menu font-heading">
                         <li><a href="/profileinfo">Profile</a></li>
                         <li><a href="/myorders">My Orders</a></li>
-                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/myAddresses">My Addresses</a></li>
                         <li><a href="/wishlist">Wishlist</a></li>
                         <li><a href="/wallet">My Wallet</a></li>
                         <li><a href="/logout">Logout</a></li>
@@ -1358,55 +1358,6 @@ document.querySelectorAll('.set-default').forEach(link => {
 
 
 
-// document.addEventListener("DOMContentLoaded",()=>{
-
-//     const form = document.querySelector('form');
-
-//     form.addEventListener('submit', async function (e) {
-//         e.preventDefault();
-//         const method = document.querySelector('input[name="paymentMethod"]:checked').value;
-//         const totalAmt = parseFloat(document.getElementById('totalAmount').value);
-//         if (method === 'cod' && totalAmt > 1000) {
-//           Swal.fire({
-//             icon: 'error',
-//             text: 'COD is not available for orders above ₹1000 dear!',
-//             timer: 2000,
-//             showConfirmButton: false
-//           });
-//           return;
-//         }
-
-//      try {
-//             const res = await fetch('/checkout', {
-//                 method: 'POST',
-//                 body: new FormData(form)
-//             });
-
-//             const data = await res.json();
-
-//             Swal.fire({
-//                 icon: res.ok ? "success" : "error",
-//                 text: data.message || data.error || (res.ok ? "Order placed successfully!" : "Failed to place order"),
-//                 timer: 1500,
-//                 showConfirmButton: false
-//             });
-
-//             if (res.ok) {
-//                 setTimeout(() => {
-//                     window.location.href = "/order-success"; 
-//                 }, 1500); 
-//             }
-
-//         } catch (err) {
-//             Swal.fire({
-//                 icon: "error",
-//                 text: "An error occurred while placing the order.",
-//                 timer: 1500,
-//                 showConfirmButton: false
-//             });
-//         }
-//     });    
-// })
   </script>
   
 

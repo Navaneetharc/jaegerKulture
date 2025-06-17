@@ -82,6 +82,13 @@
         color: #3BB77E;
     }
 
+    /* Hide dashboard menu on small screens */
+    @media (max-width: 991.98px) {
+        .dashboard-menu {
+            display: none;
+        }
+    }
+
     /* Order details styles */
     .order-details-card {
         border: 1px solid #dee2e6;
@@ -351,7 +358,6 @@
     .back-to-orders {
         margin-bottom: 1rem;
     }
-    /* cancell button */
  
 .cancel-order-section {
     margin-top: 20px;
@@ -380,7 +386,23 @@
     font-weight: 600;
 }
 
-
+.return-panel {
+    max-width: 100%; /* Align with container width */
+    font-size: 0.85rem;
+    padding-left: 0; /* Remove excessive padding */
+    margin-top: 1.5rem;
+}
+.return-panel .table-responsive {
+    overflow-x: auto;
+}
+.return-panel .table {
+    table-layout: fixed;
+    width: 100%;
+}
+.return-panel th,
+.return-panel td {
+    word-wrap: break-word;
+}
 
 </style>
 
@@ -390,10 +412,6 @@
             <div class="row align-items-center">
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
-                        <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
-                        </ul>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-4">
@@ -403,16 +421,6 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-                            <li>
-                                <a class="language-dropdown-active" href="#"> 
-                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
-                                </a>
-                                <ul class="language-dropdown">
-                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="/assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                </ul>
-                            </li>
                             <% if (typeof user !== 'undefined' && user) { %>
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= user.name %></a>
@@ -438,25 +446,22 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                       
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
-                                <div class="header-action-icon-2">
-                                    <a href="/wishlist">
-                                        <img class="svgInject" alt="Evara" src="/assets2/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
-
-                                    </a>
-                                </div>
-                                <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="/cart">
-                                        <img alt="Evara" src="/assets2/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
-                                    </a>
-
-                                </div>
+                            <div class="header-action-icon-2">
+                                <a href="/wishlist">
+                                    <img class="svgInject" alt="Evara" src="/assets2/imgs/theme/icons/icon-heart.svg">
+                                    <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
+                                </a>
                             </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="/cart">
+                                    <img alt="Evara" src="/assets2/imgs/theme/icons/icon-cart.svg">
+                                    <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -473,19 +478,12 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="#">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="#">Deals</a>
-                                    <ul class="mega-menu">
-                                    </ul>
-                                </li>
-                                <li><a href="#">Contact</a></li>
                             </ul>
                         </nav>
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">
@@ -519,7 +517,7 @@
                     <ul class="mobile-menu font-heading">
                         <li><a href="/profileinfo">Profile</a></li>
                         <li><a href="/myorders">My Orders</a></li>
-                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/myAddresses">My Addresses</a></li>
                         <li><a href="/wishlist">Wishlist</a></li>
                         <li><a href="/wallet">My Wallet</a></li>
                         <li><a href="/logout">Logout</a></li>
@@ -562,7 +560,6 @@
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
-                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/wallet">
                                     <i class="fi-rs-credit-card"></i> My Wallet
@@ -575,7 +572,6 @@
                                 </a>
                             </li>
                             <%}%>
-                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
                                     <i class="fi-rs-exit"></i> Logout
@@ -585,7 +581,6 @@
                     </div>
                 </div>
 
-      
                 <div class="col-lg-9">
                     <% // Build array of only those items flagged for return %>
                     <% const itemsRequested = order.orderItems.filter(i => Array.isArray(i.statusHistory) && i.statusHistory.some(h => h.status === 'Return Requested')); %>
@@ -603,7 +598,7 @@
                                 <span class="order-date ms-2">Placed on: <%= order.createdAt.toLocaleDateString() %></span>
                             </div>
                     
-                                                        <%
+                            <%
                             const statusClassMap = {
                                 'Pending'        : 'pending',
                                 'Order Placed'   : 'placed',
@@ -614,11 +609,9 @@
                                 'Returned'       : 'returned',
                                 'Payment Failed' : 'failed'
                             };
-                            // pick the class, default to 'pending' if status is unknown
                             const cssClass = statusClassMap[order.status] || 'pending';
                             %>
                             <span class="order-status <%= cssClass %>"><%= order.status %></span>
-
                         </div>
                     
                         <div class="card-body">
@@ -627,31 +620,24 @@
                             order.orderItems.forEach(item => {
                                 subtotal += item.product.salePrice * item.quantity;
                             });
-                            let tax = 0.05 * subtotal; // 5% tax
+                            let tax = 0.05 * subtotal;
                             let deliveryCharge = 41;
                             let total = subtotal + tax + deliveryCharge;
                             %>
                     
                             <div class="order-items">
                                 <% order.orderItems.forEach((item, itemIndex) => { 
-                                    // Determine the status for this specific item
-                                    let itemStatus = 'Delivered'; // Default status
-                                    
-                                    // Debug info array
+                                    let itemStatus = 'Delivered';
                                     let debugInfo = [];
                                     debugInfo.push(`Item ${itemIndex} initial status: ${itemStatus}`);
                                     
                                     if (Array.isArray(item.statusHistory)) {
                                         debugInfo.push(`Item has statusHistory with ${item.statusHistory.length} entries`);
-                                        
-                                        // Check if this item has a returned status
                                         const returnedEntry = item.statusHistory.find(h => h.status === 'Returned');
                                         const requestedEntry = item.statusHistory.find(h => h.status === 'Return Requested');
-                                        
                                         debugInfo.push(`Has 'Returned' entry: ${!!returnedEntry}`);
                                         debugInfo.push(`Has 'Return Requested' entry: ${!!requestedEntry}`);
                                         
-                                        // Only mark as returned if THIS specific item has been returned
                                         if (returnedEntry) {
                                             itemStatus = 'Returned';
                                             debugInfo.push(`Setting status to: ${itemStatus}`);
@@ -663,18 +649,15 @@
                                         debugInfo.push(`Item has no statusHistory or it's not an array`);
                                     }
                                     
-                                    // Check if 'currentStatus' property exists and use it if available
                                     if (item.currentStatus) {
                                         debugInfo.push(`Item has currentStatus property: ${item.currentStatus}`);
-                                        // Use currentStatus if it exists
                                         itemStatus = item.currentStatus;
                                     }
                                     
-                                    // For debugging, log to console
                                     console.log(`Item ${itemIndex} (${item.product?.productName || 'unnamed'}): ${debugInfo.join(' | ')}`);
                                 %>
                                 <div class="order-item">
-                                    <img src="/uploads/product-images/<%= item.productImage %>" alt="Product">
+                                    <img src="/Uploads/product-images/<%= item.productImage %>" alt="Product">
                                     <div class="order-item-details">
                                         <div class="order-item-name"><%= item.product?.productName || "Unnamed Product" %></div>
                                         <div class="order-item-price">₹<%= item.product.salePrice %></div>
@@ -682,7 +665,6 @@
                                             Quantity: <%= item.quantity %><br>
                                             <span>Size: <%= item?.variant?.size?.toUpperCase?.() || 'N/A' %></span>
                                         </div>
-                                        <!-- Add item status badge -->
                                         <div class="item-status mt-2">
                                             <% if (item.currentStatus === 'Returned') { %>
                                                 <span class="badge bg-success">Returned & Refunded</span>
@@ -694,8 +676,6 @@
                                                 <span class="badge bg-secondary"><%= item.currentStatus %></span>
                                               <% } %>
                                         </div>
-                                        
-                                        <!-- Debug information (remove in production) -->
                                         <div class="debug-info small text-muted mt-1">
                                             Status: <%= itemStatus %>
                                             <% if (item.statusHistory) { %>
@@ -707,55 +687,43 @@
                                 </div>
                                 <% }) %>
                             </div>
-                    <%
-// Avoid naming conflicts by using unique names
-const computedSubtotal = order.orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-const computedDelivery  = order.deliveryCharge;
-const computedTax       = order.tax;
-const computedDiscount  = order.couponDiscount || 0;
-const computedTotal     = order.totalAmount;
-%>
 
-<div class="order-summary">
+                            <%
+                            const computedSubtotal = order.orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+                            const computedDelivery  = order.deliveryCharge;
+                            const computedTax       = order.tax;
+                            const computedDiscount  = order.couponDiscount || 0;
+                            const computedTotal     = order.totalAmount;
+                            %>
 
-  <div class="order-summary-row">
-    <div class="order-summary-label">Subtotal</div>
-    <div class="order-summary-value">₹<%= computedSubtotal.toFixed(2) %></div>
-  </div>
-
-  <div class="order-summary-row">
-    <div class="order-summary-label">Delivery charge</div>
-    <div class="order-summary-value">₹<%= computedDelivery.toFixed(2) %></div>
-  </div>
-
-  <div class="order-summary-row">
-    <div class="order-summary-label">Tax (5%)</div>
-    <div class="order-summary-value">₹<%= computedTax.toFixed(2) %></div>
-  </div>
-
-  <% if (computedDiscount > 0) { %>
-  <div class="order-summary-row">
-    <div class="order-summary-label">Discount (<%= order.couponCode %>)</div>
-    <div class="order-summary-value text-success">-₹<%= computedDiscount.toFixed(2) %></div>
-  </div>
-  <% } %>
-
-  <div class="order-summary-row">
-    <div class="order-summary-label"><strong>Total</strong></div>
-    <div class="order-summary-value"><strong>₹<%= computedTotal.toFixed(2) %></strong></div>
-  </div>
-
-</div>
-
+                            <div class="order-summary">
+                                <div class="order-summary-row">
+                                    <div class="order-summary-label">Subtotal</div>
+                                    <div class="order-summary-value">₹<%= computedSubtotal.toFixed(2) %></div>
+                                </div>
+                                <div class="order-summary-row">
+                                    <div class="order-summary-label">Delivery charge</div>
+                                    <div class="order-summary-value">₹<%= computedDelivery.toFixed(2) %></div>
+                                </div>
+                                <div class="order-summary-row">
+                                    <div class="order-summary-label">Tax (5%)</div>
+                                    <div class="order-summary-value">₹<%= computedTax.toFixed(2) %></div>
+                                </div>
+                                <% if (computedDiscount > 0) { %>
+                                <div class="order-summary-row">
+                                    <div class="order-summary-label">Discount (<%= order.couponCode %>)</div>
+                                    <div class="order-summary-value text-success">-₹<%= computedDiscount.toFixed(2) %></div>
+                                </div>
+                                <% } %>
+                                <div class="order-summary-row">
+                                    <div class="order-summary-label"><strong>Total</strong></div>
+                                    <div class="order-summary-value"><strong>₹<%= computedTotal.toFixed(2) %></strong></div>
+                                </div>
+                            </div>
                     
-                            <!-- Add status history timeline -->
-                            
-<!-- In the order timeline section, update to handle per-item status -->
                             <div class="order-timeline">
                                 <div class="order-timeline-title">Order Timeline</div>
-
                                 <% if (order.status === 'Cancelled') { %>
-                                    <!-- CANCELLED -->
                                     <div class="order-timeline-item cancelled">
                                         <div class="order-timeline-date">
                                             <%= new Date(order.updatedAt).toLocaleDateString() %>
@@ -765,7 +733,6 @@ const computedTotal     = order.totalAmount;
                                             Reason: <%= order.cancelReason || 'No reason provided' %>
                                         </div>
                                     </div>
-
                                 <% } else { 
                                     const steps = [
                                         { key: 'order placed',    title: 'Order Placed',    description: 'Your order has been placed successfully.', fallbackDate: order.createdAt },
@@ -783,8 +750,6 @@ const computedTotal     = order.totalAmount;
                                         });
                                     }
                                 
-                                    // Use the base order status for the timeline (not affected by individual item returns)
-                                    // We'll consider an order "Delivered" even if some items are returned
                                     const orderBaseStatus = order.status === 'Returned' ? 'Delivered' : order.status;
                                     const currentIndex = steps.findIndex(s => s.key === (orderBaseStatus || '').toLowerCase());
                                 %>
@@ -803,7 +768,7 @@ const computedTotal     = order.totalAmount;
                                                         <%= new Date().toLocaleDateString() %>
                                                         <%= new Date().toLocaleTimeString() %>
                                                     <% } else { %>
-                                                        &nbsp;
+                                                         
                                                     <% } %>
                                                 <% } %>
                                             </div>
@@ -814,7 +779,6 @@ const computedTotal     = order.totalAmount;
                                         </div>
                                     <% }) %>
 
-                                    <% // Add returned items section if any items have been returned %>
                                     <% const returnedItems = order.orderItems.filter(i => 
                                         Array.isArray(i.statusHistory) && 
                                         i.statusHistory.some(h => h.status === 'Returned')); %>
@@ -823,7 +787,6 @@ const computedTotal     = order.totalAmount;
                                         <div class="order-timeline-item completed">
                                             <div class="order-timeline-date">
                                                 <% 
-                                                // Find the most recent return timestamp
                                                 let latestReturnDate = null;
                                                 returnedItems.forEach(item => {
                                                     const returnEntry = item.statusHistory.find(h => h.status === 'Returned');
@@ -852,9 +815,6 @@ const computedTotal     = order.totalAmount;
                                 <% } %>
                             </div>
                             
-                                  
-                              
-                                
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="shipping-address">
@@ -894,7 +854,6 @@ const computedTotal     = order.totalAmount;
                                 <% } %>
                             </div>
                     
-                            <!-- Cancel order form (show if order is not yet cancelled) -->
                             <% if (order.status !== 'Cancelled' && (order.status === 'Order Placed' || order.status === 'Pending')) { %>
                                 <div class="cancel-order-section mt-3">
                                   <form id="cancelOrderForm" method="POST" action="/cancel-order/<%= order._id %>">
@@ -912,199 +871,158 @@ const computedTotal     = order.totalAmount;
                                 <h6 class="text-danger">Can't cancel the order after order confirmation</h6>
                               <% } %>
                               
-                              
-                                <!-- Add this section after the cancel order form -->
-                                <% if (order.status === 'Delivered' && itemsRequested.length === 0) { %>
-                                    <div class="return-section mt-4">
-                                        <h5>Return Options</h5>
-                                        <div class="return-tabs mb-3">
-                                            <ul class="nav nav-tabs" id="returnTabs" role="tablist">
-                                                <li class="nav-role">
-                                                    <a class="nav-link active" id="return-full-tab" data-bs-toggle="tab" href="#return-full" role="tab">Return Entire Order</a>
-                                                </li>
-                                                <li class="nav-role">
-                                                    <a class="nav-link" id="return-items-tab" data-bs-toggle="tab" href="#return-items" role="tab">Return Specific Items</a>
-                                                </li>
-                                            </ul>
+                              <% if (order.status === 'Delivered' && itemsRequested.length === 0) { %>
+                                <div class="return-section mt-4">
+                                    <h5>Return Options</h5>
+                                    <div class="return-tabs mb-3">
+                                        <ul class="nav nav-tabs" id="returnTabs" role="tablist">
+                                            <li class="nav-role">
+                                                <a class="nav-link active" id="return-full-tab" data-bs-toggle="tab" href="#return-full" role="tab">Return Entire Order</a>
+                                            </li>
+                                            <li class="nav-role">
+                                                <a class="nav-link" id="return-items-tab" data-bs-toggle="tab" href="#return-items" role="tab">Return Specific Items</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active" id="return-full" role="tabpanel" aria-labelledby="return-full-tab">
+                                            <form id="returnFullOrderForm" method="POST" action="/return-order/<%= order._id %>">
+                                                <input type="hidden" name="returnType" value="full">
+                                                <div class="mb-3">
+                                                    <label for="returnFullReason" class="form-label">Reason for Return</label>
+                                                    <select class="form-select" id="returnFullReason" name="returnReason" required>
+                                                        <option value="">Select a reason</option>
+                                                        <option value="Damaged product">Damaged product</option>
+                                                        <option value="Wrong product received">Wrong product received</option>
+                                                        <option value="Product quality issue">Product quality issue</option>
+                                                        <option value="Missing parts/accessories">Missing parts/accessories</option>
+                                                        <option value="Other">Other reason</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3" id="otherReasonFull" style="display: none;">
+                                                    <label for="otherReturnFullReason" class="form-label">Please specify</label>
+                                                    <textarea class="form-control" id="otherReturnFullReason" name="otherReason" rows="3" placeholder="Please provide details..."></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-danger">Return Entire Order</button>
+                                            </form>
                                         </div>
-                                        <div class="tab-content">
-                                <!-- Return Entire Order -->
-                                <div class="tab-pane fade show active" id="return-full" role="tabpanel" aria-labelledby="return-full-tab">
-                                    <form id="returnFullOrderForm" method="POST" action="/return-order/<%= order._id %>">
-                                        <input type="hidden" name="returnType" value="full">
-                                        <div class="mb-3">
-                                            <label for="returnFullReason" class="form-label">Reason for Return</label>
-                                            <select class="form-select" id="returnFullReason" name="returnReason" required>
-                                                <option value="">Select a reason</option>
-                                                <option value="Damaged product">Damaged product</option>
-                                                <option value="Wrong product received">Wrong product received</option>
-                                                <option value="Product quality issue">Product quality issue</option>
-                                                <option value="Missing parts/accessories">Missing parts/accessories</option>
-                                                <option value="Other">Other reason</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3" id="otherReasonFull" style="display: none;">
-                                            <label for="otherReturnFullReason" class="form-label">Please specify</label>
-                                            <textarea class="form-control" id="otherReturnFullReason" name="otherReason" rows="3" placeholder="Please provide details..."></textarea>
-                                        </div>
-                                        
-                                        <button type="submit" class="btn btn-danger">Return Entire Order</button>
-                                    </form>
-                                </div>
-                                
-                                <!-- Return Specific Items -->
-                                <div class="tab-pane fade" id="return-items" role="tabpanel" aria-labelledby="return-items-tab">
-                                    <form id="returnItemsForm" method="POST" action="/return-items/<%= order._id %>">
-                                        <div class="mb-3">
-                                            <div class="return-item-selection">
-                                                <% order.orderItems.forEach((item, index) => { %>
-                                                    <div class="return-item-checkbox mb-2">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="returnItems[]" value="<%= item._id %>" id="returnItem<%= index %>">
-                                                            <label class="form-check-label" for="returnItem<%= index %>">
-                                                                <div class="d-flex align-items-center">
-                                                                    <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
-                                                                    <div>
-                                                                        <div><%= item.product?.productName || "Unnamed Product" %></div>
-                                                                        <div class="text-muted small">Size: <%= item?.variant?.size?.toUpperCase?.() || 'N/A' %>, Qty: <%= item.quantity %></div>
-                                                                    </div>
+                                        <div class="tab-pane fade" id="return-items" role="tabpanel" aria-labelledby="return-items-tab">
+                                            <form id="returnItemsForm" method="POST" action="/return-items/<%= order._id %>">
+                                                <div class="mb-3">
+                                                    <div class="return-item-selection">
+                                                        <% order.orderItems.forEach((item, index) => { %>
+                                                            <div class="return-item-checkbox mb-2">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" name="returnItems[]" value="<%= item._id %>" id="returnItem<%= index %>">
+                                                                    <label class="form-check-label" for="returnItem<%= index %>">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <img src="/Uploads/product-images/<%= item.productImage %>" alt="Product" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+                                                                            <div>
+                                                                                <div><%= item.product?.productName || "Unnamed Product" %></div>
+                                                                                <div class="text-muted small">Size: <%= item?.variant?.size?.toUpperCase?.() || 'N/A' %>, Qty: <%= item.quantity %></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </label>
                                                                 </div>
-                                                            </label>
-                                                        </div>
+                                                            </div>
+                                                        <% }) %>
                                                     </div>
-                                                <% }) %>
-                                            </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="returnItemsReason" class="form-label">Reason for Return</label>
+                                                    <select class="form-select" id="returnItemsReason" name="returnReason" required>
+                                                        <option value="">Select a reason</option>
+                                                        <option value="Damaged product">Damaged product</option>
+                                                        <option value="Wrong product received">Wrong product received</option>
+                                                        <option value="Product quality issue">Product quality issue</option>
+                                                        <option value="Sizing/fit issue">Sizing/fit issue</option>
+                                                        <option value="Other">Other reason</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3" id="otherReasonItems" style="display: none;">
+                                                    <label for="otherReturnItemsReason" class="form-label">Please specify</label>
+                                                    <textarea class="form-control" id="otherReturnItemsReason" name="otherReason" rows="3" placeholder="Please provide details..."></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-danger">Return Selected Items</button>
+                                            </form>
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="returnItemsReason" class="form-label">Reason for Return</label>
-                                            
-                                            <select class="form-select" id="returnItemsReason" name="returnReason" required>
-                                                <option value="">Select a reason</option>
-                                                <option value="Damaged product">Damaged product</option>
-                                                <option value="Wrong product received">Wrong product received</option>
-                                                <option value="Product quality issue">Product quality issue</option>
-                                                <option value="Sizing/fit issue">Sizing/fit issue</option>
-                                                <option value="Other">Other reason</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3" id="otherReasonItems" style="display: none;">
-                                            <label for="otherReturnItemsReason" class="form-label">Please specify</label>
-                                            <textarea class="form-control" id="otherReturnItemsReason" name="otherReason" rows="3" placeholder="Please provide details..."></textarea>
-                                        </div>
-                                        
-                                        <button type="submit" class="btn btn-danger">Return Selected Items</button>
-                                    </form>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
                         
-                        <script>
-                            // Show/hide "other reason" textarea based on selection
-                            document.getElementById('returnFullReason').addEventListener('change', function() {
-                                document.getElementById('otherReasonFull').style.display = 
-                                    this.value === 'Other' ? 'block' : 'none';
-                            });
-                            
-                            document.getElementById('returnItemsReason').addEventListener('change', function() {
-                                document.getElementById('otherReasonItems').style.display = 
-                                    this.value === 'Other' ? 'block' : 'none';
-                            });
-                        </script>
-                    <% } %>
+                                <script>
+                                    document.getElementById('returnFullReason').addEventListener('change', function() {
+                                        document.getElementById('otherReasonFull').style.display = 
+                                            this.value === 'Other' ? 'block' : 'none';
+                                    });
+                                    
+                                    document.getElementById('returnItemsReason').addEventListener('change', function() {
+                                        document.getElementById('otherReasonItems').style.display = 
+                                            this.value === 'Other' ? 'block' : 'none';
+                                    });
+                                </script>
+                            <% } %>
                         </div>
                     </div>
                     
-                </div>
-            </div>
-        </div>
-        <style>
-            .return-panel {
-              max-width: 1460px;        /* adjust this to your sidebar’s inner width */
-              font-size: 0.85rem;
-              padding-left: 450px;     /* gently shrink everything to help it fit */
-            }
-            .return-panel .table-responsive {
-              overflow-x: auto;        /* allow inner scroll if something still overflows */
-            }
-            .return-panel .table {
-              table-layout: fixed;     /* force cells to share the width */
-              width: 100%;             /* fill the panel exactly */
-            }
-            .return-panel th,
-            .return-panel td {
-              word-wrap: break-word;   /* wrap long text rather than expand */
-            }
-          </style>
-          
-          <!-- wrap your entire existing block in this -->
-          <div class="return-panel">
-          
-            <!-- Return Request Confirmation -->
-            <% if (locals.session?.returnRequested) { %>
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <strong>Return Request Submitted!</strong> We've received your return request and will review it soon.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <% locals.session.returnRequested = null; %> <!-- Clear the message after displaying -->
-            <% } %>
-          
-            <!-- Display for approved returns -->
-            <% if (locals.hasReturnedItems && locals.latestApprovedRefund) { %>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong>Return Approved!</strong> Your return request has been approved and the refund has been credited to your wallet.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <% } %>
-          
-            <!-- Return Item Status Section -->
-            <% if (itemsRequested.length > 0) { %>
-                <div class="return-status-section mt-4 mb-4">
-                  <h5>Your Return Status</h5>
-                  <div class="table-responsive">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Size</th>
-                          <th>Qty</th>
-                          <th>Status</th>
-                          <th>Requested On</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% itemsRequested.forEach(item => {
-                             const reqEntry = item.statusHistory.find(h => h.status === 'Return Requested');
-                        %>
-                        <tr>
-                          <td>
-                            <div class="d-flex align-items-center">
-                              <img src="/uploads/product-images/<%= item.productImage %>" alt="Product" style="width:40px;height:40px;object-fit:cover;margin-right:8px;">
-                              <%= item.product?.productName || 'Unnamed Product' %>
+                    <div class="return-panel">
+                        <% if (locals.session?.returnRequested) { %>
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <strong>Return Request Submitted!</strong> We've received your return request and will review it soon.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
-                          </td>
-                          <td><%= (item.variant?.size || 'N/A').toUpperCase() %></td>
-                          <td><%= item.quantity %></td>
-                          <td>
-                            <% if (item.currentStatus === 'Returned') { %>
-                              <span class="badge bg-success">Returned & Refunded</span>
-                            <% } else { %>
-                              <span class="badge bg-warning">Return Requested</span>
-                            <% } %>
-                          </td>
-                          <td><%= reqEntry ? new Date(reqEntry.timestamp).toLocaleDateString() : 'N/A' %></td>
-                        </tr>
-                        <% }) %>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <% } %>
-                
-                
-
-                        </div>
+                            <% locals.session.returnRequested = null; %>
+                        <% } %>
+          
+                        <% if (locals.hasReturnedItems && locals.latestApprovedRefund) { %>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Return Approved!</strong> Your return request has been approved and the refund has been credited to your wallet.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <% } %>
+          
+                        <% if (itemsRequested.length > 0) { %>
+                            <div class="return-status-section mt-4 mb-4">
+                              <h5>Your Return Status</h5>
+                              <div class="table-responsive">
+                                <table class="table table-bordered">
+                                  <thead>
+                                    <tr>
+                                      <th>Product</th>
+                                      <th>Size</th>
+                                      <th>Qty</th>
+                                      <th>Status</th>
+                                      <th>Requested On</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <% itemsRequested.forEach(item => {
+                                         const reqEntry = item.statusHistory.find(h => h.status === 'Return Requested');
+                                    %>
+                                    <tr>
+                                      <td>
+                                        <div class="d-flex align-items-center">
+                                          <img src="/Uploads/product-images/<%= item.productImage %>" alt="Product" style="width:40px;height:40px;object-fit:cover;margin-right:8px;">
+                                          <%= item.product?.productName || 'Unnamed Product' %>
+                                        </div>
+                                      </td>
+                                      <td><%= (item.variant?.size || 'N/A').toUpperCase() %></td>
+                                      <td><%= item.quantity %></td>
+                                      <td>
+                                        <% if (item.currentStatus === 'Returned') { %>
+                                          <span class="badge bg-success">Returned & Refunded</span>
+                                        <% } else { %>
+                                          <span class="badge bg-warning">Return Requested</span>
+                                        <% } %>
+                                      </td>
+                                      <td><%= reqEntry ? new Date(reqEntry.timestamp).toLocaleDateString() : 'N/A' %></td>
+                                    </tr>
+                                    <% }) %>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                        <% } %>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -1115,12 +1033,10 @@ const computedTotal     = order.totalAmount;
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Simple JavaScript for basic interactions
     const downloadInvoiceButtons = document.querySelectorAll('.btn-outline-primary');
     downloadInvoiceButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            // Add download invoice logic here
             console.log('Downloading invoice');
         });
     });
@@ -1129,9 +1045,8 @@ document.addEventListener('DOMContentLoaded', function() {
     reorderButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            // Add reorder logic here
             console.log('Reordering items');
         });
     });
 });
-</script> 
+</script>

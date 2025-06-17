@@ -1,5 +1,5 @@
 <%- include('../partials/userL/header.ejs') %>
-    
+
 <style>
     .dropdown{
         position:relative;
@@ -45,8 +45,8 @@
         color: #3BB77E;
         font-weight: 500;
     }
-     /* Sort Dropdown Styles */
-     .sort-by-cover {
+    /* Sort Dropdown Styles */
+    .sort-by-cover {
         position: relative;
     }
     .sort-by-product-wrap {
@@ -121,24 +121,65 @@
     }
 
     /* For the "Hot" Badge */
-.hot {
-  background-color: #28a745; /* Green */
-  color: white;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
+    .hot {
+        background-color: #28a745; /* Green */
+        color: white;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
 
-/* For the "Out of Stock" Badge */
-.out-of-stock {
-  background-color: #dc3545; /* Red */
-  color: white;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: block;
-}
+    /* For the "Out of Stock" Badge */
+    .out-of-stock {
+        background-color: #dc3545; /* Red */
+        color: white;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: block;
+    }
 
+    /* Mobile Header Styles */
+    @media (max-width: 991px) {
+        .header-middle {
+            display: block !important; /* Override d-none to show search bar on mobile */
+            padding: 10px 0;
+        }
+        .header-wrap {
+            flex-direction: column;
+            align-items: flex-end; /* Align items to the right */
+        }
+        .logo.logo-width-1 {
+            order: 1; /* Ensure logo appears first */
+            margin-bottom: 10px;
+            text-align: right; /* Align logo to the right */
+        }
+        .header-right {
+            order: 2; /* Search bar and actions below logo */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .search-style-2 {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 0 10px 0; /* Margin below search bar */
+        }
+        .search-style-2 form {
+            width: 100%;
+        }
+        .search-style-2 input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #e5e5e5;
+        }
+        .header-action-right {
+            margin-top: 10px;
+        }
+    }
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -147,33 +188,20 @@
             <div class="row align-items-center">
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
-                        <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-rs-marker"></i><a  href="/contact">Our location</a></li>
-                        </ul>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-4">
                     <div class="text-center">
-                   
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-                            <li>
-                                <a class="language-dropdown-active" href="#"> <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i></a>
-                                <ul class="language-dropdown">
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                </ul>
-                            </li>
                             <% if (typeof user !== 'undefined' && user) { %>
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= user.name %></a>
                                     <div class="dropdown-content">
-                                        <a href="/profileInfo">Profile</a>
+                                        <a href="/userProfile">Profile</a>
                                         <a href="/logout">Logout</a>
                                     </div>
                                 </div>
@@ -186,11 +214,11 @@
             </div>
         </div>
     </div>
-    <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+    <div class="header-middle header-middle-ptb-1">
         <div class="container">
             <div class="header-wrap">
                 <div class="logo logo-width-1">
-                   <img src="assets/imgs/theme/jaeger.png" alt="logo">
+                    <img src="assets/imgs/theme/jaeger.png" alt="logo">
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
@@ -213,7 +241,6 @@
                                     <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
                                     <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
                                 </a>
-
                             </div>
                         </div>
                     </div>
@@ -228,246 +255,205 @@
                     <a href="/"><img src="assets/imgs/theme/jaeger.png" alt="logo"></a>
                 </div>
                 <div class="header-nav d-none d-lg-flex">
-    
                     <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                         <nav>
                             <ul>
-                                <li><a class="" href="/">Home</a>
-                                    
-                                </li>
-                                <li>
-                                    <a href=#>About</a>
-                                </li>
-                                <li><a class="active" href="/shop">Shop</a>
-                                   
-                                </li>
-                                <li class="position-static"><a href="#">Deals</a>
-                                    <ul class="mega-menu">
-                                        
-                                    </ul>
-                                </li>
-                                
-                        
-                                <li>
-                                    <a href="#">Contact</a>
-                                </li>
+                                <li><a class="" href="/">Home</a></li>
+                                <li><a class="active" href="/shop">Shop</a></li>
                             </ul>
                         </nav>
                     </div>
                 </div>
-                <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
-                </div>   
             </div>
         </div>
     </div>
 </header>
 
-    <!-- border -->
-
-                
-    <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="/" rel="nofollow">Home</a>
-                    <span></span> Shop
-                </div>
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> Shop
             </div>
         </div>
-        <section class="mt-50 mb-50">
-            <div class="container">
-                <div class="row flex-row-reverse">
-                    <div class="col-lg-9">
-                        <div class="shop-product-fillter">
-                            <div class="totall-product">
-                                <p> We found <strong class="text-brand"><%= totalProducts %></strong> items for you!</p>
-                            </div>
-                            <% if (typeof priceRange !== 'undefined' && priceRange) { %>
-                                <div class="price-filter-info">
-                                    <p>Price Range: ₹<%= priceRange.min %> - ₹<%= priceRange.max %></p>
-                                    <a href="/shop" class="clear-filter">Clear Filter</a>
-                                    <div class="sort-by-cover">
-                                
-                            </div>
-                                </div>
-                            <% } %>
-                            
-                            
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row flex-row-reverse">
+                <div class="col-lg-9">
+                    <div class="shop-product-fillter">
+                        <div class="totall-product">
+                            <p> We found <strong class="text-brand"><%= totalProducts %></strong> items for you!</p>
                         </div>
-
-                        <div class="row product-grid-3">
-                            <% for(let i = 0; i < products.length; i++){ %>
-                              <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                  <div class="product-img-action-wrap">
-                                    <div class="product-img product-img-zoom">
-                                      <a href="/productDetails?id=<%= products[i]._id %>">
-                                        <img class="default-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
-                                        <img class="hover-img" src="/uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
-                                      </a>
-                                    </div>
-                                    <div class="product-action-1">
-                                      <a aria-label="Add To Wishlist" 
-                                         class="action-btn hover-up add-to-wishlist" 
-                                         href="#" 
-                                         data-product-id="<%= products[i]._id %>">
-                                        <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
-                                           <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
-                                             style="fill: red;"
-                                           <% } %>
-                                        ></i>
-                                      </a>
-                                    </div>
-                          
-                                    <!-- Badge: Show 'Out of Stock' if all sizes are 0, else show 'Hot' -->
-                                    <% const allSizesOutOfStock = products[i].variant.size.s === 0 && 
-                                                                 products[i].variant.size.m === 0 && 
-                                                                 products[i].variant.size.l === 0 && 
-                                                                 products[i].variant.size.x === 0 && 
-                                                                 products[i].variant.size.xl === 0; %>
-                          
-                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                      <% if (allSizesOutOfStock) { %>
-                                        <!-- Display the 'Out of Stock' badge -->
-                                        <span class="out-of-stock">Out of Stock</span>
-                                      <% } else { %>
-                                        <!-- Display the 'Hot' badge -->
-                                        <span class="hot">Hot</span>
-                                      <% } %>
-                                    </div>
-                                  </div>
-                                  <div class="product-content-wrap">
-                                    <div class="product-category">
-                                      <a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].category.name %></a>
-                                    </div>
-                                    <h2><a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].productName %></a></h2>
-                                    
-                                    <div class="product-price">
-                                      <span>₹<%= products[i].salePrice %></span>
-                                      <span class="old-price">₹<%= products[i].regularPrice %></span>
-                                    </div>
-                                   
-                                  </div>
-                                </div>
-                              </div>
-                            <% } %>
-                          </div>
-                          
-                        <!--pagination-->
-                        <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-start">
-                                    <% if (currentPage > 1) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="/shop?page=<%= currentPage - 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">
-                                                <i class="fi-rs-angle-double-small-left"></i>
-                                            </a>
-                                        </li>
-                                    <% } %>
-                                    
-                                    <% 
-                                        let startPage = Math.max(1, currentPage - 2);
-                                        let endPage = Math.min(totalPages, currentPage + 2);
-                                        if(startPage > 1) { 
-                                    %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="/shop?page=1<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">01</a>
-                                        </li>
-                                        <% if(startPage > 2) { %>
-                                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                                        <% } %>
-                                    <% } %>
-                                    
-                                    <% for(let i = startPage; i <= endPage; i++) { %>
-                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                            <a class="page-link" href="/shop?page=<%= i %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>"><%= i.toString().padStart(2, '0') %></a>
-                                        </li>
-                                    <% } %>
-                                    
-                                    <% if (currentPage < totalPages) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="/shop?page=<%= currentPage + 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">
-                                                <i class="fi-rs-angle-double-small-right"></i>
-                                            </a>
-                                        </li>
-                                    <% } %>
-                                </ul>
-                            </nav>
-                        </div>
-                          
-                          
+                        <% if (typeof priceRange !== 'undefined' && priceRange) { %>
+                            <div class="price-filter-info">
+                                <p |Price Range: ₹<%= priceRange.min %> - ₹<%= priceRange.max %></p>
+                                <a href="/shop" class="clear-filter">Clear Filter</a>
+                                <div class="sort-by-cover"></div>
+                            </div>
+                        <% } %>
                     </div>
-                    <div class="col-lg-3 primary-sidebar sticky-sidebar">
 
-
-                        <div class="sort-by-cover">
-                            <div class="sort-by-product-wrap">
-                                <div class="sort-by">
-                                    <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
-                                </div>
-                                <div class="sort-by-dropdown-wrap">
-                                    <span id="currentSort">
-                                        <% if (typeof sortOption !== 'undefined' && sortOption) { %>
-                                            <% if (sortOption === 'price_low') { %>
-                                                Price: Low to High
-                                            <% } else if (sortOption === 'price_high') { %>
-                                                Price: High to Low
+                    <div class="row product-grid-3">
+                        <% for(let i = 0; i < products.length; i++){ %>
+                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                                <div class="product-cart-wrap mb-30">
+                                    <div class="product-img-action-wrap">
+                                        <div class="product-img product-img-zoom">
+                                            <a href="/productDetails?id=<%= products[i]._id %>">
+                                                <img class="default-img" src="/Uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                                <img class="hover-img" src="/Uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                            </a>
+                                        </div>
+                                        <div class="product-action-1">
+                                            <a aria-label="Add To Wishlist" 
+                                               class="action-btn hover-up add-to-wishlist" 
+                                               href="#" 
+                                               data-product-id="<%= products[i]._id %>">
+                                                <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
+                                                   <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
+                                                     style="fill: red;"
+                                                   <% } %>
+                                                ></i>
+                                            </a>
+                                        </div>
+                                        <!-- Badge: Show 'Out of Stock' if all sizes are 0, else show 'Hot' -->
+                                        <% const allSizesOutOfStock = products[i].variant.size.s === 0 && 
+                                                                     products[i].variant.size.m === 0 && 
+                                                                     products[i].variant.size.l === 0 && 
+                                                                     products[i].variant.size.x === 0 && 
+                                                                     products[i].variant.size.xl === 0; %>
+                                        <div class="product-badges product-badges-position product-badges-mrg">
+                                            <% if (allSizesOutOfStock) { %>
+                                                <span class="out-of-stock">Out of Stock</span>
                                             <% } else { %>
-                                                Featured
+                                                <span class="hot">Hot</span>
                                             <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="product-content-wrap">
+                                        <div class="product-category">
+                                            <a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].category.name %></a>
+                                        </div>
+                                        <h2><a href="/productDetails?id=<%= products[i]._id %>"><%= products[i].productName %></a></h2>
+                                        <div class="rating-result" title="90%">
+                                            <span>
+                                                <span>90%</span>
+                                            </span>
+                                        </div>
+                                        <div class="product-price">
+                                            <span>₹<%= products[i].salePrice %></span>
+                                            <span class="old-price">₹<%= products[i].regularPrice %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!--pagination-->
+                    <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-start">
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/shop?page=<%= currentPage - 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">
+                                            <i class="fi-rs-angle-double-small-left"></i>
+                                        </a>
+                                    </li>
+                                <% } %>
+                                <% 
+                                    let startPage = Math.max(1, currentPage - 2);
+                                    let endPage = Math.min(totalPages, currentPage + 2);
+                                    if(startPage > 1) { 
+                                %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/shop?page=1<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">01</a>
+                                    </li>
+                                    <% if(startPage > 2) { %>
+                                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                    <% } %>
+                                <% } %>
+                                <% for(let i = startPage; i <= endPage; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="/shop?page=<%= i %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>"><%= i.toString().padStart(2, '0') %></a>
+                                    </li>
+                                <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/shop?page=<%= currentPage + 1 %><%= selectedCategory ? '&category=' + selectedCategory : '' %><%= sortOption ? '&sort=' + sortOption : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>">
+                                            <i class="fi-rs-angle-double-small-right"></i>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                    <div class="sort-by-cover">
+                        <div class="sort-by-product-wrap">
+                            <div class="sort-by">
+                                <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+                            </div>
+                            <div class="sort-by-dropdown-wrap">
+                                <span id="currentSort">
+                                    <% if (typeof sortOption !== 'undefined' && sortOption) { %>
+                                        <% if (sortOption === 'price_low') { %>
+                                            Price: Low to High
+                                        <% } else if (sortOption === 'price_high') { %>
+                                            Price: High to Low
                                         <% } else { %>
                                             Featured
                                         <% } %>
-                                        <i class="fi-rs-angle-small-down"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="sort-by-dropdown">
-                                <ul>
-                                    <li><a href="/shop?sort=price_low<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>" class="<%= sortOption === 'price_low' ? 'active' : '' %>">Price: Low to High</a></li>
-                                    <li><a href="/shop?sort=price_high<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>" class="<%= sortOption === 'price_high' ? 'active' : '' %>">Price: High to Low</a></li>
-                                </ul>
+                                    <% } else { %>
+                                        Featured
+                                    <% } %>
+                                    <i class="fi-rs-angle-small-down"></i>
+                                </span>
                             </div>
                         </div>
-
-
-                        <div class="widget-category mb-30">
-                            <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
-                            <ul class="categories">
-                                <li><a href="#" class="category-link <%= !selectedCategory ? 'active' : '' %>" data-category="">All Categories</a></li>
-                                <% for(let i = 0; i < category.length; i++) { %>
+                        <div class="sort-by-dropdown">
+                            <ul>
+                                <li><a href="/shop?sort=price_low<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>" class="<%= sortOption === 'price_low' ? 'active' : '' %>">Price: Low to High</a></li>
+                                <li><a href="/shop?sort=price_high<%= selectedCategory ? '&category=' + selectedCategory : '' %><%= typeof searchQuery !== 'undefined' && searchQuery ? '&query=' + searchQuery : '' %>" class="<%= sortOption === 'price_high' ? 'active' : '' %>">Price: High to Low</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="widget-category mb-30">
+                        <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+                        <ul class="categories">
+                            <li><a href="#" class="category-link <%= !selectedCategory ? 'active' : '' %>" data-category="">All Categories</a></li>
+                            <% for(let i = 0; i < category.length; i++) { %>
                                 <li>
                                     <a href="#" class="category-link <%= selectedCategory && selectedCategory.toString() === category[i]._id.toString() ? 'active' : '' %>" 
                                        data-category="<%= category[i]._id %>">
                                         <%= category[i].name %>
                                     </a>
                                 </li>
-                                <% } %>
-                            </ul>
+                            <% } %>
+                        </ul>
+                    </div>
+                    <!-- Price Filter -->
+                    <div class="sidebar-widget price_range range mb-30">
+                        <div class="widget-header position-relative mb-20 pb-10">
+                            <h5 class="widget-title mb-10">Filter by price</h5>
+                            <div class="bt-1 border-color-1"></div>
                         </div>
-                        <!-- Price Filter -->
-                        <div class="sidebar-widget price_range range mb-30">
-                            <div class="widget-header position-relative mb-20 pb-10">
-                                <h5 class="widget-title mb-10">Filter by price</h5>
-                                <div class="bt-1 border-color-1"></div>
-                            </div>
-                            <div class="price-filter">
-                                <div class="price-filter-inner">
-                                    <div id="slider-range"></div>
-                                    <div class="price_slider_amount">
-                                        <div class="label-input">
-                                            <span>Range:</span>
-                                            <input type="text" id="amount" name="price" placeholder="Add Your Price" />
-                                        </div>
+                        <div class="price-filter">
+                            <div class="price-filter-inner">
+                                <div id="slider-range"></div>
+                                <div class="price_slider_amount">
+                                    <div class="label-input">
+                                        <span>Range:</span>
+                                        <input type="text" id="amount" name="price" placeholder="Add Your Price" />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <button id="applyFilter" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Filter</button>
-
-                        
                     </div>
+                    <button id="applyFilter" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Filter</button>
                 </div>
             </div>
         </section>
@@ -477,78 +463,93 @@
 
     <script>
         document.querySelectorAll('.add-to-wishlist').forEach(button => {
-  button.addEventListener('click', async function (e) {
-    e.preventDefault();
-    const productId = this.getAttribute('data-product-id');
-    const iconElement = this.querySelector('i');
-    const isInWishlist = iconElement.classList.contains('text-danger');
-    
-    try {
-      const endpoint = isInWishlist ? '/wishlist/remove' : '/wishlist/add';
-      
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ productId })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        if (isInWishlist) {
-          // Remove styling
-          iconElement.classList.remove('text-danger');
-          iconElement.style.fill = '';
-          
-          Swal.fire({
-            icon: 'success',
-            title: 'Removed from Wishlist!',
-            text: 'Product has been successfully removed.',
-            timer: 1500,
-            showConfirmButton: false
-          });
-        } else {
-          // Add styling
-          iconElement.classList.add('text-danger');
-          iconElement.style.fill = 'red';
-          
-          Swal.fire({
-            icon: 'success',
-            title: 'Added to Wishlist!',
-            text: 'Product has been successfully added.',
-            timer: 1500,
-            showConfirmButton: false
-          });
-        }
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops!',
-          text: data.message || 'Could not update wishlist.'
+            button.addEventListener('click', async function (e) {
+                e.preventDefault();
+                const productId = this.getAttribute('data-product-id');
+                const iconElement = this.querySelector('i');
+                const isInWishlist = iconElement.classList.contains('text-danger');
+                
+                try {
+                    const endpoint = isInWishlist ? '/wishlist/remove' : '/wishlist/add';
+                    
+                    console.log(`Sending request to ${endpoint} for product ID: ${productId}`);
+                    
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ productId })
+                    });
+                    
+                    const data = await response.json();
+                    console.log('Server response:', data);
+                    
+                    if (response.ok) {
+                        // Update the wishlist count in the header
+                        const wishlistCountElement = document.querySelector('.header-action-icon-2 a[href="/wishlist"] .pro-count');
+                        if (wishlistCountElement) {
+                            let newCount;
+                            if (typeof data.wishlistCount !== 'undefined') {
+                                // Use server-provided count if available
+                                newCount = data.wishlistCount;
+                            } else {
+                                // Fallback: Increment/decrement current count
+                                const currentCountText = wishlistCountElement.textContent.match(/\d+/);
+                                const currentCount = currentCountText ? parseInt(currentCountText[0]) : 0;
+                                newCount = isInWishlist ? currentCount - 1 : currentCount + 1;
+                                newCount = Math.max(0, newCount); // Ensure count doesn't go negative
+                            }
+                            wishlistCountElement.textContent = `${newCount} product${newCount !== 1 ? 's' : ''}`;
+                            console.log(`Wishlist count updated to: ${newCount}`);
+                        } else {
+                            console.error('Wishlist count element not found');
+                        }
+                        
+                        if (isInWishlist) {
+                            iconElement.classList.remove('text-danger');
+                            iconElement.style.fill = '';
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Removed from Wishlist!',
+                                text: 'Product has been successfully removed.',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            iconElement.classList.add('text-danger');
+                            iconElement.style.fill = 'red';
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Added to Wishlist!',
+                                text: 'Product has been successfully added.',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops!',
+                            text: data.message || 'Could not update wishlist.'
+                        });
+                    }
+                } catch (err) {
+                    console.error('Error during wishlist update:', err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Error',
+                        text: 'Something went wrong. Try again later.'
+                    });
+                }
+            });
         });
-      }
-    } catch (err) {
-      console.error(err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Server Error',
-        text: 'Something went wrong. Try again later.'
-      });
-    }
-  });
-});
-      </script>
-      
-
-
+    </script>
 
     <%- include('../partials/userL/footer.ejs') %>
 
     <script>
-
-            function handleSearch(form) {
+        function handleSearch(form) {
             const searchInput = form.querySelector('input[name="query"]');
             if (!searchInput.value.trim()) {
                 window.location.href = '/shop';
@@ -556,7 +557,6 @@
             }
             return true;
         }
-
 
         $(document).ready(function() {
             let selectedCategoryId = '<%= selectedCategory %>';
@@ -599,7 +599,7 @@
                 if (currentSort) {
                     url += (url.includes('?') ? '&' : '?') + 'sort=' + currentSort;
                 }
-                 const searchQuery = '<%= typeof searchQuery !== "undefined" ? searchQuery : "" %>';
+                const searchQuery = '<%= typeof searchQuery !== "undefined" ? searchQuery : "" %>';
                 if (searchQuery) {
                     url += (url.includes('?') ? '&' : '?') + 'query=' + encodeURIComponent(searchQuery);
                 }
@@ -617,8 +617,6 @@
                 }
             });
         });
-
-        
     </script>
 </body>
 </html>

@@ -44,6 +44,98 @@
     font-style: italic;
 }
 
+/* New responsive image section styles */
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .col-lg-6 {
+        margin-bottom: 30px;
+    }
+    
+    
+    
+    .pt-150 {
+        padding-top: 80px !important;
+    }
+    
+    .pb-150 {
+        padding-bottom: 80px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .login_wrap {
+        padding: 20px !important;
+    }
+    
+    .pt-150 {
+        padding-top: 50px !important;
+    }
+    
+    .pb-150 {
+        padding-bottom: 50px !important;
+    }
+    
+    
+    
+    .form-group input,
+    .form-group select {
+        height: 50px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .btn {
+        height: 50px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .col-lg-10 {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .login_wrap {
+        padding: 15px !important;
+    }
+    
+    .heading_s1 h3 {
+        font-size: 24px;
+    }
+    
+    .mb-50 {
+        margin-bottom: 30px !important;
+    }
+    
+    .mb-30 {
+        margin-bottom: 20px !important;
+    }
+}
+
+/* Ensure form inputs are properly sized on all devices */
+.form-group input,
+.form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-group select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="m2 0-2 2h4zm0 5 2-2h-4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    padding-right: 40px;
+}
+
 </style>
 
     <main class="main">
@@ -54,14 +146,14 @@
                     <div class="col-lg-10 m-auto">
                         <div class="row">
 
-                            <div class="col-lg-6">
+                            <div class="col-lg-6 col-md-12">
                                 <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
                                     <div class="padding_eight_all bg-white">
                                         <div class="heading_s1">
                                             <h3 class="mb-30">Create an Account</h3>
                                         </div>
                                         <p class="mb-50 font-sm">
-                                            Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy
+                                            Your personal data will be used to support your experience throughout this website.
                                         </p>
                                         <form id="signform" method="post" action="/signup">
                                             <div class="form-group">
@@ -119,7 +211,7 @@
                                             <span> or</span>
                                         </div>
                                         <ul class="btn-login list_none text-center mb-15">
-                                            <li><a href="" class="btn btn-facebook hover-up mb-lg-0 mb-sm-4">Login With Facebook</a></li>
+                                            <!-- <li><a href="" class="btn btn-facebook hover-up mb-lg-0 mb-sm-4">Login With Facebook</a></li> -->
                                             <li><a href="/google" class="btn btn-google hover-up">Login With Google</a></li>
                                         </ul>
                                         <div class="text-muted text-center">Already have an account? <a href="/login">Log in now</a></div>
@@ -127,6 +219,8 @@
                                 </div>
                             </div>
 
+                            <!-- New Image Section -->
+                           
                             
                         </div>
                     </div>

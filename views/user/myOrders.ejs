@@ -218,6 +218,71 @@
         color: #6c757d;
         margin-bottom: 1.5rem;
     }
+
+    /* RESPONSIVE FIX: Hide desktop sidebar on small screens */
+    @media (max-width: 991.98px) {
+        .desktop-sidebar {
+            display: none !important;
+        }
+        
+        .mobile-main-content {
+            width: 100%;
+            max-width: 100%;
+            flex: 0 0 100%;
+        }
+    }
+
+    /* Ensure desktop sidebar is visible on larger screens */
+    @media (min-width: 992px) {
+        .desktop-sidebar {
+            display: block !important;
+        }
+    }
+
+    /* Additional responsive improvements for order cards */
+    @media (max-width: 767.98px) {
+        .order-card .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .order-card .order-item {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+        
+        .order-card .order-item img {
+            margin-bottom: 0.5rem;
+            margin-right: 0;
+        }
+        
+        .order-card .order-actions {
+            justify-content: center;
+        }
+        
+        .order-card .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .order-card .card-header,
+        .order-card .card-body {
+            padding: 0.75rem;
+        }
+        
+        .order-card .order-item-details {
+            font-size: 0.9rem;
+        }
+    }
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -226,10 +291,10 @@
             <div class="row align-items-center">
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
-                        <ul>
+                        <!-- <ul>
                             <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
                             <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
-                        </ul>
+                        </ul> -->
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-4">
@@ -239,7 +304,7 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-                            <li>
+                            <!-- <li>
                                 <a class="language-dropdown-active" href="#"> 
                                     <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
                                 </a>
@@ -248,7 +313,7 @@
                                     <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
                                     <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                             <% if (typeof user !== 'undefined' && user) { %>
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= user.name %></a>
@@ -309,19 +374,19 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="#">About</a></li>
+                                <!-- <li><a href="#">About</a></li> -->
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="#">Deals</a>
+                                <!-- <li class="position-static"><a href="#">Deals</a> -->
                                     <ul class="mega-menu">
                                     </ul>
                                 </li>
-                                <li><a href="#">Contact</a></li>
+                                <!-- <li><a href="#">Contact</a></li> -->
                             </ul>
                         </nav>
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                    <!-- <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p> -->
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">
@@ -355,7 +420,7 @@
                     <ul class="mobile-menu font-heading">
                         <li><a href="/profileinfo">Profile</a></li>
                         <li><a href="/myorders">My Orders</a></li>
-                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/myAddresses">My Addresses</a></li>
                         <li><a href="/wishlist">Wishlist</a></li>
                         <li><a href="/wallet">My Wallet</a></li>
                         <li><a href="/logout">Logout</a></li>
@@ -379,7 +444,8 @@
     <section class="mt-50 mb-50">
         <div class="container">
             <div class="row">
-          <div class="col-lg-3">
+                <!-- DESKTOP SIDEBAR - Hidden on small screens -->
+                <div class="col-lg-3 desktop-sidebar">
                     <div class="dashboard-menu">
                         <ul class="nav flex-column" role="tablist">
                             <li class="nav-item">
@@ -419,7 +485,9 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-9">
+                
+                <!-- MAIN CONTENT - Full width on mobile, 9 columns on desktop -->
+                <div class="col-lg-9 mobile-main-content">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h3 class="mb-0">My Orders</h3>
@@ -443,8 +511,6 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="order-items">
-                                        
-
                                         <% order.orderItems.forEach(item => { %>
                                         <div class="order-item">
                                             <img src="/uploads/product-images/<%= item.productImage %>" alt="Product">
@@ -455,7 +521,6 @@
                                                 </div>
                                                 <div class="order-item-quantity">Quantity: <%= item.quantity%></div>
                                                 <!-- <pre><%= JSON.stringify(item, null, 2) %></pre> -->
-
                                             </div>
                                         </div>
                                         <% }) %>
@@ -469,9 +534,6 @@
                                 </div>
                             </div>
                             <%})%>
-
-                            
-
                         </div>
                     </div>
                     <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
@@ -499,11 +561,9 @@
                                   </li>
                                 <% } %>
                               </ul>
-                              
                         </nav>
                     </div>
                 </div>
-                
             </div>
         </div>
     </section>
@@ -522,4 +582,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-</script> 
+</script>

@@ -228,27 +228,33 @@
     }
 
     /* phind */
-
     .invalid-feedback {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
-    color: #dc3545;
-}
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        color: #dc3545;
+    }
 
-.is-invalid {
-    border-color: #dc3545;
-    padding-right: calc(1.5rem + 1.5625rem);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cpath d='M6 7l2 2 2-2M6 7l-2 2-2-2'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right calc(0.375rem + 0.1875rem) center;
-    background-size: calc(0.75rem + 0.375rem) calc(0.75rem + 0.375rem);
-}
+    .is-invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5rem + 1.5625rem);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cpath d='M6 7l2 2 2-2M6 7l-2 2-2-2'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375rem + 0.1875rem) center;
+        background-size: calc(0.75rem + 0.375rem) calc(0.75rem + 0.375rem);
+    }
 
-.form-control:focus:not(:placeholder-shown):invalid {
-    border-color: #dc3545;
-    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-}
+    .form-control:focus:not(:placeholder-shown):invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    /* Hide dashboard menu on small screens */
+    @media (max-width: 991px) {
+        .dashboard-menu {
+            display: none;
+        }
+    }
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -258,7 +264,6 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
                         <ul>
-                            <li><i class="fi-ss-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
                         </ul>
                     </div>
                 </div>
@@ -269,16 +274,6 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-                            <li>
-                                <a class="language-dropdown-active" href="#"> 
-                                    <i class="fi-ss-world"></i> English <i class="fi-ss-angle-small-down"></i>
-                                </a>
-                                <ul class="language-dropdown">
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                </ul>
-                            </li>
                             <% if (typeof user !== 'undefined' && user) { %>
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= user.name %></a>
@@ -304,7 +299,6 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        
                     </div>
                     <div class="header-action-right">
                        <div class="header-action-2">
@@ -312,7 +306,6 @@
                                     <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
                                         <span class="pro-count blue"><%= wishlistCount %> product<%= wishlistCount !== 1 ? 's' : '' %></span>
-
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
@@ -320,7 +313,6 @@
                                         <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
                                         <span class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
                                     </a>
-
                                 </div>
                             </div>
                     </div>
@@ -339,19 +331,12 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="#">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="#">Deals</a>
-                                    <ul class="mega-menu">
-                                    </ul>
-                                </li>
-                                <li><a href="#">Contact</a></li>
                             </ul>
                         </nav>
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-ss-headset"></i><span>Hotline</span> 1900 - 888 </p>
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">
@@ -428,13 +413,11 @@
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
-                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/wallet">
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                           
                             <% if(!user.googleId){%>
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
@@ -442,7 +425,6 @@
                                 </a>
                             </li>
                             <%}%>
-                          
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
                                     <i class="fi-rs-exit"></i> Logout
@@ -583,11 +565,11 @@
                                     <label for="defaultAddress" class="form-check-label">Set as default address</label>
                                 </div>
 
-                                 <input type="hidden" name="redirect" value="<%= redirect %>">
+                                <input type="hidden" name="redirect" value="<%= redirect %>">
 
                                 <div class="mt-4">
                                     <button type="submit" class="btn btn-fill-out">Save Address</button>
-                                    <a href="/addresses" class="btn btn-outline-primary ms-2">Cancel</a>
+                                    <a href="/myAddresses" class="btn btn-outline-primary ms-2">Cancel</a>
                                 </div>
                             </form>
                         </div>

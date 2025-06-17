@@ -139,6 +139,13 @@
         color: #6c757d;
         margin-bottom: 1.5rem;
     }
+
+    /* Hide dashboard menu on small screens */
+    @media (max-width: 991px) {
+        .dashboard-menu {
+            display: none;
+        }
+    }
 </style>
 
 <header class="header-area header-style-1 header-height-2">
@@ -147,10 +154,6 @@
             <div class="row align-items-center">
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info">
-                        <ul>
-                            <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                            <li><i class="fi-rs-marker"></i><a href="/contact">Our location</a></li>
-                        </ul>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-4">
@@ -160,16 +163,6 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-                            <li>
-                                <a class="language-dropdown-active" href="#"> 
-                                    <i class="fi-rs-world"></i> English <i class="fi-rs-angle-small-down"></i>
-                                </a>
-                                <ul class="language-dropdown">
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-fr.png" alt="">Français</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
-                                    <li><a href="#"><img src="assets2/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
-                                </ul>
-                            </li>
                            <% if (typeof user !== 'undefined' && user) { %>
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= user.name %></a>
@@ -195,7 +188,6 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
@@ -203,7 +195,6 @@
                                     <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="assets2/imgs/theme/icons/icon-heart.svg">
                                         <span class="pro-count blue"><%= wishlistCount %> products<%= wishlistCount !== 1 ? 's' : '' %></span>
-
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
@@ -211,7 +202,6 @@
                                         <img alt="Evara" src="assets2/imgs/theme/icons/icon-cart.svg">
                                         <span id="cart-count" class="pro-count blue"><%= items.length %> Item<%= items.length !== 1 ? 's' : '' %></span>
                                     </a>
-
                                 </div>
                             </div>
                     </div>
@@ -230,19 +220,12 @@
                         <nav>
                             <ul>
                                 <li><a href="/">Home</a></li>
-                                <li><a href="#">About</a></li>
                                 <li><a href="/shop">Shop</a></li>
-                                <li class="position-static"><a href="#">Deals</a>
-                                    <ul class="mega-menu">
-                                    </ul>
-                                </li>
-                                <li><a href="#">Contact</a></li>
                             </ul>
                         </nav>
                     </div>
                 </div>
                 <div class="hotline d-none d-lg-block">
-                    <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
                 </div>   
                 <div class="header-action-icon-2 d-block d-lg-none">
                     <div class="burger-icon burger-icon-white">
@@ -276,7 +259,7 @@
                     <ul class="mobile-menu font-heading">
                         <li><a href="/profileinfo">Profile</a></li>
                         <li><a href="/myorders">My Orders</a></li>
-                        <li><a href="/addresses">My Addresses</a></li>
+                        <li><a href="/myAddresses">My Addresses</a></li>
                         <li><a href="/wishlist">Wishlist</a></li>
                         <li><a href="/wallet">My Wallet</a></li>
                         <li><a href="/logout">Logout</a></li>
@@ -318,13 +301,11 @@
                                     <i class="fi-rs-marker"></i> My Addresses
                                 </a>
                             </li>
-                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/wallet">
                                     <i class="fi-rs-credit-card"></i> My Wallet
                                 </a>
                             </li>
-                          
                             <% if(!user.googleId){%>
                             <li class="nav-item">
                                 <a class="nav-link" href="/security">
@@ -332,7 +313,6 @@
                                 </a>
                             </li>
                             <%}%>
-                           
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">
                                     <i class="fi-rs-exit"></i> Logout
@@ -346,12 +326,8 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h3 class="mb-0">My Addresses</h3>
                             <a href="/addAddresses?redirect=myAddresses" class="btn btn-sm btn-fill-out">Add New Address</a>
-
                         </div>
                         <div class="card-body">
-                           
-                            
-
                             <div class="address-card">                               
                                 <% addresses.forEach((addr, index) => { %>
                                     <div class="card">
@@ -382,7 +358,7 @@
                                       </div>
                                     </div>
                                   <% }) %>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>

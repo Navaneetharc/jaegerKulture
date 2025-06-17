@@ -167,6 +167,10 @@ const placeOrder = async (req, res, next) => {
       });
     }
 
+    if(couponCode && discount > 0){
+      await applyCoupon(userId, couponCode, subTotal, true);
+    }
+
     for (const item of cart.items) {
       const productId = item.productId._id;
       const size = item.variants.size.toLowerCase();
@@ -216,7 +220,7 @@ const createRazorPay = async (req, res, next) => {
     const delivery = 41;
     const tax = parseFloat((subTotal * 0.05).toFixed(2));
     
-    const { discount } = await applyCoupon(userId, couponCode, subTotal);
+    const { discount } = await applyCoupon(userId, couponCode, subTotal, false);
     
     const total = Math.round((subTotal - discount + delivery + tax) * 100);
 
@@ -284,15 +288,12 @@ const verifyRazorpayPayment = async (req, res, next) => {
     const deliveryCharge = 41;
     const tax            = parseFloat((subTotal * 0.05).toFixed(2));
 
-
     let discount = 0;
     let couponName = null;
     if (couponCode) {
+      
       const couponDoc = await Coupon.findOne({ code: couponCode });
-      console.log('Coupon doc fetched:', couponDoc);
-
-      const result = await applyCoupon(userId, couponCode, subTotal);
-      console.log('applyCoupon result:', result);
+      const result = await applyCoupon(userId, couponCode, subTotal, false);
 
       discount = result.discount || 0;
       if (discount > 0 && couponDoc) {
@@ -326,6 +327,10 @@ const verifyRazorpayPayment = async (req, res, next) => {
       status:           'Order Placed'
     });
 
+    if (couponCode && discount > 0) {
+      await applyCoupon(userId, couponCode, subTotal, true);
+    }
+
     for (const item of cart.items) {
       const prod = await Product.findById(item.productId._id);
       if (!prod) continue;
@@ -347,6 +352,7 @@ const verifyRazorpayPayment = async (req, res, next) => {
     return res.status(500).json({ success: false, redirect: '/order-failure' });
   }
 };
+
 
 
 const loadOrderSuccess = async (req, res) => {
