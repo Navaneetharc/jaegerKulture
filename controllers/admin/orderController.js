@@ -142,14 +142,14 @@ const getOrderDetails = async (req, res) => {
         };
       } else {
         displayOrder.returnRequest = { status: null, items: [], _id: order._id };
-        console.log('No items found for return!');
+        // console.log('No items found for return');
       }
     } else {
       displayOrder.returnRequest = { status: null, items: [], _id: order._id };
-      console.log('No return requests found for this order');
+      // console.log('No return requests found for this order');
     }
 
-    console.log('Return items count:', displayOrder.returnRequest.items.length);
+    // console.log('Return items count:', displayOrder.returnRequest.items.length);
     
     res.render('adminOrderDetails', { order: displayOrder, refunds });
   } catch (error) {
@@ -229,7 +229,7 @@ const approveReturns = async (req, res) => {
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).send('Order not found');
 
-    console.log(`Processing return approval for order ${orderId}`);
+    // console.log(`Processing return approval for order ${orderId}`);
 
     const refunds = await Refund.find({
       order: orderId,

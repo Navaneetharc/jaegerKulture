@@ -48,7 +48,7 @@ const addCategory = async(req,res)=>{
     const trimmedName = name.trim();
     const trimmedDesc = description.trim();
     try {
-        console.log("Received category data:", { trimmedName, trimmedDesc, Visibility, offer });
+        // console.log("Received category data:", { trimmedName, trimmedDesc, Visibility, offer });
 
         const existingCategory = await Category.findOne({ name: { $regex: `^${trimmedName}$`, $options: "i" } });
        
@@ -65,7 +65,7 @@ const addCategory = async(req,res)=>{
         });           
 
         await newCategory.save();
-        console.log("Category saved successfully:", newCategory);
+        // console.log("Category saved successfully:", newCategory);
 
         const products = await Product.find({ category: newCategory._id });
         for (const product of products) {

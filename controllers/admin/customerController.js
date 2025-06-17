@@ -44,9 +44,9 @@ const customerBlocked = async(req,res)=>{
     try {
         
         let id = req.query.id;
-        console.log("Blocking user with ID:", id);
+        // console.log("Blocking user with ID:", id);
         const result = await User.updateOne({_id:id},{$set:{isBlocked:true}});
-        console.log("Update result:", result);
+        // console.log("Update result:", result);
 
         if (req.app.locals.sessionStore) {
             req.app.locals.sessionStore.all((error, sessions) => {

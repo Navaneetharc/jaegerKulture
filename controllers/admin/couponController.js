@@ -57,7 +57,7 @@ const addCoupon = async (req, res) => {
     });
 
     await newCoupon.save();
-    console.log('Coupon saved:', newCoupon.code);
+    // console.log('Coupon saved:', newCoupon.code);
     
     if (req.xhr) {
       return res.status(200).json({
@@ -134,7 +134,7 @@ const updateCoupon = async (req, res) => {
       });
     }
 
-    console.log('Coupon updated:', updatedCoupon.code);
+    // console.log('Coupon updated:', updatedCoupon.code);
     
     if (req.xhr) {
       return res.json({

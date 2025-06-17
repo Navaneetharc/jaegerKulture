@@ -27,7 +27,7 @@ const login = async (req, res) => {
             const passwordMatch = await bcrypt.compare(password, admin.password);
             if (passwordMatch) {
                 req.session.admin = true;
-                console.log("Admin session set:", req.session.admin);
+                // console.log("Admin session set:", req.session.admin);
                 req.session.save(() => {
                     res.redirect('/admin');
                 });

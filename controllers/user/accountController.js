@@ -180,7 +180,6 @@ const resendEmailOTP = async (req, res) => {
   }
 };
 
-// Verify OTP for email change
 const verifyEmailOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -212,7 +211,6 @@ const verifyEmailOTP = async (req, res) => {
   }
 };
 
-// Edit profile information
 const editProfileInfo = async (req, res) => {
   try {
     const userId = req.params.id;
