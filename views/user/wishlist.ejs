@@ -632,23 +632,30 @@
                                 row.remove();
                             }
 
-                            // Update wishlist count in header and mobile nav
-                            const wishlistCountElements = document.querySelectorAll('.wishlist-count, .wishlist-count-mobile');
-                            wishlistCountElements.forEach(element => {
-                                const parent = element.parentElement;
-                                element.textContent = `${data.totalCount} product${data.totalCount !== 1 ? 's' : ''}`;
-                                
-                                // Remove badge if count is 0
+                            // Update wishlist count in header
+                            const wishlistCountElement = document.querySelector('.wishlist-count');
+                            if (wishlistCountElement) {
+                                wishlistCountElement.textContent = `${data.totalCount} product${data.totalCount !== 1 ? 's' : ''}`;
                                 if (data.totalCount === 0) {
-                                    if (element.classList.contains('wishlist-count-mobile')) {
-                                        // For mobile nav, remove the badge element
-                                        element.remove();
-                                    } else {
-                                        // For header, update text and keep element
-                                        element.textContent = '0 products';
-                                    }
+                                    wishlistCountElement.textContent = '0 products';
                                 }
-                            });
+                            }
+
+                            // Update wishlist count in mobile nav
+                            const mobileWishlistNav = document.querySelector('.mobile-nav-item[href="/wishlist"]');
+                            let mobileBadge = mobileWishlistNav.querySelector('.wishlist-count-mobile');
+                            if (data.totalCount > 0) {
+                                if (!mobileBadge) {
+                                    mobileBadge = document.createElement('div');
+                                    mobileBadge.classList.add('mobile-nav-badge', 'wishlist-count-mobile');
+                                    mobileWishlistNav.appendChild(mobileBadge);
+                                }
+                                mobileBadge.textContent = data.totalCount;
+                            } else {
+                                if (mobileBadge) {
+                                    mobileBadge.remove();
+                                }
+                            }
 
                             // Check if wishlist is empty and update UI
                             const tbody = document.querySelector('.shopping-summery tbody');
