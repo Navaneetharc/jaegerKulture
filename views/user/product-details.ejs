@@ -410,14 +410,21 @@
                                             <div class="product-cart-wrap mb-30">
                                                 <div class="product-img-action-wrap">
                                                     <div class="product-img product-img-zoom">
-                                                        <a href="/productDetails?id=<%= products[i]._id %>">
+                                                        <a href="<%= products[i]._id %>">
                                                             <img class="default-img" src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
                                                         </a>
                                                     </div>
                                                     <div class="product-action-1">
-                                                        <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addToWishlist?id=<%= products[i]._id %>">
-                                                            <i class="fi-rs-heart"></i>
-                                                        </a>
+                                                        <a aria-label="Add To Wishlist" 
+                                               class="action-btn hover-up add-to-wishlist" 
+                                               href="#" 
+                                               data-product-id="<%= products[i]._id %>">
+                                                <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
+                                                   <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
+                                                     style="fill: red;"
+                                                   <% } %>
+                                                ></i>
+                                            </a>
                                                     </div>
                                                     <div class="product-badges product-badges-position product-badges-mrg">
                                                         <span class="hot">Hot</span>
