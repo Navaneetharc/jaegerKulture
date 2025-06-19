@@ -48,15 +48,28 @@ const productDetails = async (req, res) => {
                             wishlistCount = wishlist ? wishlist.products.length : 0;
                         }  
         
-            
+            let wishlistItems = [];
+
+            if (userId) {
+                try {
+                    const wishlist = await Wishlist.findOne({ userId }).lean();
+                    if (wishlist) {
+                        wishlistItems = wishlist.products.map(item => item.productId.toString());
+                    }
+                } catch (wishlistError) {
+                    console.error('Error fetching wishlist:', wishlistError);
+                }
+}
+
 
         res.render('product-details', {
             user: userData || null,
             product,
             items,
             wishlistCount,
+            wishlistItems,
             category: product.category,
-            products: relatedProducts
+            products: relatedProducts,
         });
     } catch (error) {
         console.log('Error in fetching product details:', error);

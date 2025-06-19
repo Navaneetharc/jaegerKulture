@@ -416,15 +416,15 @@
                                                     </div>
                                                     <div class="product-action-1">
                                                         <a aria-label="Add To Wishlist" 
-                                               class="action-btn hover-up add-to-wishlist" 
-                                               href="#" 
-                                               data-product-id="<%= products[i]._id %>">
-                                                <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
-                                                   <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
-                                                     style="fill: red;"
-                                                   <% } %>
-                                                ></i>
-                                            </a>
+                                                        class="action-btn hover-up add-to-wishlist" 
+                                                        href="#" 
+                                                        data-product-id="<%= products[i]._id %>">
+                                                            <i class="fi-rs-heart <%= locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString()) ? 'text-danger' : '' %>" 
+                                                            <% if (locals.wishlistItems && Array.isArray(wishlistItems) && wishlistItems.includes(products[i]._id.toString())) { %>
+                                                                style="fill: red;"
+                                                            <% } %>
+                                                            ></i>
+                                                        </a>
                                                     </div>
                                                     <div class="product-badges product-badges-position product-badges-mrg">
                                                         <span class="hot">Hot</span>
