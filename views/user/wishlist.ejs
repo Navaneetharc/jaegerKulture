@@ -632,25 +632,34 @@
                                 row.remove();
                             }
 
-                            // Update wishlist count in header
-                            const wishlistCountElement = document.querySelector('.header-action-icon-2 .wishlist-count');
+                            // Update wishlist count in header (desktop)
+                            const wishlistCountElement = document.querySelector('#wishlist-count');
                             if (wishlistCountElement) {
-                                wishlistCountElement.textContent = `${data.totalCount} product${data.totalCount !== 1 ? 's' : ''}`;
+                                const newCount = data.totalCount || 0;
+                                wishlistCountElement.textContent = `${newCount} product${newCount !== 1 ? 's' : ''}`;
                             }
 
                             // Update wishlist count in mobile nav
-                            const mobileWishlistNav = document.querySelector('.mobile-nav-item[href="/wishlist"]');
-                            let mobileBadge = mobileWishlistNav.querySelector('.wishlist-count-mobile');
-                            if (data.totalCount > 0) {
-                                if (!mobileBadge) {
-                                    mobileBadge = document.createElement('div');
-                                    mobileBadge.classList.add('mobile-nav-badge', 'wishlist-count-mobile');
-                                    mobileWishlistNav.appendChild(mobileBadge);
+                            const mobileWishlistBadge = document.querySelector('#mobile-wishlist-badge');
+                            const newCount = data.totalCount || 0;
+                            
+                            if (newCount > 0) {
+                                if (mobileWishlistBadge) {
+                                    mobileWishlistBadge.textContent = newCount;
+                                } else {
+                                    // Create badge if it doesn't exist
+                                    const mobileWishlistNav = document.querySelector('.mobile-nav-item[href="/wishlist"]');
+                                    if (mobileWishlistNav) {
+                                        const badge = document.createElement('div');
+                                        badge.classList.add('mobile-nav-badge');
+                                        badge.id = 'mobile-wishlist-badge';
+                                        badge.textContent = newCount;
+                                        mobileWishlistNav.appendChild(badge);
+                                    }
                                 }
-                                mobileBadge.textContent = data.totalCount;
                             } else {
-                                if (mobileBadge) {
-                                    mobileBadge.remove();
+                                if (mobileWishlistBadge) {
+                                    mobileWishlistBadge.remove();
                                 }
                             }
 
