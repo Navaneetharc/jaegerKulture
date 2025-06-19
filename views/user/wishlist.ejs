@@ -625,24 +625,37 @@
     
                         const data = await response.json();
     
-                        if (response.status === 200) {
+                        if (response.ok && data.message === 'Removed from wishlist') {
                             // Remove the table row dynamically
-                            const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+                            const row = form.closest(`tr[data-product-id="${productId}"]`);
                             if (row) {
                                 row.remove();
                             }
 
-                            // Update wishlist count
+                            // Update wishlist count in header and mobile nav
                             const wishlistCountElements = document.querySelectorAll('.wishlist-count, .wishlist-count-mobile');
                             wishlistCountElements.forEach(element => {
+                                const parent = element.parentElement;
                                 element.textContent = `${data.totalCount} product${data.totalCount !== 1 ? 's' : ''}`;
+                                
+                                // Remove badge if count is 0
                                 if (data.totalCount === 0) {
-                                    element.parentElement.removeChild(element);
-                                    // Show empty wishlist message
-                                    const tbody = document.querySelector('.shopping-summery tbody');
-                                    tbody.innerHTML = '<tr><td colspan="6">Your wishlist is empty.</td></tr>';
+                                    if (element.classList.contains('wishlist-count-mobile')) {
+                                        // For mobile nav, remove the badge element
+                                        element.remove();
+                                    } else {
+                                        // For header, update text and keep element
+                                        element.textContent = '0 products';
+                                    }
                                 }
                             });
+
+                            // Check if wishlist is empty and update UI
+                            const tbody = document.querySelector('.shopping-summery tbody');
+                            const remainingRows = tbody.querySelectorAll('tr[data-product-id]');
+                            if (remainingRows.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="6">Your wishlist is empty.</td></tr>';
+                            }
 
                             Swal.fire({
                                 icon: 'success',
@@ -671,5 +684,6 @@
         });
     });
 </script>
+
 
 <%- include('../partials/userL/footer.ejs') %>
