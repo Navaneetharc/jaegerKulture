@@ -4,7 +4,6 @@ const path        = require('path');
 function generateInvoice(order, res) {
   const doc = new PDFDocument({ size: 'A4', margin: 50 });
 
-  
     try {
     doc.image(path.join(__dirname, '../assets/imgs/theme/jaeger.png'), 50, 45, { width: 50 });
   } catch (e) {}

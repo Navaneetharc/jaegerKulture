@@ -201,7 +201,7 @@
                                 <div class="dropdown">
                                     <a href="#" class="sign-in-link"><%= user.name %></a>
                                     <div class="dropdown-content">
-                                        <a href="/userProfile">Profile</a>
+                                        <a href="/profileInfo">Profile</a>
                                         <a href="/logout">Logout</a>
                                     </div>
                                 </div>
@@ -302,8 +302,8 @@
                                     <div class="product-img-action-wrap">
                                         <div class="product-img product-img-zoom">
                                             <a href="/productDetails?id=<%= products[i]._id %>">
-                                                <img class="default-img" src="/Uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
-                                                <img class="hover-img" src="/Uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                                <img class="default-img" src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                                <img class="hover-img" src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
                                             </a>
                                         </div>
                                         <div class="product-action-1">

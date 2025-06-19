@@ -762,7 +762,6 @@ $(document).ready(function() {
         }
     });
 
-    // Force mobile button visibility
     $(window).on('load resize', function() {
         if (window.innerWidth <= 991) {
             console.log('Mobile view detected');
@@ -787,7 +786,6 @@ $(document).ready(function() {
     });
 });
 
-// Additional debugging
 console.log('Dashboard script loaded');
 console.log('Chart.js available:', typeof Chart !== 'undefined');
 
@@ -802,7 +800,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.toggle('sidebar-open');
   });
 
-  // Optional: click outside to close
   document.addEventListener('click', function (e) {
     if (window.innerWidth <= 991 &&
       !e.target.closest('#offcanvas_aside') &&

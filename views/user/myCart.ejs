@@ -804,7 +804,7 @@
                                                 <tr class="cart-item-row" data-price="<%= item.price %>" data-stock="<%= stockAvailable %>">
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img src="/Uploads/product-images/<%= item.productImage %>" alt="<%= item.name %>" class="cart-item-image" />
+                                                            <img src="<%= item.productImage %>" alt="<%= item.name %>" class="cart-item-image" />
                                                             <div class="cart-item-details">
                                                                 <div class="cart-item-name"><%= item.name %></div>
                                                             </div>
@@ -844,7 +844,7 @@
                                             %>
                                             <div class="cart-item-card" data-price="<%= item.price %>" data-stock="<%= stockAvailable %>">
                                                 <div class="cart-item-header">
-                                                    <img src="/Uploads/product-images/<%= item.productImage %>" alt="<%= item.name %>" class="cart-item-image" />
+                                                    <img src="<%= item.productImage %>" alt="<%= item.name %>" class="cart-item-image" />
                                                     <div class="cart-item-details">
                                                         <div class="cart-item-name"><%= item.name %></div>
                                                         <div class="cart-item-price">₹<%= item.price.toFixed(2) %></div>

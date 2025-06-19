@@ -12,7 +12,7 @@ const wishlistController = require('../controllers/user/wishlistController');
 const cartController = require('../controllers/user/cartController');
 const walletController = require('../controllers/user/walletController');
 const checkoutController = require('../controllers/user/checkoutController');
-const upload = require('../middlewares/multerConfig');
+const upload = require('../middlewares/imageUpload');
 const invoiceController  = require('../controllers/user/invoiceController');
 
 

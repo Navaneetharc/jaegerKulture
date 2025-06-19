@@ -212,5 +212,5 @@ module.exports = {
   getCartPage,
   removeFromCart,
   updateCart,
-  updateCartItem,
+  updateCartItem, 
 };

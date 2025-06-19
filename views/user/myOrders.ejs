@@ -513,7 +513,7 @@
                                     <div class="order-items">
                                         <% order.orderItems.forEach(item => { %>
                                         <div class="order-item">
-                                            <img src="/uploads/product-images/<%= item.productImage %>" alt="Product">
+                                            <img src="<%= item.productImage %>" alt="Product">
                                             <div class="order-item-details">
                                                 <div class="order-item-name"> <%= item.product?.productName || "Unnamed Product" %></div>
                                                 <div class="order-item-price">₹<%= item.product.salePrice%></div>

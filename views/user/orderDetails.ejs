@@ -657,7 +657,7 @@
                                     console.log(`Item ${itemIndex} (${item.product?.productName || 'unnamed'}): ${debugInfo.join(' | ')}`);
                                 %>
                                 <div class="order-item">
-                                    <img src="/Uploads/product-images/<%= item.productImage %>" alt="Product">
+                                    <img src="<%= item.productImage %>" alt="Product">
                                     <div class="order-item-details">
                                         <div class="order-item-name"><%= item.product?.productName || "Unnamed Product" %></div>
                                         <div class="order-item-price">₹<%= item.product.salePrice %></div>
@@ -916,7 +916,7 @@
                                                                     <input class="form-check-input" type="checkbox" name="returnItems[]" value="<%= item._id %>" id="returnItem<%= index %>">
                                                                     <label class="form-check-label" for="returnItem<%= index %>">
                                                                         <div class="d-flex align-items-center">
-                                                                            <img src="/Uploads/product-images/<%= item.productImage %>" alt="Product" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+                                                                            <img src="<%= item.productImage %>" alt="Product" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
                                                                             <div>
                                                                                 <div><%= item.product?.productName || "Unnamed Product" %></div>
                                                                                 <div class="text-muted small">Size: <%= item?.variant?.size?.toUpperCase?.() || 'N/A' %>, Qty: <%= item.quantity %></div>
@@ -1001,7 +1001,7 @@
                                     <tr>
                                       <td>
                                         <div class="d-flex align-items-center">
-                                          <img src="/Uploads/product-images/<%= item.productImage %>" alt="Product" style="width:40px;height:40px;object-fit:cover;margin-right:8px;">
+                                          <img src="<%= item.productImage %>" alt="Product" style="width:40px;height:40px;object-fit:cover;margin-right:8px;">
                                           <%= item.product?.productName || 'Unnamed Product' %>
                                         </div>
                                       </td>

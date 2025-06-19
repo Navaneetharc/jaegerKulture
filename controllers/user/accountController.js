@@ -244,22 +244,10 @@ const editProfileInfo = async (req, res) => {
         }
       }
 
-      const uploadDir = path.join(__dirname, '../../public/uploads/userProfile');
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
+      if (req.file) {
+  user.profileImage = req.file.path; // ✅ Cloudinary URL
+}
 
-      const filename = `user-${Date.now()}.jpg`;
-      const outputPath = path.join(uploadDir, filename);
-
-      await sharp(file.path)
-        .resize(440, 440)
-        .jpeg({ quality: 80 })
-        .toFile(outputPath);
-
-      await fs.promises.unlink(file.path);
-
-      user.profileImage = `/uploads/userProfile/${filename}`;
     }
 
     user.name = fullName;

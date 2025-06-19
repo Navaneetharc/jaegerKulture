@@ -8,9 +8,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "An e-commerce web app built with Node.js, Express, MongoDB, and EJS. Includes features like user auth, admin panel, coupons, order management, and more.",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cloudinary": "^1.30.0",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
@@ -24,6 +25,7 @@
     "mongodb": "^6.14.2",
     "mongoose": "^8.12.1",
     "multer": "^1.4.5-lts.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "nanoid": "^5.1.5",
     "nodemailer": "^6.10.1",
     "nodemon": "^3.1.9",
@@ -32,5 +34,13 @@
     "pdfkit": "^0.17.1",
     "razorpay": "^2.9.6",
     "sharp": "^0.33.5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Navaneetharc/jaegerKulture.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Navaneetharc/jaegerKulture/issues"
+  },
+  "homepage": "https://github.com/Navaneetharc/jaegerKulture#readme"
 }

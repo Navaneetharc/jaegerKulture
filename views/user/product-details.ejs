@@ -273,7 +273,8 @@
                                     <div class="product-image-slider">
                                         <% product.productImage.forEach((img, index) => { %>
                                             <div class="zoom-container" style="position: relative;">
-                                                <img src="/Uploads/product-images/<%= img %>" alt="product image <%= index+1 %>" class="zoom-image" style="width: 100%; height: auto;">
+                                                <img src="<%= img %>" alt="product image <%= index+1 %>" class="zoom-image" style="width: 100%; height: auto;">
+
                                             </div>
                                         <% }); %>
                                     </div>
@@ -281,7 +282,7 @@
                                     <div class="slider-nav-thumbnails pl-15 pr-15">
                                         <% product.productImage.forEach((img, index) => { %>
                                             <div>
-                                                <img src="/Uploads/product-images/<%= img %>" alt="product thumbnail <%= index+1 %>" style="width: 100%; object-fit: cover;">
+                                                <img src="<%= img %>" alt="product thumbnail <%= index+1 %>" style="width: 100%; object-fit: cover;">
                                             </div>
                                         <% }); %>
                                     </div>
@@ -353,14 +354,11 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Description & Specifications Section -->
                         <div class="row">
                             <div class="col-lg-10 m-auto entry-main-content">
                                 <h2 class="section-title style-1 mb-30">Description</h2>
                                 <div class="description mb-50">
-                                    <!-- Long Description -->
                                     <p><%= product.longDescription %></p>
-                                    <!-- Specifications, rendered line by line (split by newline) -->
                                     <h4 class="mt-30">Specifications</h4>
                                     <ul class="product-more-infor mt-30">
                                         <% product.specifications.split(/\r?\n/).forEach(spec => { %>
@@ -413,7 +411,7 @@
                                                 <div class="product-img-action-wrap">
                                                     <div class="product-img product-img-zoom">
                                                         <a href="/productDetails?id=<%= products[i]._id %>">
-                                                            <img class="default-img" src="/Uploads/product-images/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                                            <img class="default-img" src="<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
                                                         </a>
                                                     </div>
                                                     <div class="product-action-1">
@@ -646,11 +644,9 @@
                             showConfirmButton: false
                         });
                     }
-                    // Update header cart count
                     if (cartCountEl && typeof data.totalCount === 'number') {
                         cartCountEl.textContent = `${data.totalCount} Item${data.totalCount !== 1 ? 's' : ''}`;
                     }
-                    // Update mobile bottom navigation cart badge
                     const cartNavItem = document.querySelector('.mobile-nav-item[href="/cart"]');
                     let badge = cartNavItem.querySelector('.mobile-nav-badge');
                     if (data.totalCount > 0) {

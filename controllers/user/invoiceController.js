@@ -48,7 +48,7 @@ const downloadInvoice = async (req, res) => {
       date:         order.createdAt.toLocaleDateString(),
       items: order.orderItems.map(i => ({
                 name:     i.product.productName,
-                size:     i.variant?.size || 'N/A',
+                size:     i.variant?.size || 'N/A', 
                 quantity: i.quantity,
                 price:    i.price
             })),
