@@ -633,12 +633,9 @@
                             }
 
                             // Update wishlist count in header
-                            const wishlistCountElement = document.querySelector('.wishlist-count');
+                            const wishlistCountElement = document.querySelector('.header-action-icon-2 .wishlist-count');
                             if (wishlistCountElement) {
                                 wishlistCountElement.textContent = `${data.totalCount} product${data.totalCount !== 1 ? 's' : ''}`;
-                                if (data.totalCount === 0) {
-                                    wishlistCountElement.textContent = '0 products';
-                                }
                             }
 
                             // Update wishlist count in mobile nav
