@@ -552,6 +552,7 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Vendor JS-->
     <script src="assets2/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="assets2/js/vendor/jquery-3.6.0.min.js"></script>
@@ -577,113 +578,197 @@
     <script src="./assets2/js/main.js?v=3.4"></script>
     <script src="./assets2/js/shop.js?v=3.4"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Mobile bottom navigation active state
-            const currentPath = window.location.pathname.split('/')[1];
-            const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
-            mobileNavItems.forEach(item => {
-                const href = item.getAttribute('href').split('/')[1] || '';
-                if (href === currentPath || (currentPath === '' && href === '')) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
+        $(document).ready(function() {
+    // Initialize the image slider
+    $('.product-image-slider').slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: false,
+        fade: true,
+        asNavFor: '.slider-nav-thumbnails'
+    });
+    // Initialize the thumbnail slider
+    $('.slider-nav-thumbnails').slick({
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        asNavFor: '.product-image-slider',
+        dots: false,
+        focusOnSelect: true
+    });
+});
 
-            const form = document.getElementById("add-to-cart-form");
-            const sizeOptions = document.querySelectorAll('.size-option');
-            const stockCount = document.getElementById('stock-count');
-            const selectedSizeInput = document.getElementById('selectedSize');
-            const cartCountEl = document.getElementById('cart-count');
-            const cartNavBadge = document.getElementById('cart-nav-badge');
-            let selectedStock = 0;
+document.addEventListener("DOMContentLoaded", () => {
+    // Mobile bottom navigation active state
+    const currentPath = window.location.pathname.split('/')[1];
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    mobileNavItems.forEach(item => {
+        const href = item.getAttribute('href').split('/')[1] || '';
+        if (href === currentPath || (currentPath === '' && href === '')) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
 
-            sizeOptions.forEach(option => {
-                option.addEventListener('click', e => {
-                    e.preventDefault();
-                    const size = option.dataset.size;
-                    const stock = parseInt(option.dataset.stock);
-                    selectedSizeInput.value = size;
-                    stockCount.textContent = `${stock} Items in Stock`;
-                    selectedStock = stock;
-                });
-            });
+    // Cart functionality
+    const form = document.getElementById("add-to-cart-form");
+    const sizeOptions = document.querySelectorAll('.size-option');
+    const stockCount = document.getElementById('stock-count');
+    const selectedSizeInput = document.getElementById('selectedSize');
+    const cartCountEl = document.getElementById('cart-count');
+    const cartNavBadge = document.getElementById('cart-nav-badge');
+    let selectedStock = 0;
 
-            form.addEventListener("submit", async e => {
-                e.preventDefault();
-                const size = selectedSizeInput.value;
-                if (!size) {
-                    return Swal.fire({
-                        icon: "error",
-                        text: "Please select a size",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-                if (selectedStock <= 0) {
-                    return Swal.fire({
-                        icon: "error",
-                        text: "Selected size is out of stock",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-                const payload = {
-                    productId: form.productId.value,
-                    price: form.price.value,
-                    basePrice: form.basePrice.value,
-                    productImage: form.productImage.value,
-                    name: form.name.value,
-                    variants: { size }
-                };
-                try {
-                    const res = await fetch(form.action, {
-                        method: form.method,
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const data = await res.json();
-                    if (!res.ok) {
-                        return Swal.fire({
-                            icon: "error",
-                            text: data.error || data.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    }
-                    if (cartCountEl && typeof data.totalCount === 'number') {
-                        cartCountEl.textContent = `${data.totalCount} Item${data.totalCount !== 1 ? 's' : ''}`;
-                    }
-                    const cartNavItem = document.querySelector('.mobile-nav-item[href="/cart"]');
-                    let badge = cartNavItem.querySelector('.mobile-nav-badge');
-                    if (data.totalCount > 0) {
-                        if (!badge) {
-                            badge = document.createElement('div');
-                            badge.className = 'mobile-nav-badge';
-                            badge.id = 'cart-nav-badge';
-                            cartNavItem.appendChild(badge);
-                        }
-                        badge.textContent = data.totalCount;
-                    } else if (badge) {
-                        badge.remove();
-                    }
-                    Swal.fire({
-                        icon: "success",
-                        text: data.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                } catch (err) {
-                    console.error("Error submitting form:", err);
-                    Swal.fire({
-                        icon: "error",
-                        text: "Something went wrong. Please try again.",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-            });
+    sizeOptions.forEach(option => {
+        option.addEventListener('click', e => {
+            e.preventDefault();
+            const size = option.dataset.size;
+            const stock = parseInt(option.dataset.stock);
+            selectedSizeInput.value = size;
+            stockCount.textContent = `${stock} Items in Stock`;
+            selectedStock = stock;
         });
+    });
+
+    form.addEventListener("submit", async e => {
+        e.preventDefault();
+        const size = selectedSizeInput.value;
+        if (!size) {
+            return Swal.fire({
+                icon: "error",
+                text: "Please select a size",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        if (selectedStock <= 0) {
+            return Swal.fire({
+                icon: "error",
+                text: "Selected size is out of stock",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        const payload = {
+            productId: form.productId.value,
+            price: form.price.value,
+            basePrice: form.basePrice.value,
+            productImage: form.productImage.value,
+            name: form.name.value,
+            variants: { size }
+        };
+        try {
+            const res = await fetch(form.action, {
+                method: form.method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                return Swal.fire({
+                    icon: "error",
+                    text: data.error || data.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+            if (cartCountEl && typeof data.totalCount === 'number') {
+                cartCountEl.textContent = `${data.totalCount} Item${data.totalCount !== 1 ? 's' : ''}`;
+            }
+            const cartNavItem = document.querySelector('.mobile-nav-item[href="/cart"]');
+            let badge = cartNavItem.querySelector('.mobile-nav-badge');
+            if (data.totalCount > 0) {
+                if (!badge) {
+                    badge = document.createElement('div');
+                    badge.className = 'mobile-nav-badge';
+                    badge.id = 'cart-nav-badge';
+                    cartNavItem.appendChild(badge);
+                }
+                badge.textContent = data.totalCount;
+            } else if (badge) {
+                badge.remove();
+            }
+            Swal.fire({
+                icon: "success",
+                text: data.message,
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } catch (err) {
+            console.error("Error submitting form:", err);
+            Swal.fire({
+                icon: "error",
+                text: "Something went wrong. Please try again.",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
+
+    // Wishlist functionality
+    document.querySelectorAll('.add-to-wishlist').forEach(button => {
+        button.addEventListener('click', async function (e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+            const icon = this.querySelector('i');
+            const isInWishlist = icon.classList.contains('text-danger');
+            const endpoint = isInWishlist ? '/wishlist/remove' : '/wishlist/add';
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: result.message || 'Failed to update wishlist.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+                icon.classList.toggle('text-danger', !isInWishlist);
+                icon.style.fill = !isInWishlist ? 'red' : '';
+                updateWishlistCount(result.totalCount);
+                Swal.fire({
+                    icon: 'success',
+                    title: isInWishlist ? 'Removed from Wishlist!' : 'Added to Wishlist!',
+                    text: result.message || (isInWishlist ? 'Product successfully removed.' : 'Product successfully added.'),
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: 'Something went wrong. Please try again later.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        });
+    });
+
+    function updateWishlistCount(count) {
+        const wishlistCountElement = document.querySelector('.header-action-icon-2 a[href="/wishlist"] .pro-count');
+        if (wishlistCountElement) {
+            const productText = count !== 1 ? 'products' : 'product';
+            wishlistCountElement.textContent = `${count} ${productText}`;
+        }
+        const mobileBadge = document.querySelector('.mobile-nav-item[href="/wishlist"] .mobile-nav-badge');
+        if (mobileBadge) {
+            if (count > 0) {
+                mobileBadge.textContent = count;
+                mobileBadge.style.display = 'flex';
+            } else {
+                mobileBadge.style.display = 'none';
+            }
+        }
+    }
+});
     </script>
 </body>
 </html>

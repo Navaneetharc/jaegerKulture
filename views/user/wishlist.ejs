@@ -626,14 +626,30 @@
                         const data = await response.json();
     
                         if (response.status === 200) {
+                            // Remove the table row dynamically
+                            const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+                            if (row) {
+                                row.remove();
+                            }
+
+                            // Update wishlist count
+                            const wishlistCountElements = document.querySelectorAll('.wishlist-count, .wishlist-count-mobile');
+                            wishlistCountElements.forEach(element => {
+                                element.textContent = `${data.totalCount} product${data.totalCount !== 1 ? 's' : ''}`;
+                                if (data.totalCount === 0) {
+                                    element.parentElement.removeChild(element);
+                                    // Show empty wishlist message
+                                    const tbody = document.querySelector('.shopping-summery tbody');
+                                    tbody.innerHTML = '<tr><td colspan="6">Your wishlist is empty.</td></tr>';
+                                }
+                            });
+
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Removed!',
                                 text: data.message || 'Product removed from wishlist.',
                                 timer: 2000,
                                 showConfirmButton: false
-                            }).then(() => {
-                                location.reload(); 
                             });
                         } else {
                             Swal.fire({
