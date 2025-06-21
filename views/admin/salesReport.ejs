@@ -110,28 +110,29 @@
 
         <!-- Custom date inputs (only shown when dateRange==='custom') -->
         <% if (dateRange==='custom') { %>
-        <div class="col-md-6" id="customDateFilterContainer">
-          <div class="row">
-            <div class="col-md-6">
-              <label class="form-label">From</label>
-              <input 
-                type="date" 
-                name="startDate" 
-                class="form-control" 
-                value="<%= startDate %>"
-              >
+        <div class="col-md-6" id="customDateFilterContainer" style="display: none;">
+            <div class="row">
+                <div class="col-md-6">
+                <label class="form-label">From</label>
+                <input 
+                    type="date" 
+                    id="fromDate"
+                    name="startDate" 
+                    class="form-control"
+                >
+                </div>
+                <div class="col-md-6">
+                <label class="form-label">To</label>
+                <input 
+                    type="date" 
+                    id="toDate"
+                    name="endDate" 
+                    class="form-control"
+                >
+                </div>
             </div>
-            <div class="col-md-6">
-              <label class="form-label">To</label>
-              <input 
-                type="date" 
-                name="endDate" 
-                class="form-control" 
-                value="<%= endDate %>"
-              >
             </div>
-          </div>
-        </div>
+
         <% } %>
 
         <div class="col-md-3 d-flex align-items-end justify-content-end">
@@ -313,7 +314,6 @@
                         <option value="last30days">Last 30 Days</option>
                         <option value="thisMonth">This Month</option>
                         <option value="lastMonth">Last Month</option>
-                        <option value="custom">Custom Date Range</option>
                     </select>
                 </div>
                 <div class="col-md-6">
@@ -750,13 +750,11 @@ function showToast(message, type = 'info') {
 
        <script>
   $(document).ready(function () {
-    // Sidebar toggle
     $('.btn-aside-minimize, .btn-mobile').on('click', function () {
       $('#offcanvas_aside').toggleClass('show');
       $('body').toggleClass('sidebar-open');
     });
 
-    // Close sidebar if click outside
     $(document).on('click', function (e) {
       if (!$(e.target).closest('#offcanvas_aside, .btn-aside-minimize, .btn-mobile').length) {
         if ($('#offcanvas_aside').hasClass('show')) {
@@ -767,6 +765,75 @@ function showToast(message, type = 'info') {
     });
   });
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const dateRangeSelect = document.getElementById('dateRangeFilter');
+  const customDateContainer = document.getElementById('customDateFilterContainer');
+
+  if (dateRangeSelect.value === 'custom') {
+    customDateContainer.style.display = 'block';
+  } else {
+    customDateContainer.style.display = 'none';
+  }
+
+  dateRangeSelect.addEventListener('change', function () {
+    if (this.value === 'custom') {
+      customDateContainer.style.display = 'block';
+    } else {
+      customDateContainer.style.display = 'none';
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const applyBtn = document.querySelector('form button[type="submit"]');
+  const fromDate = document.getElementById('fromDate');
+  const toDate = document.getElementById('toDate');
+  const dateRange = document.getElementById('dateRangeFilter');
+
+  if (applyBtn) {
+    applyBtn.addEventListener('click', function (e) {
+      if (dateRange.value === 'custom') {
+        const from = new Date(fromDate.value);
+        const to = new Date(toDate.value);
+        const today = new Date();
+
+        if (!fromDate.value || !toDate.value) {
+          e.preventDefault();
+          Swal.fire({
+            icon: 'warning',
+            title: 'Missing Dates',
+            text: 'Please select both From and To dates.'
+          });
+          return;
+        }
+
+        if (from > to) {
+          e.preventDefault();
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Date Range',
+            text: 'From date cannot be after To date.'
+          });
+          return;
+        }
+
+        if (from > today || to > today) {
+          e.preventDefault();
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Date',
+            text: 'Future dates are not allowed.'
+          });
+          return;
+        }
+      }
+    });
+  }
+});
+</script>
+
 
 
         <!-- Vendor Scripts -->
