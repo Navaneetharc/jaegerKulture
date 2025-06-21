@@ -584,7 +584,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Mobile bottom navigation active state
         const currentPath = window.location.pathname;
         const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
         
@@ -597,7 +596,6 @@
             }
         });
 
-        // Wishlist remove functionality
         document.querySelectorAll('.remove-wishlist-form').forEach(form => {
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -626,20 +624,17 @@
                         const data = await response.json();
     
                         if (response.ok && data.message === 'Removed from wishlist') {
-                            // Remove the table row dynamically
                             const row = form.closest(`tr[data-product-id="${productId}"]`);
                             if (row) {
                                 row.remove();
                             }
 
-                            // Update wishlist count in header (desktop)
                             const wishlistCountElement = document.querySelector('#wishlist-count');
                             if (wishlistCountElement) {
                                 const newCount = data.totalCount || 0;
                                 wishlistCountElement.textContent = `${newCount} product${newCount !== 1 ? 's' : ''}`;
                             }
 
-                            // Update wishlist count in mobile nav
                             const mobileWishlistBadge = document.querySelector('#mobile-wishlist-badge');
                             const newCount = data.totalCount || 0;
                             
@@ -647,7 +642,6 @@
                                 if (mobileWishlistBadge) {
                                     mobileWishlistBadge.textContent = newCount;
                                 } else {
-                                    // Create badge if it doesn't exist
                                     const mobileWishlistNav = document.querySelector('.mobile-nav-item[href="/wishlist"]');
                                     if (mobileWishlistNav) {
                                         const badge = document.createElement('div');
@@ -663,7 +657,6 @@
                                 }
                             }
 
-                            // Check if wishlist is empty and update UI
                             const tbody = document.querySelector('.shopping-summery tbody');
                             const remainingRows = tbody.querySelectorAll('tr[data-product-id]');
                             if (remainingRows.length === 0) {

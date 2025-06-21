@@ -579,7 +579,6 @@
     <script src="./assets2/js/shop.js?v=3.4"></script>
     <script>
         $(document).ready(function() {
-    // Initialize the image slider
     $('.product-image-slider').slick({
         slidesToShow: 1,
         slidesToScroll: 1,
@@ -587,7 +586,6 @@
         fade: true,
         asNavFor: '.slider-nav-thumbnails'
     });
-    // Initialize the thumbnail slider
     $('.slider-nav-thumbnails').slick({
         slidesToShow: 4,
         slidesToScroll: 1,
@@ -598,7 +596,6 @@
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Mobile bottom navigation active state
     const currentPath = window.location.pathname.split('/')[1];
     const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
     mobileNavItems.forEach(item => {
@@ -610,7 +607,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Cart functionality
     const form = document.getElementById("add-to-cart-form");
     const sizeOptions = document.querySelectorAll('.size-option');
     const stockCount = document.getElementById('stock-count');
@@ -705,7 +701,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Wishlist functionality
     document.querySelectorAll('.add-to-wishlist').forEach(button => {
         button.addEventListener('click', async function (e) {
             e.preventDefault();

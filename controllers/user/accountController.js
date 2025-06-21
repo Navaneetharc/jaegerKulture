@@ -337,35 +337,6 @@ const updatePassword = async (req, res) => {
       return res.redirect('/login');
     }
 
-    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!passwordMatch) {
-      return res.render('security', { message: "Incorrect current password", user });
-    }
-
-    if (newPassword !== confirmPassword) {
-      return res.render('security', { message: "New passwords do not match", user });
-    }
-
-    const strengthErrors = validatePasswordStrength(newPassword);
-    if (strengthErrors.length > 0) {
-      return res.render('security', {
-        message: "Password does not meet strength requirements: " + strengthErrors.join(", "),
-        user
-      });
-    }
-
-    const isSamePassword = await bcrypt.compare(newPassword, user.password);
-    if (isSamePassword) {
-      return res.render('security', {
-        message: "New password cannot be the same as your current password",
-        user
-      });
-    }
-
-    const newPasswordHash = await securePassword(newPassword);
-    user.password = newPasswordHash;
-    await user.save();
-
     let cart = await Cart
               .findOne({ userId })
               .populate('items.productId');
@@ -378,6 +349,41 @@ const updatePassword = async (req, res) => {
                 const wishlist = await Wishlist.findOne({ userId });
                 wishlistCount = wishlist ? wishlist.products.length : 0;
             }  
+
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return res.render('security', { message: "Incorrect current password", user,items,wishlistCount });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.render('security', { message: "New passwords do not match", user,items,wishlistCount });
+    }
+
+    const strengthErrors = validatePasswordStrength(newPassword);
+    if (strengthErrors.length > 0) {
+      return res.render('security', {
+        message: "Password does not meet strength requirements: " + strengthErrors.join(", "),
+        user,
+        items,
+        wishlistCount
+      });
+    }
+
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.render('security', {
+        message: "New password cannot be the same as your current password",
+        user,
+        items,
+        wishlistCount
+      });
+    }
+
+    const newPasswordHash = await securePassword(newPassword);
+    user.password = newPasswordHash;
+    await user.save();
+
+    
 
     return res.render('security', { message: "Password updated successfully.", user ,items,wishlistCount});
   } catch (error) {
