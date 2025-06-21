@@ -157,35 +157,34 @@
                                             <td><%=category.name%></td>
                                             <td class="text-start"> 
                                                 <%if(category.isListed){%>
-                                                <button 
-                                                    class="btn btn-danger" 
-                                                    style="width: 100px;" 
-                                                    onclick="confirmUnlist('<%= category._id %>', '<%= category.name %>')">
-                                                    Unlist
-                                                </button>
-                                                <%}else{%>
-
-                                                <button 
-                                                    class="btn btn-success" 
-                                                    style="width: 100px;" 
-                                                    onclick="confirmList('<%= category._id %>', '<%= category.name %>')">
-                                                    List
-                                                </button>
+                                                <% if (category.isListed) { %>
+                                                    <a href="/admin/unlistCategory?id=<%= category._id %>" class="btn btn-danger" style="width: 100px; text-decoration: none; color: white;">
+                                                        Unlist
+                                                    </a>
+                                                <% } else { %>
+                                                    <a href="/admin/listCategory?id=<%= category._id %>" class="btn btn-success" style="width: 100px; text-decoration: none; color: white;">
+                                                        List
+                                                    </a>
+                                                <% } %>
                                                 <%}%>
                                             </td>
                                             <td><%= new Date(category.createdAt).toISOString().split('T')[0] %></td>
                                             <!-- <td>1</td> -->
                                             <td class="text-start">
                                                 <%if(category.isListed){%>
-                                                    <a href="/admin/unlistCategory?id=<%=category._id%>" class="btn btn-danger" style="width: 100px; text-decoration: none; color: white;">
+                                                    <button 
+                                                        class="btn btn-danger" 
+                                                        style="width: 100px;" 
+                                                        onclick="confirmUnlist('<%= category._id %>', '<%= category.name %>')">
                                                         Unlist
-                                                        </a>
-                                               
-                                                <%}else{%>
-                                                    <a href="/admin/listCategory?id=<%=category._id%>" class="btn btn-success" style="width: 100px; text-decoration: none; color: white;">
+                                                    </button>
+                                                <% } else { %>
+                                                    <button 
+                                                        class="btn btn-success" 
+                                                        style="width: 100px;" 
+                                                        onclick="confirmList('<%= category._id %>', '<%= category.name %>')">
                                                         List
-                                                        </a>
-                                                <%}%>
+                                                    </button>
                                             </td>
                                             <td><a class="dropdown-item" href="/admin/editCategory?id=<%=category._id%>">Edit info</a></td>
                                         </tr>                
