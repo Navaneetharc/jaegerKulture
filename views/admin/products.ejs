@@ -135,15 +135,22 @@
                                         
                                         <td><%= new Date(data[i].createdAt).toISOString().split('T')[0] %></td>
                                         <td class="text-start">
-                                            <%if(data[i].isBlocked===false){%>
-                                                <a href="/admin/blockProduct/<%=data[i]._id%>" class="btn btn-danger" style="width: 100px; text-decoration: none; color: white;">
+                                            <% if (data[i].isBlocked === false) { %>
+                                                <button 
+                                                    class="btn btn-danger" 
+                                                    style="width: 100px;" 
+                                                    onclick="confirmBlock('<%= data[i]._id %>', '<%= data[i].productName %>')">
                                                     Block
-                                                </a>
-                                            <%}else{%>
-                                                <a href="/admin/unblockProduct/<%=data[i]._id%>" class="btn btn-success" style="width: 100px; text-decoration: none; color: white;">
+                                                </button>
+                                            <% } else { %>
+                                                <button 
+                                                    class="btn btn-success" 
+                                                    style="width: 100px;" 
+                                                    onclick="confirmUnblock('<%= data[i]._id %>', '<%= data[i].productName %>')">
                                                     Unblock
-                                                </a>
-                                            <%}%>
+                                                </button>
+                                            <% } %>
+
                                         </td>
                                         <td><a class="dropdown-item" href="/admin/editProduct/<%=data[i]._id%>">Edit info</a></td>
                                     </tr>
@@ -181,6 +188,9 @@
         </section>
 
         <script>
+
+
+
   $(document).ready(function () {
     // Sidebar toggle
     $('.btn-aside-minimize, .btn-mobile').on('click', function () {
@@ -198,6 +208,42 @@
       }
     });
   });
+
+    function confirmBlock(productId, productName){
+        Swal.fire({
+            title: 'Block Product',
+            text: `Are you sure you want to block "${productName}"?`,
+            icon:'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, block it!',
+            cancelButtonText: 'Cancle'
+        }).then((result)=>{
+            if(result.isConfirmed){
+                window.location.href = `/admin/blockProduct/${productId}`;
+            }
+        })
+    }
+    
+    function confirmUnblock(productId, productName) {
+        Swal.fire({
+            title: 'Unblock Product',
+            text: `Are you sure you want to unblock "${productName}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, unblock it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/admin/unblockProduct/${productId}`;
+            }
+        });
+    }
+
+
 </script>
 
 
