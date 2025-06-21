@@ -220,26 +220,42 @@
                 <div class="logo logo-width-1">
                     <img src="assets/imgs/theme/jaeger.png" alt="logo">
                 </div>
-                <div class="header-right">
-                    <div class="search-style-2" style="position: relative; width: fit-content;">
-                    <form action="/search" method="get" onsubmit="return handleSearch(this)">
-                        <input 
-                            id="searchInput"
-                            type="text" 
-                            placeholder="Search for items..." 
-                            name="query" 
-                            value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
-                            style="padding-right: 30px;"
-                        >
-                        <button 
-                            type="button" 
-                            onclick="clearSearch()" 
-                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;"
-                        >
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </form>
-                </div>
+                <div class="search-style-2" style="position: relative; width: fit-content;">
+                <form action="/search" method="get" onsubmit="return handleSearch(this)">
+                    <input 
+                        id="searchInput"
+                        type="text" 
+                        placeholder="Search for items..." 
+                        name="query" 
+                        value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+                        style="
+                            width: 300px;        /* You can increase this if you want */
+                            height: 45px;        /* Taller input */
+                            padding-right: 40px; /* Space for the X button */
+                            font-size: 16px;     /* Bigger text */
+                            border: 1px solid #ccc;
+                            border-radius: 8px;
+                        "
+                    >
+                    <button 
+                        type="button" 
+                        onclick="clearSearch()" 
+                        style="
+                            position: absolute; 
+                            right: 12px; 
+                            top: 50%; 
+                            transform: translateY(-50%);
+                            background: none; 
+                            border: none; 
+                            cursor: pointer;
+                            font-size: 18px;  /* Bigger X icon */
+                            color: #666;
+                        "
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </form>
+            </div>
 
                     <div class="header-action-right">
                         <div class="header-action-2">
@@ -482,7 +498,7 @@
             input.value = '';
             input.focus();
         }
-        
+
         document.querySelectorAll('.add-to-wishlist').forEach(button => {
             button.addEventListener('click', async function (e) {
                 e.preventDefault();
