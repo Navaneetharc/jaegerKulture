@@ -157,18 +157,20 @@
                                             <td><%=category.name%></td>
                                             <td class="text-start"> 
                                                 <%if(category.isListed){%>
-                                                <span 
-                                                class="badge rounded-pill alert-success"
-                                                style="width: 60px;"
-                                                >Listed
-                                                </span>
+                                                <button 
+                                                    class="btn btn-danger" 
+                                                    style="width: 100px;" 
+                                                    onclick="confirmUnlist('<%= category._id %>', '<%= category.name %>')">
+                                                    Unlist
+                                                </button>
                                                 <%}else{%>
 
-                                                <span
-                                                class="badge rounded-pill alert-danger"
-                                                style="width: 60px;"
-                                                >Unlisted
-                                                </span>
+                                                <button 
+                                                    class="btn btn-success" 
+                                                    style="width: 100px;" 
+                                                    onclick="confirmList('<%= category._id %>', '<%= category.name %>')">
+                                                    List
+                                                </button>
                                                 <%}%>
                                             </td>
                                             <td><%= new Date(category.createdAt).toISOString().split('T')[0] %></td>
@@ -321,6 +323,39 @@
                 });
             }
 
+            function confirmBlock(categoryId, productName){
+                Swal.fire({
+                    title:  'Unlist Category',
+                    text: `Are you sure you want to unlist "${categoryName}"?`,
+                    icon: 'warning',
+                    showCancelbutton: true,
+                    confirmButtonColor: '#d33',
+                    cancelbuttonColor: '#3085d6',
+                    confirmButtonText: 'Yes, unlist it!',
+                    cancelbuttonText: 'Cancel'
+                }).then((result)=>{
+                    if(result.isConfirmed){
+                        window.location.href = `/admin/unlistCategory?id=${categoryId}`;
+                    }
+                });
+            }
+
+            function confirmBlock(categoryId,categoryName){
+                Swal.fire({
+                    title: 'List Category',
+                    text: `Are you sure you want to list "${categoryName}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, List it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result)=>{
+                    if(result.isConfirmed){
+                        window.location.href = `/admin/listCategory?id=${categoryId}`;
+                    }
+                });
+            }
 
 
         </script>

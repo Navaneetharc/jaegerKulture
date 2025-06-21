@@ -218,14 +218,14 @@
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Yes, block it!',
-            cancelButtonText: 'Cancle'
+            cancelButtonText: 'Cancel'
         }).then((result)=>{
             if(result.isConfirmed){
                 window.location.href = `/admin/blockProduct/${productId}`;
             }
         })
     }
-    
+
     function confirmUnblock(productId, productName) {
         Swal.fire({
             title: 'Unblock Product',
