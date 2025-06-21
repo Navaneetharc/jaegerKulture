@@ -259,7 +259,14 @@
                 <div class="header-right">
                     <div class="search-style-2">
                         <form action="/search" method="get" onsubmit="return handleSearch(this)">
-                            <input type="text" placeholder="Search for items..." name="query" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                            <input id="searchInput" type="text" placeholder="Search for items..." name="query" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                        <button 
+                            type="button" 
+                            onclick="clearSearch()" 
+                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;"
+                        >
+                            <i class="fas fa-times"></i>
+                        </button>
                         </form>
                     </div>
                     <div class="header-action-right">
@@ -560,6 +567,12 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+
+    function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            input.focus();
+        }
   document.querySelectorAll('.add-to-wishlist').forEach(button => {
     button.addEventListener('click', async function (e) {
       e.preventDefault();
