@@ -1,4 +1,11 @@
 <%- include('../partials/userL/otphead.ejs') %>
+<style>
+    button:disabled {
+    background-color: #ddd !important;
+    cursor: not-allowed;
+    color: #999 !important;
+}
+</style>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 </head>
@@ -36,6 +43,9 @@
 
 <script>
     let timeLeft = 49;
+    document.addEventListener('DOMContentLoaded', ()=>{
+        document.getElementById("resendOtp").disabled = true;
+    })
     let timerInterval = setInterval(() => {
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
@@ -165,7 +175,7 @@
             document.getElementById(`otp${i}`).disabled = false;
             document.getElementById(`otp${i}`).value = '';
         }
-        // Focus the first input after resending
+
         document.getElementById('otp1').focus();
 
         timerInterval = setInterval(() => {
