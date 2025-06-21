@@ -153,7 +153,7 @@
                                                     <input class="form-check-input" type="checkbox" value="" />
                                                 </div>
                                             </td> -->
-                                            <td><category class="_id"></category></td>
+                                            <td><%= category._id %></td>
                                             <td><%=category.name%></td>
                                             <td class="text-start"> 
                                                 <%if(category.isListed){%>
@@ -185,6 +185,7 @@
                                                         onclick="confirmList('<%= category._id %>', '<%= category.name %>')">
                                                         List
                                                     </button>
+                                                    <% } %> 
                                             </td>
                                             <td><a class="dropdown-item" href="/admin/editCategory?id=<%=category._id%>">Edit info</a></td>
                                         </tr>                
@@ -322,7 +323,7 @@
                 });
             }
 
-            function confirmBlock(categoryId, productName){
+            function confirmUnlist(categoryId, productName){
                 Swal.fire({
                     title:  'Unlist Category',
                     text: `Are you sure you want to unlist "${categoryName}"?`,
@@ -339,7 +340,7 @@
                 });
             }
 
-            function confirmBlock(categoryId,categoryName){
+            function confirmList(categoryId,categoryName){
                 Swal.fire({
                     title: 'List Category',
                     text: `Are you sure you want to list "${categoryName}"?`,
