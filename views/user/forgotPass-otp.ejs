@@ -1,5 +1,12 @@
 
 <%- include('../partials/userL/otphead.ejs') %>
+<style>
+    button:disabled {
+    background-color: #ddd !important;
+    cursor: not-allowed;
+    color: #999 !important;
+}
+</style>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 </head>
@@ -40,6 +47,10 @@
 
 <script>
     let timeLeft = 49;
+    document.addEventListener('DomContentLoaded',()=>{
+        document.getElementById('resedOtp').desabled = true;
+    })
+
     let timerInterval = setInterval(() => {
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
