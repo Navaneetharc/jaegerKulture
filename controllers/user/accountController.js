@@ -381,7 +381,7 @@ const updatePassword = async (req, res) => {
 
     const newPasswordHash = await securePassword(newPassword);
     user.password = newPasswordHash;
-    await user.save();
+    await user.save();rity
 
     
 
