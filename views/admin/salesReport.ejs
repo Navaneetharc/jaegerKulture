@@ -108,32 +108,32 @@
           </select>
         </div>
 
-        <!-- Custom date inputs (only shown when dateRange==='custom') -->
-        <!-- <% if (dateRange==='custom') { %> -->
-        <div class="col-md-6" id="customDateFilterContainer" style="display: none;">
-            <div class="row">
-                <div class="col-md-6">
-                <label class="form-label">From</label>
-                <input 
-                    type="date" 
-                    id="fromDate"
-                    name="startDate" 
-                    class="form-control"
-                >
-                </div>
-                <div class="col-md-6">
-                <label class="form-label">To</label>
-                <input 
-                    type="date" 
-                    id="toDate"
-                    name="endDate" 
-                    class="form-control"
-                >
-                </div>
+                <!-- Custom date inputs (only shown when dateRange==='custom') -->
+                <div class="col-md-6" id="customDateFilterContainer" style="display: <%= dateRange === 'custom' ? 'block' : 'none' %>;">
+        <div class="row">
+            <div class="col-md-6">
+            <label class="form-label">From</label>
+            <input 
+                type="date" 
+                id="fromDate"
+                name="startDate" 
+                class="form-control"
+                value="<%= startDate %>"
+            >
             </div>
+            <div class="col-md-6">
+            <label class="form-label">To</label>
+            <input 
+                type="date" 
+                id="toDate"
+                name="endDate" 
+                class="form-control"
+                value="<%= endDate %>"
+            >
             </div>
+        </div>
+        </div>
 
-        <!-- <% } %> -->
 
         <div class="col-md-3 d-flex align-items-end justify-content-end">
           <button type="submit" class="btn btn-primary">Apply Filters</button>
