@@ -109,7 +109,7 @@
         </div>
 
         <!-- Custom date inputs (only shown when dateRange==='custom') -->
-        <% if (dateRange==='custom') { %>
+        <!-- <% if (dateRange==='custom') { %> -->
         <div class="col-md-6" id="customDateFilterContainer" style="display: none;">
             <div class="row">
                 <div class="col-md-6">
@@ -133,7 +133,7 @@
             </div>
             </div>
 
-        <% } %>
+        <!-- <% } %> -->
 
         <div class="col-md-3 d-flex align-items-end justify-content-end">
           <button type="submit" class="btn btn-primary">Apply Filters</button>
@@ -785,6 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const applyBtn = document.querySelector('form button[type="submit"]');
